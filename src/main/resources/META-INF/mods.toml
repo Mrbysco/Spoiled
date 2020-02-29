@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+#issueTrackerURL=""
+
+[[mods]]
+modId="spoiled"
+version="${file.jarVersion}"
+displayName="Spoiled"
+#displayURL=""
+authors="Mrbysco, ShyNieke"
+description='''
+I'm sorry if I'm spoiling it for you. But you might wanna keep an eye on your food.
+'''
