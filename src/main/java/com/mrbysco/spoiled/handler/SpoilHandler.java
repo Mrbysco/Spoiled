@@ -1,6 +1,7 @@
 package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
+import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.registry.SpoilInfo;
 import com.mrbysco.spoiled.registry.SpoilRegistry;
 import net.minecraft.entity.item.ItemEntity;
@@ -23,7 +24,7 @@ public class SpoilHandler {
         if(event.phase == TickEvent.Phase.END && !event.world.isRemote && event.world.getGameTime() % 20 == 0) {
             World world = event.world;
             for(TileEntity te : world.tickableTileEntities) {
-                if(te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+                if(te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent() && !SpoiledConfig.SERVER.containerBlacklist.get().contains(te.getClass().getSimpleName())) {
                     IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null); //Should never be null.
                     for(int i = 0; i < itemHandler.getSlots(); i++) {
                         ItemStack stack = itemHandler.getStackInSlot(i);

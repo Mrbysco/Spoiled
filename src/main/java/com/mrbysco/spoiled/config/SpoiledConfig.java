@@ -3,9 +3,13 @@ package com.mrbysco.spoiled.config;
 import com.mrbysco.spoiled.Spoiled;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class SpoiledConfig {
     public static class Client {
@@ -23,12 +27,41 @@ public class SpoiledConfig {
         }
     }
 
+    public static class Server {
+        public final ConfigValue<List<? extends String>> containerBlacklist;
+
+        Server(ForgeConfigSpec.Builder builder) {
+            builder.comment("Client settings")
+                    .push("client");
+
+            String[] containers = new String[]
+                    {
+                            "ShulkerBoxTileEntity"
+                    };
+
+            containerBlacklist = builder
+                    .comment("A list of containers in which food does not spoil.")
+                    .defineList("containerblacklist", Arrays.asList(containers), o -> (o instanceof String));
+
+            builder.pop();
+        }
+    }
+
     public static final ForgeConfigSpec clientSpec;
     public static final SpoiledConfig.Client CLIENT;
     static {
         final Pair<SpoiledConfig.Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SpoiledConfig.Client::new);
         clientSpec = specPair.getRight();
         CLIENT = specPair.getLeft();
+    }
+
+    public static final ForgeConfigSpec serverSpec;
+    public static final SpoiledConfig.Server SERVER;
+
+    static {
+        final Pair<SpoiledConfig.Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SpoiledConfig.Server::new);
+        serverSpec = specPair.getRight();
+        SERVER = specPair.getLeft();
     }
 
     @SubscribeEvent
