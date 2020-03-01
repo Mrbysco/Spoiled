@@ -13,8 +13,6 @@ public class SpoilRegistry {
     private Map<ResourceLocation, SpoilInfo> spoilMap = Maps.newHashMap();
 
     public static void initializeSpoiling() {
-        Map<ResourceLocation, SpoilInfo> nameToAgeing = INSTANCE.getSpoilMap();
-
         INSTANCE.registerSpoiling(new SpoilInfo("apple", new ItemStack(Items.APPLE), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("baked_potato", new ItemStack(Items.BAKED_POTATO), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("beef", new ItemStack(Items.BEEF), new ItemStack(Items.ROTTEN_FLESH), 1200));
@@ -47,7 +45,6 @@ public class SpoilRegistry {
         INSTANCE.registerSpoiling(new SpoilInfo("pumpkin_pie", new ItemStack(Items.PUMPKIN_PIE), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("rabbit", new ItemStack(Items.RABBIT), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("rabbit_stew", new ItemStack(Items.RABBIT_STEW), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("rotten_flesh", new ItemStack(Items.ROTTEN_FLESH), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("salmon", new ItemStack(Items.SALMON), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("spider_eye", new ItemStack(Items.SPIDER_EYE), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("suspicious_stew", new ItemStack(Items.SUSPICIOUS_STEW), new ItemStack(Items.ROTTEN_FLESH), 1200));
@@ -57,10 +54,50 @@ public class SpoilRegistry {
 
     public void registerSpoiling(SpoilInfo info)
     {
-        spoilMap.put(info.getFoodStack().getItem().getRegistryName(), info);
+        if(!containsID(info.getUniqueID())) {
+            spoilMap.put(info.getFoodStack().getItem().getRegistryName(), info);
+        }
+    }
+
+    public void removeSpoiling(SpoilInfo info)
+    {
+        removeSpoiling(info.getUniqueID());
+    }
+
+    public void removeSpoiling(String uniqueID)
+    {
+        if(containsID(uniqueID)) {
+            for (Map.Entry<ResourceLocation, SpoilInfo> entry : spoilMap.entrySet()) {
+                SpoilInfo value = entry.getValue();
+                if(value.getUniqueID().equals(uniqueID))
+                    spoilMap.remove(entry.getKey(), entry.getValue());
+            }
+        }
     }
 
     public Map<ResourceLocation, SpoilInfo> getSpoilMap() {
         return spoilMap;
+    }
+
+    public boolean containsID(String uniqueID) {
+        if(!spoilMap.isEmpty()) {
+            for (Map.Entry<ResourceLocation, SpoilInfo> entry : spoilMap.entrySet()) {
+                SpoilInfo value = entry.getValue();
+                if(value.getUniqueID().equals(uniqueID))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public SpoilInfo getInfoFromID(String uniqueID) {
+        if(containsID(uniqueID)) {
+            for (Map.Entry<ResourceLocation, SpoilInfo> entry : spoilMap.entrySet()) {
+                SpoilInfo value = entry.getValue();
+                if(value.getUniqueID().equals(uniqueID))
+                    return value;
+            }
+        }
+        return null;
     }
 }
