@@ -6,18 +6,16 @@ import com.mrbysco.spoiled.registry.SpoilRegistry;
 
 public class ActionRemoveSpoiling implements IUndoableAction {
     public final String uniqueID;
-    public final SpoilInfo oldAgeingData;
+    public final SpoilInfo oldSpoilData;
 
     public ActionRemoveSpoiling(String uniqueID) {
         this.uniqueID = uniqueID;
-        this.oldAgeingData = SpoilRegistry.INSTANCE.getInfoFromID(uniqueID);
+        this.oldSpoilData = SpoilRegistry.INSTANCE.getInfoFromID(uniqueID);
     }
 
     @Override
     public void apply() {
-        if (SpoilRegistry.INSTANCE.containsID(uniqueID)) {
-            SpoilRegistry.INSTANCE.removeSpoiling(uniqueID);
-        }
+        SpoilRegistry.INSTANCE.removeSpoiling(uniqueID);
     }
 
     @Override
@@ -31,13 +29,11 @@ public class ActionRemoveSpoiling implements IUndoableAction {
 
     @Override
     public void undo() {
-        if (!SpoilRegistry.INSTANCE.containsID(uniqueID)) {
-            SpoilRegistry.INSTANCE.registerSpoiling(oldAgeingData);
-        }
+        SpoilRegistry.INSTANCE.registerSpoiling(oldSpoilData);
     }
 
     @Override
     public String describeUndo() {
-        return String.format("Ageing from <" + oldAgeingData.getFoodStack().getItem().getRegistryName() + "> to <" + oldAgeingData.getSpoilStack().getItem().getRegistryName() + "> has been added again, unique ID: " + oldAgeingData.getUniqueID());
+        return String.format("Spoiling from <" + oldSpoilData.getFoodStack().getItem().getRegistryName() + "> to <" + oldSpoilData.getSpoilStack().getItem().getRegistryName() + "> has been added again, unique ID: " + oldSpoilData.getUniqueID());
     }
 }

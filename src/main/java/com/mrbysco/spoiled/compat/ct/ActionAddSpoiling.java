@@ -13,9 +13,7 @@ public class ActionAddSpoiling implements IUndoableAction {
 
     @Override
     public void apply() {
-        if (!SpoilRegistry.INSTANCE.containsID(spoilInfo.getUniqueID())) {
-            SpoilRegistry.INSTANCE.registerSpoiling(spoilInfo);
-        }
+        SpoilRegistry.INSTANCE.registerSpoiling(spoilInfo);
     }
 
     @Override
@@ -29,9 +27,7 @@ public class ActionAddSpoiling implements IUndoableAction {
 
     @Override
     public void undo() {
-        if (SpoilRegistry.INSTANCE.containsID(spoilInfo.getUniqueID())) {
-            SpoilRegistry.INSTANCE.removeSpoiling(spoilInfo);
-        }
+        SpoilRegistry.INSTANCE.removeSpoiling(spoilInfo);
     }
 
     @Override

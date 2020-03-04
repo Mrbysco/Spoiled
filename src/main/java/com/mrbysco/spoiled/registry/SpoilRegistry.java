@@ -75,6 +75,14 @@ public class SpoilRegistry {
         }
     }
 
+    public void replaceSpoiling(SpoilInfo info) {
+        if(containsID(info.getUniqueID())) {
+            SpoilInfo oldInfo = getInfoFromID(info.getUniqueID());
+            spoilMap.remove(oldInfo.getFoodStack().getItem().getRegistryName(), oldInfo);
+            spoilMap.put(info.getFoodStack().getItem().getRegistryName(), info);
+        }
+    }
+
     public Map<ResourceLocation, SpoilInfo> getSpoilMap() {
         return spoilMap;
     }

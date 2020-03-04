@@ -31,8 +31,8 @@ public class SpoiledConfig {
         public final ConfigValue<List<? extends String>> containerBlacklist;
 
         Server(ForgeConfigSpec.Builder builder) {
-            builder.comment("Client settings")
-                    .push("client");
+            builder.comment("Server settings")
+                    .push("Server");
 
             String[] containers = new String[]
                     {
@@ -41,7 +41,7 @@ public class SpoiledConfig {
 
             containerBlacklist = builder
                     .comment("A list of containers in which food does not spoil.")
-                    .defineList("containerblacklist", Arrays.asList(containers), o -> (o instanceof String));
+                    .defineList("containerBlacklist", Arrays.asList(containers), o -> (o instanceof String));
 
             builder.pop();
         }

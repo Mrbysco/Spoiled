@@ -1,12 +1,12 @@
 modLoader="javafml"
 loaderVersion="[31,)"
-#issueTrackerURL=""
+issueTrackerURL="https://github.com/Mrbysco/Spoiled"
 
 [[mods]]
 modId="spoiled"
 version="${file.jarVersion}"
 displayName="Spoiled"
-#displayURL=""
+displayURL="https://www.curseforge.com/minecraft/mc-mods/spoiled"
 authors="Mrbysco, ShyNieke"
 description='''
 I'm sorry if I'm spoiling it for you. But you might wanna keep an eye on your food.
