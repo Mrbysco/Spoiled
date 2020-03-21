@@ -29,7 +29,7 @@ public class SpoilHandler {
                     for(int i = 0; i < itemHandler.getSlots(); i++) {
                         ItemStack stack = itemHandler.getStackInSlot(i);
 
-                        if(doesSpoil(stack)) {
+                        if(SpoilRegistry.INSTANCE.doesSpoil(stack)) {
                             updateSpoilingStack(stack);
 
                             if(stack.getTag() != null && !stack.getTag().isEmpty()) {
@@ -61,7 +61,7 @@ public class SpoilHandler {
         for(int i = 0; i < invCount; i++) {
             ItemStack stack = player.inventory.getStackInSlot(i);
             if(!stack.isEmpty()) {
-                if(doesSpoil(stack)) {
+                if(SpoilRegistry.INSTANCE.doesSpoil(stack)) {
                     updateSpoilingStack(stack);
 
                     if(stack.getTag() != null && !stack.getTag().isEmpty()) {
@@ -75,10 +75,6 @@ public class SpoilHandler {
                 }
             }
         }
-    }
-
-    public boolean doesSpoil(ItemStack stack) {
-        return SpoilRegistry.INSTANCE.getSpoilMap().containsKey(stack.getItem().getRegistryName());
     }
 
     public void updateSpoilingStack(ItemStack stack) {

@@ -108,4 +108,8 @@ public class SpoilRegistry {
         }
         return null;
     }
+
+    public boolean doesSpoil(ItemStack stack) {
+        return spoilMap.containsKey(stack.getItem().getRegistryName());
+    }
 }

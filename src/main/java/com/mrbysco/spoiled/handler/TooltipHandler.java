@@ -2,6 +2,7 @@ package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.config.SpoiledConfig;
+import com.mrbysco.spoiled.registry.SpoilRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -15,7 +16,7 @@ public class TooltipHandler {
     @SubscribeEvent
     public void onItemPickup(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if(stack.getTag() != null && !stack.getTag().isEmpty()) {
+        if(stack.getTag() != null && !stack.getTag().isEmpty() && stack.getTag().contains(Reference.SPOIL_TAG)) {
             CompoundNBT tag = stack.getTag();
             int timer = tag.getInt(Reference.SPOIL_TAG);
             int timeMax = tag.getInt(Reference.SPOIL_TIME_TAG);

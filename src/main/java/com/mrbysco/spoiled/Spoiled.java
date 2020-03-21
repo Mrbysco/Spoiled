@@ -4,9 +4,11 @@ import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.handler.TooltipHandler;
 import com.mrbysco.spoiled.registry.SpoilRegistry;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -26,10 +28,12 @@ public class Spoiled
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, SpoiledConfig.serverSpec);
         eventBus.register(SpoiledConfig.class);
 
-        // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new SpoilHandler());
-        MinecraftForge.EVENT_BUS.register(new TooltipHandler());
+
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            MinecraftForge.EVENT_BUS.register(new TooltipHandler());
+        });
     }
 
     @SubscribeEvent
