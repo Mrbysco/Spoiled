@@ -23,26 +23,28 @@ public class SpoilHandler {
     public void onWorldTick(WorldTickEvent event) {
         if(event.phase == TickEvent.Phase.END && !event.world.isRemote && event.world.getGameTime() % 20 == 0) {
             World world = event.world;
-            for(TileEntity te : world.tickableTileEntities) {
-                if(te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent() && !SpoiledConfig.SERVER.containerBlacklist.get().contains(te.getClass().getSimpleName())) {
-                    IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null); //Should never be null.
-                    for(int i = 0; i < itemHandler.getSlots(); i++) {
-                        ItemStack stack = itemHandler.getStackInSlot(i);
+            if(!world.tickableTileEntities.isEmpty()) {
+                for(TileEntity te : world.tickableTileEntities) {
+                    if(te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent() && !SpoiledConfig.SERVER.containerBlacklist.get().contains(te.getClass().getSimpleName())) {
+                        te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
+                            for(int i = 0; i < itemHandler.getSlots(); i++) {
+                                ItemStack stack = itemHandler.getStackInSlot(i);
+                                if(SpoilRegistry.INSTANCE.doesSpoil(stack)) {
+                                    updateSpoilingStack(stack);
 
-                        if(SpoilRegistry.INSTANCE.doesSpoil(stack)) {
-                            updateSpoilingStack(stack);
-
-                            if(stack.getTag() != null && !stack.getTag().isEmpty()) {
-                                CompoundNBT tag = stack.getTag();
-                                if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-                                    int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-                                    int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-                                    if(getOldTime >= getMaxTime) {
-                                        spoilItemInTE(itemHandler, i, stack);
+                                    if(stack.getTag() != null && !stack.getTag().isEmpty()) {
+                                        CompoundNBT tag = stack.getTag();
+                                        if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+                                            int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+                                            int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                                            if(getOldTime >= getMaxTime) {
+                                                spoilItemInTE(itemHandler, i, stack);
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        }
+                        });
                     }
                 }
             }
