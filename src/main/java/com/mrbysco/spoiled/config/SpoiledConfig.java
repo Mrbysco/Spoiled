@@ -40,7 +40,7 @@ public class SpoiledConfig {
                     };
 
             containerBlacklist = builder
-                    .comment("A list of containers in which food does not spoil.")
+                    .comment("A list of containers in which food does not spoil. To blacklist add the tileentity's class name")
                     .defineList("containerBlacklist", Arrays.asList(containers), o -> (o instanceof String));
 
             builder.pop();
