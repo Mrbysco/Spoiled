@@ -17,6 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class SpoilHandler {
@@ -26,8 +27,8 @@ public class SpoilHandler {
         if(event.phase == TickEvent.Phase.END && !event.world.isRemote && event.world.getGameTime() % 20 == 0) {
             World world = event.world;
             if(!world.tickableTileEntities.isEmpty()) {
-                List<TileEntity> TEList = event.world.tickableTileEntities;
-                for(TileEntity te : TEList) {
+                for (Iterator<TileEntity> iterator = world.tickableTileEntities.iterator(); iterator.hasNext(); ) {
+                    TileEntity te = iterator.next();
                     if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent() && !SpoiledConfig.SERVER.containerBlacklist.get().contains(te.getClass().getSimpleName())) {
                         te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
                             for(int i = 0; i < itemHandler.getSlots(); i++) {
