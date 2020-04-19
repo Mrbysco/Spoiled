@@ -13,21 +13,24 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SpoilHandler {
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public void onWorldTick(WorldTickEvent event) {
-        if(event.phase == TickEvent.Phase.END && !event.world.isRemote && event.world.getGameTime() % 20 == 0) {
+        if(event.phase == TickEvent.Phase.START && !event.world.isRemote && event.world.getGameTime() % 20 == 0) {
             World world = event.world;
             if(!world.tickableTileEntities.isEmpty()) {
-                for (Iterator<TileEntity> iterator = world.tickableTileEntities.iterator(); iterator.hasNext(); ) {
+                List<TileEntity> tickableTileEntities = new CopyOnWriteArrayList<>(world.tickableTileEntities);
+                for (Iterator<TileEntity> iterator = tickableTileEntities.iterator(); iterator.hasNext();) {
                     TileEntity te = iterator.next();
                     if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent() && !SpoiledConfig.SERVER.containerBlacklist.get().contains(te.getClass().getSimpleName())) {
                         te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
@@ -53,6 +56,15 @@ public class SpoilHandler {
                 }
             }
         }
+    }
+
+    private void spoilItemInTE(IItemHandler itemHandler, int slot, ItemStack stack) {
+        SpoilInfo info = SpoilRegistry.INSTANCE.getSpoilMap().get(stack.getItem().getRegistryName());
+        ItemStack spoiledStack = info.getSpoilStack().copy();
+        spoiledStack.setCount(stack.getCount());
+        stack.shrink(stack.getCount());
+
+        itemHandler.insertItem(slot, spoiledStack, false);
     }
 
     @SubscribeEvent
@@ -114,14 +126,5 @@ public class SpoilHandler {
             itemEntity.setItem(spoiledStack);
             player.world.addEntity(itemEntity);
         }
-    }
-
-    public void spoilItemInTE(IItemHandler itemHandler, int slot, ItemStack stack) {
-        SpoilInfo info = SpoilRegistry.INSTANCE.getSpoilMap().get(stack.getItem().getRegistryName());
-        ItemStack spoiledStack = info.getSpoilStack().copy();
-        spoiledStack.setCount(stack.getCount());
-        stack.shrink(64);
-
-        itemHandler.insertItem(slot, spoiledStack, false);
     }
 }
