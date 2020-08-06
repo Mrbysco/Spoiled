@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[32,)"
 issueTrackerURL="https://github.com/Mrbysco/Spoiled"
+license="MIT"
 
 [[mods]]
 modId="spoiled"
