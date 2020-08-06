@@ -10,7 +10,7 @@ import java.util.Map;
 public class SpoilRegistry {
     public static SpoilRegistry INSTANCE = new SpoilRegistry();
 
-    private Map<ResourceLocation, SpoilInfo> spoilMap = Maps.newHashMap();
+    private final Map<ResourceLocation, SpoilInfo> spoilMap = Maps.newHashMap();
 
     public static void initializeSpoiling() {
         INSTANCE.registerSpoiling(new SpoilInfo("apple", new ItemStack(Items.APPLE), new ItemStack(Items.ROTTEN_FLESH), 1200));
@@ -34,7 +34,6 @@ public class SpoilRegistry {
         INSTANCE.registerSpoiling(new SpoilInfo("dried_kelp", new ItemStack(Items.DRIED_KELP), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("golden_apple", new ItemStack(Items.GOLDEN_APPLE), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("golden_carrot", new ItemStack(Items.GOLDEN_CARROT), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("honey_bottle", new ItemStack(Items.HONEY_BOTTLE), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("melon_slice", new ItemStack(Items.MELON_SLICE), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("mushroom_stew", new ItemStack(Items.MUSHROOM_STEW), new ItemStack(Items.ROTTEN_FLESH), 1200));
         INSTANCE.registerSpoiling(new SpoilInfo("mutton", new ItemStack(Items.MUTTON), new ItemStack(Items.ROTTEN_FLESH), 1200));

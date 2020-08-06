@@ -66,11 +66,11 @@ public class SpoiledConfig {
 
     @SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) {
-        Spoiled.LOGGER.debug("Loaded forge config file {}", configEvent.getConfig().getFileName());
+        Spoiled.LOGGER.debug("Loaded Spoiled's config file {}", configEvent.getConfig().getFileName());
     }
 
     @SubscribeEvent
     public static void onFileChange(final ModConfig.Reloading configEvent) {
-        Spoiled.LOGGER.debug("Forge config just got changed on the file system!");
+        Spoiled.LOGGER.debug("Spoiled's config just got changed on the file system!");
     }
 }

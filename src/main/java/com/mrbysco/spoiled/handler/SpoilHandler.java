@@ -30,7 +30,8 @@ public class SpoilHandler {
             World world = event.world;
             if(!world.tickableTileEntities.isEmpty()) {
                 List<TileEntity> tickableTileEntities = new CopyOnWriteArrayList<>(world.tickableTileEntities);
-                for (Iterator<TileEntity> iterator = tickableTileEntities.iterator(); iterator.hasNext();) {
+                Iterator<TileEntity> iterator;
+                for (iterator = tickableTileEntities.iterator(); iterator.hasNext();) {
                     TileEntity te = iterator.next();
                     if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent() && !SpoiledConfig.SERVER.containerBlacklist.get().contains(te.getClass().getSimpleName())) {
                         te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {

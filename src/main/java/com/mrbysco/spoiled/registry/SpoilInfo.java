@@ -3,7 +3,7 @@ package com.mrbysco.spoiled.registry;
 import net.minecraft.item.ItemStack;
 
 public class SpoilInfo {
-    private String uniqueID;
+    private final String uniqueID;
     private ItemStack foodStack;
     private ItemStack spoilStack;
     private int spoilTime;
