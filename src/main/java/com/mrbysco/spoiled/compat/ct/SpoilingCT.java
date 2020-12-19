@@ -2,6 +2,7 @@ package com.mrbysco.spoiled.compat.ct;
 
 import com.blamejared.crafttweaker.api.CraftTweakerAPI;
 import com.blamejared.crafttweaker.api.annotations.ZenRegister;
+import com.blamejared.crafttweaker.api.item.IItemStack;
 import org.openzen.zencode.java.ZenCodeType;
 
 @ZenRegister
@@ -10,6 +11,16 @@ public class SpoilingCT {
     @ZenCodeType.Method
     public static void addSpoiling(MCSpoiling spoiling) {
         CraftTweakerAPI.apply(new ActionAddSpoiling(spoiling));
+    }
+
+    @ZenCodeType.Method
+    public static void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime) {
+        CraftTweakerAPI.apply(new ActionAddModSpoiling(modName, spoilStack, spoilTime));
+    }
+
+    @ZenCodeType.Method
+    public static void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime, float sanity) {
+        CraftTweakerAPI.apply(new ActionAddModSpoiling(modName, spoilStack, spoilTime, sanity));
     }
 
     @ZenCodeType.Method

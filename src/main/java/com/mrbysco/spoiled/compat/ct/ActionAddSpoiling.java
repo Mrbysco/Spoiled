@@ -32,6 +32,6 @@ public class ActionAddSpoiling implements IUndoableAction {
 
     @Override
     public String describeUndo() {
-        return "Ageing from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> has been removed again, unique ID: " + spoilInfo.getUniqueID();
+        return "Spoiling from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> has been removed again, unique ID: " + spoilInfo.getUniqueID();
     }
 }
