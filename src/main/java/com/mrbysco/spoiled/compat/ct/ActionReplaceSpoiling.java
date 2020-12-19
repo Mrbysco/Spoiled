@@ -10,30 +10,30 @@ public class ActionReplaceSpoiling implements IUndoableAction {
 
     public ActionReplaceSpoiling(MCSpoiling data) {
         this.spoilInfo = data.getInternal();
-        this.oldSpoilInfo = SpoilRegistry.INSTANCE.getInfoFromID(data.getInternal().getUniqueID());
+        this.oldSpoilInfo = SpoilRegistry.instance().getInfoFromID(data.getInternal().getUniqueID());
     }
 
     @Override
     public void apply() {
-        SpoilRegistry.INSTANCE.replaceSpoiling(spoilInfo);
+        SpoilRegistry.instance().replaceSpoiling(spoilInfo);
     }
 
     @Override
     public String describe() {
-        if (SpoilRegistry.INSTANCE.containsID(spoilInfo.getUniqueID())) {
-            return String.format("Spoiling data with ID: " + spoilInfo.getUniqueID() + " has been replaced.");
+        if (SpoilRegistry.instance().containsID(spoilInfo.getUniqueID())) {
+            return "Spoiling data with ID: " + spoilInfo.getUniqueID() + " has been replaced.";
         } else {
-            return String.format("Spoiling data with ID: " + spoilInfo.getUniqueID() + " could not be replaced as it doesn't exist.");
+            return "Spoiling data with ID: " + spoilInfo.getUniqueID() + " could not be replaced as it doesn't exist.";
         }
     }
 
     @Override
     public void undo() {
-        SpoilRegistry.INSTANCE.replaceSpoiling(oldSpoilInfo);
+        SpoilRegistry.instance().replaceSpoiling(oldSpoilInfo);
     }
 
     @Override
     public String describeUndo() {
-        return String.format("Spoiling data with ID: " + spoilInfo.getUniqueID() + " has been returned to it's former glory.");
+        return "Spoiling data with ID: " + spoilInfo.getUniqueID() + " has been returned to it's former glory.";
     }
 }

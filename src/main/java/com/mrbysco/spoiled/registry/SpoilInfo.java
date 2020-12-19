@@ -4,9 +4,9 @@ import net.minecraft.item.ItemStack;
 
 public class SpoilInfo {
     private final String uniqueID;
-    private ItemStack foodStack;
-    private ItemStack spoilStack;
-    private int spoilTime;
+    private final ItemStack foodStack;
+    private final ItemStack spoilStack;
+    private final int spoilTime;
     private float sanity;
 
     public SpoilInfo(String uniqueID, ItemStack food, ItemStack spoiled, int time) {

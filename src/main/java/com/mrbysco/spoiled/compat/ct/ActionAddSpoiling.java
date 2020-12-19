@@ -13,25 +13,25 @@ public class ActionAddSpoiling implements IUndoableAction {
 
     @Override
     public void apply() {
-        SpoilRegistry.INSTANCE.registerSpoiling(spoilInfo);
+        SpoilRegistry.instance().registerSpoiling(spoilInfo);
     }
 
     @Override
     public String describe() {
-        if (!SpoilRegistry.INSTANCE.containsID(spoilInfo.getUniqueID())) {
-            return String.format("Spoiling from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> has been added with unique ID: " + spoilInfo.getUniqueID());
+        if (!SpoilRegistry.instance().containsID(spoilInfo.getUniqueID())) {
+            return "Spoiling from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> has been added with unique ID: " + spoilInfo.getUniqueID();
         } else {
-            return String.format("Spoiling from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> could not be added, ID: " + spoilInfo.getUniqueID() + " already exists");
+            return "Spoiling from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> could not be added, ID: " + spoilInfo.getUniqueID() + " already exists";
         }
     }
 
     @Override
     public void undo() {
-        SpoilRegistry.INSTANCE.removeSpoiling(spoilInfo);
+        SpoilRegistry.instance().removeSpoiling(spoilInfo);
     }
 
     @Override
     public String describeUndo() {
-        return String.format("Ageing from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> has been removed again, unique ID: " + spoilInfo.getUniqueID());
+        return "Ageing from <" + spoilInfo.getFoodStack().getItem().getRegistryName() + "> to <" + spoilInfo.getSpoilStack().getItem().getRegistryName() + "> has been removed again, unique ID: " + spoilInfo.getUniqueID();
     }
 }

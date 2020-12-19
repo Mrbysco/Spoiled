@@ -1,58 +1,77 @@
 package com.mrbysco.spoiled.registry;
 
 import com.google.common.collect.Maps;
+import com.mrbysco.spoiled.config.SpoiledConfig;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
 public class SpoilRegistry {
-    public static SpoilRegistry INSTANCE = new SpoilRegistry();
-
     private final Map<ResourceLocation, SpoilInfo> spoilMap = Maps.newHashMap();
+    private static SpoilRegistry INSTANCE;
 
-    public static void initializeSpoiling() {
-        INSTANCE.registerSpoiling(new SpoilInfo("apple", new ItemStack(Items.APPLE), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("baked_potato", new ItemStack(Items.BAKED_POTATO), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("beef", new ItemStack(Items.BEEF), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("beetroot", new ItemStack(Items.BEETROOT), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("beetroot_soup", new ItemStack(Items.BEETROOT_SOUP), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("bread", new ItemStack(Items.BREAD), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("carrot", new ItemStack(Items.CARROT), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("chicken", new ItemStack(Items.CHICKEN), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("chorus_fruit", new ItemStack(Items.CHORUS_FRUIT), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cod", new ItemStack(Items.COD), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cooked_beef", new ItemStack(Items.COOKED_BEEF), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cooked_chicken", new ItemStack(Items.COOKED_CHICKEN), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cooked_cod", new ItemStack(Items.COOKED_COD), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cooked_mutton", new ItemStack(Items.COOKED_MUTTON), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cooked_porkchop", new ItemStack(Items.COOKED_PORKCHOP), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cooked_rabbit", new ItemStack(Items.COOKED_RABBIT), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cooked_salmon", new ItemStack(Items.COOKED_SALMON), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("cookie", new ItemStack(Items.COOKIE), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("dried_kelp", new ItemStack(Items.DRIED_KELP), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("golden_apple", new ItemStack(Items.GOLDEN_APPLE), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("golden_carrot", new ItemStack(Items.GOLDEN_CARROT), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("melon_slice", new ItemStack(Items.MELON_SLICE), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("mushroom_stew", new ItemStack(Items.MUSHROOM_STEW), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("mutton", new ItemStack(Items.MUTTON), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("poisonous_potato", new ItemStack(Items.POISONOUS_POTATO), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("porkchop", new ItemStack(Items.PORKCHOP), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("potato", new ItemStack(Items.POTATO), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("pufferfish", new ItemStack(Items.PUFFERFISH), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("pumpkin_pie", new ItemStack(Items.PUMPKIN_PIE), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("rabbit", new ItemStack(Items.RABBIT), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("rabbit_stew", new ItemStack(Items.RABBIT_STEW), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("salmon", new ItemStack(Items.SALMON), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("spider_eye", new ItemStack(Items.SPIDER_EYE), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("suspicious_stew", new ItemStack(Items.SUSPICIOUS_STEW), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("sweet_berries", new ItemStack(Items.SWEET_BERRIES), new ItemStack(Items.ROTTEN_FLESH), 1200));
-        INSTANCE.registerSpoiling(new SpoilInfo("tropical_fish", new ItemStack(Items.TROPICAL_FISH), new ItemStack(Items.ROTTEN_FLESH), 1200));
+    public static SpoilRegistry instance() {
+        if (INSTANCE == null)
+            INSTANCE = new SpoilRegistry();
+        return INSTANCE;
     }
 
-    public void registerSpoiling(SpoilInfo info)
-    {
+    public void initializeSpoiling() {
+        spoilMap.clear();
+        if(SpoiledConfig.SERVER.initializeSpoiling.get()) {
+            int defaultTime = SpoiledConfig.SERVER.defaultSpoilTime.get();
+            String defaultItemValue = SpoiledConfig.SERVER.defaultSpoilItem.get();
+            ItemStack defaultItemstack = ItemStack.EMPTY;
+            if(!defaultItemValue.isEmpty()) {
+                Item defaultItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(defaultItemValue));
+                if(defaultItem != null) {
+                    defaultItemstack = new ItemStack(defaultItem);
+                }
+            }
+            registerSpoiling(new SpoilInfo("apple", new ItemStack(Items.APPLE), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("baked_potato", new ItemStack(Items.BAKED_POTATO), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("beef", new ItemStack(Items.BEEF), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("beetroot", new ItemStack(Items.BEETROOT), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("beetroot_soup", new ItemStack(Items.BEETROOT_SOUP), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("bread", new ItemStack(Items.BREAD), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("carrot", new ItemStack(Items.CARROT), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("chicken", new ItemStack(Items.CHICKEN), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("chorus_fruit", new ItemStack(Items.CHORUS_FRUIT), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cod", new ItemStack(Items.COD), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cooked_beef", new ItemStack(Items.COOKED_BEEF), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cooked_chicken", new ItemStack(Items.COOKED_CHICKEN), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cooked_cod", new ItemStack(Items.COOKED_COD), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cooked_mutton", new ItemStack(Items.COOKED_MUTTON), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cooked_porkchop", new ItemStack(Items.COOKED_PORKCHOP), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cooked_rabbit", new ItemStack(Items.COOKED_RABBIT), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cooked_salmon", new ItemStack(Items.COOKED_SALMON), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("cookie", new ItemStack(Items.COOKIE), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("dried_kelp", new ItemStack(Items.DRIED_KELP), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("golden_apple", new ItemStack(Items.GOLDEN_APPLE), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("golden_carrot", new ItemStack(Items.GOLDEN_CARROT), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("melon_slice", new ItemStack(Items.MELON_SLICE), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("mushroom_stew", new ItemStack(Items.MUSHROOM_STEW), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("mutton", new ItemStack(Items.MUTTON), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("poisonous_potato", new ItemStack(Items.POISONOUS_POTATO), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("porkchop", new ItemStack(Items.PORKCHOP), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("potato", new ItemStack(Items.POTATO), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("pufferfish", new ItemStack(Items.PUFFERFISH), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("pumpkin_pie", new ItemStack(Items.PUMPKIN_PIE), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("rabbit", new ItemStack(Items.RABBIT), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("rabbit_stew", new ItemStack(Items.RABBIT_STEW), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("salmon", new ItemStack(Items.SALMON), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("spider_eye", new ItemStack(Items.SPIDER_EYE), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("suspicious_stew", new ItemStack(Items.SUSPICIOUS_STEW), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("sweet_berries", new ItemStack(Items.SWEET_BERRIES), defaultItemstack, defaultTime));
+            registerSpoiling(new SpoilInfo("tropical_fish", new ItemStack(Items.TROPICAL_FISH), defaultItemstack, defaultTime));
+        }
+    }
+
+    public void registerSpoiling(SpoilInfo info) {
         if(!containsID(info.getUniqueID())) {
             spoilMap.put(info.getFoodStack().getItem().getRegistryName(), info);
         }
@@ -63,8 +82,7 @@ public class SpoilRegistry {
         removeSpoiling(info.getUniqueID());
     }
 
-    public void removeSpoiling(String uniqueID)
-    {
+    public void removeSpoiling(String uniqueID) {
         if(containsID(uniqueID)) {
             for (Map.Entry<ResourceLocation, SpoilInfo> entry : spoilMap.entrySet()) {
                 SpoilInfo value = entry.getValue();

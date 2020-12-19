@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.mrbysco.spoiled.mixin",
+  "refmap": "spoiled.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "ForgeHooksClientMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

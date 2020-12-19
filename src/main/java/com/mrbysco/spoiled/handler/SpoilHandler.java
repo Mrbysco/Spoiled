@@ -37,7 +37,7 @@ public class SpoilHandler {
                         te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
                             for(int i = 0; i < itemHandler.getSlots(); i++) {
                                 ItemStack stack = itemHandler.getStackInSlot(i);
-                                if(SpoilRegistry.INSTANCE.doesSpoil(stack)) {
+                                if(SpoilRegistry.instance().doesSpoil(stack)) {
                                     updateSpoilingStack(stack);
 
                                     if(stack.getTag() != null && !stack.getTag().isEmpty()) {
@@ -60,7 +60,7 @@ public class SpoilHandler {
     }
 
     private void spoilItemInTE(IItemHandler itemHandler, int slot, ItemStack stack) {
-        SpoilInfo info = SpoilRegistry.INSTANCE.getSpoilMap().get(stack.getItem().getRegistryName());
+        SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
         ItemStack spoiledStack = info.getSpoilStack().copy();
         spoiledStack.setCount(stack.getCount());
         stack.shrink(stack.getCount());
@@ -80,7 +80,7 @@ public class SpoilHandler {
         for(int i = 0; i < invCount; i++) {
             ItemStack stack = player.inventory.getStackInSlot(i);
             if(!stack.isEmpty()) {
-                if(SpoilRegistry.INSTANCE.doesSpoil(stack)) {
+                if(SpoilRegistry.instance().doesSpoil(stack)) {
                     updateSpoilingStack(stack);
 
                     if(stack.getTag() != null && !stack.getTag().isEmpty()) {
@@ -97,7 +97,7 @@ public class SpoilHandler {
     }
 
     public void updateSpoilingStack(ItemStack stack) {
-        SpoilInfo info = SpoilRegistry.INSTANCE.getSpoilMap().get(stack.getItem().getRegistryName());
+        SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
         if(stack.getTag() == null || stack.getTag().isEmpty()) {
             CompoundNBT tag = new CompoundNBT();
             tag.putInt(Reference.SPOIL_TAG, 0);
@@ -108,6 +108,9 @@ public class SpoilHandler {
             if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
                 int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                 int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                if(getMaxTime != info.getSpoilTime()) {
+                    tag.putInt(Reference.SPOIL_TIME_TAG, info.getSpoilTime());
+                }
                 if(getOldTime < getMaxTime) {
                     getOldTime++;
                     tag.putInt(Reference.SPOIL_TAG, getOldTime);
@@ -118,14 +121,17 @@ public class SpoilHandler {
     }
 
     public void spoilItemForPlayer(PlayerEntity player, ItemStack stack) {
-        SpoilInfo info = SpoilRegistry.INSTANCE.getSpoilMap().get(stack.getItem().getRegistryName());
+        SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
         ItemStack spoiledStack = info.getSpoilStack().copy();
-        spoiledStack.setCount(stack.getCount());
+        int oldStackCount = stack.getCount();
         stack.shrink(64);
-        if(player.addItemStackToInventory(spoiledStack)) {
-            ItemEntity itemEntity = new ItemEntity(player.world, player.getPosX(), player.getPosY(), player.getPosZ());
-            itemEntity.setItem(spoiledStack);
-            player.world.addEntity(itemEntity);
+        if(!spoiledStack.isEmpty()) {
+            spoiledStack.setCount(oldStackCount);
+            if(player.addItemStackToInventory(spoiledStack)) {
+                ItemEntity itemEntity = new ItemEntity(player.world, player.getPosX(), player.getPosY(), player.getPosZ());
+                itemEntity.setItem(spoiledStack);
+                player.world.addEntity(itemEntity);
+            }
         }
     }
 }
