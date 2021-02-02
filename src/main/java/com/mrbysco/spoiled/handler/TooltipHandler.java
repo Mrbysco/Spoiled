@@ -1,7 +1,7 @@
 package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
-import com.mrbysco.spoiled.config.SpoiledConfig;
+import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.text.ITextComponent;
@@ -23,7 +23,7 @@ public class TooltipHandler {
             int percentage = (int)(((double)timer / timeMax) * 100);
 
             TextComponent component;
-            if(SpoiledConfig.CLIENT.showPercentage.get()) {
+            if(SpoiledConfigCache.showPercentage) {
                 component = (TextComponent)new TranslationTextComponent("spoiled.spoiling").mergeStyle(TextFormatting.YELLOW);
                 ITextComponent amount = new StringTextComponent(String.valueOf(percentage)).mergeStyle(TextFormatting.RED);
                 ITextComponent percentageComponent = new StringTextComponent("%").mergeStyle(TextFormatting.YELLOW);

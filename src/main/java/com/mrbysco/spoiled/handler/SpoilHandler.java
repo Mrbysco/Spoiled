@@ -1,7 +1,7 @@
 package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
-import com.mrbysco.spoiled.config.SpoiledConfig;
+import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.registry.SpoilInfo;
 import com.mrbysco.spoiled.registry.SpoilRegistry;
 import net.minecraft.entity.item.ItemEntity;
@@ -9,6 +9,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -26,33 +27,38 @@ public class SpoilHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onWorldTick(WorldTickEvent event) {
-        if(event.phase == TickEvent.Phase.START && !event.world.isRemote && event.world.getGameTime() % 20 == 0) {
+        if(event.phase == TickEvent.Phase.START && !event.world.isRemote && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
             World world = event.world;
             if(!world.tickableTileEntities.isEmpty()) {
                 List<TileEntity> tickableTileEntities = new CopyOnWriteArrayList<>(world.tickableTileEntities);
                 Iterator<TileEntity> iterator;
                 for (iterator = tickableTileEntities.iterator(); iterator.hasNext();) {
                     TileEntity te = iterator.next();
-                    if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent() && !SpoiledConfig.SERVER.containerBlacklist.get().contains(te.getClass().getSimpleName())) {
-                        te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
-                            for(int i = 0; i < itemHandler.getSlots(); i++) {
-                                ItemStack stack = itemHandler.getStackInSlot(i);
-                                if(SpoilRegistry.instance().doesSpoil(stack)) {
-                                    updateSpoilingStack(stack);
+                    if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+                        ResourceLocation location = te.getType().getRegistryName();
+                        boolean spoilFlag = location == null || (SpoiledConfigCache.containerModifier.containsKey(location) &&
+                                (SpoiledConfigCache.containerModifier.get(location) == 0.0D || world.rand.nextDouble() <= SpoiledConfigCache.containerModifier.get(location)));
+                        if(spoilFlag) {
+                            te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
+                                for(int i = 0; i < itemHandler.getSlots(); i++) {
+                                    ItemStack stack = itemHandler.getStackInSlot(i);
+                                    if(SpoilRegistry.instance().doesSpoil(stack)) {
+                                        updateSpoilingStack(stack);
 
-                                    if(stack.getTag() != null && !stack.getTag().isEmpty()) {
-                                        CompoundNBT tag = stack.getTag();
-                                        if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-                                            int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-                                            int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-                                            if(getOldTime >= getMaxTime) {
-                                                spoilItemInTE(itemHandler, i, stack);
+                                        if(stack.getTag() != null && !stack.getTag().isEmpty()) {
+                                            CompoundNBT tag = stack.getTag();
+                                            if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+                                                int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+                                                int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                                                if(getOldTime >= getMaxTime) {
+                                                    spoilItemInTE(itemHandler, i, stack);
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }
@@ -70,7 +76,7 @@ public class SpoilHandler {
 
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) {
-        if(event.phase == TickEvent.Phase.END && !event.player.world.isRemote && event.player.world.getGameTime() % 20 == 0 && !event.player.abilities.isCreativeMode) {
+        if(event.phase == TickEvent.Phase.END && !event.player.world.isRemote && event.player.world.getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.abilities.isCreativeMode) {
             updateInventory(event.player);
         }
     }

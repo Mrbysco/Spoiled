@@ -29,7 +29,8 @@ public class SpoiledConfig {
     }
 
     public static class Server {
-        public final ConfigValue<List<? extends String>> containerBlacklist;
+        public final ConfigValue<List<? extends String>> containerModifier;
+        public final IntValue spoilRate;
         public final BooleanValue initializeSpoiling;
         public final IntValue defaultSpoilTime;
         public final ConfigValue<String> defaultSpoilItem;
@@ -40,12 +41,19 @@ public class SpoiledConfig {
 
             String[] containers = new String[]
                     {
-                            "ShulkerBoxTileEntity"
+                            "minecraft:shulker_box,0"
                     };
 
-            containerBlacklist = builder
-                    .comment("A list of containers in which food does not spoil. To blacklist add the tileentity's class name")
-                    .defineList("containerBlacklist", Arrays.asList(containers), o -> (o instanceof String));
+            containerModifier = builder
+                    .comment("Determines the spoilrate in specific containers [Syntax: tileentity:spoil_rate]\n" +
+                            "Examples: \"minecraft:shulker_box,0\" would make shulker boxes not spoil food\n" +
+                            "\"cookingforblockheads:fridge,0.2\" would make a cooking for blockheads fridge spoil at 20% of the usual spoilrate")
+                    .defineList("containerModifier", Arrays.asList(containers), o -> (o instanceof String));
+
+            spoilRate = builder
+                    .comment("Defines the default amount of seconds in between which the spoiling updates, " +
+                            "if this is changed you should update the 'defaultSpoilTime' to accommodate for the extra time [default: 10]")
+                    .defineInRange("spoilRate", 10, 1, Integer.MAX_VALUE);
 
             initializeSpoiling = builder
                     .comment("When enabled Spoiled initializes spoiling for all vanilla food")
@@ -53,7 +61,7 @@ public class SpoiledConfig {
 
             defaultSpoilTime = builder
                     .comment("Defines the default amount of spoilTime (in second) that is used to initialize Spoiling when 'initializeSpoiling' is enabled")
-                    .defineInRange("defaultSpoilTime", 1200, 1, Integer.MAX_VALUE);
+                    .defineInRange("defaultSpoilTime", 120, 1, Integer.MAX_VALUE);
 
             defaultSpoilItem = builder
                     .comment("Defines the item the foods vanilla foods will turn into when spoiled (if empty it will clear the spoiling item) [default: 'minecraft:rotten_flesh']")
@@ -88,5 +96,10 @@ public class SpoiledConfig {
     @SubscribeEvent
     public static void onFileChange(final ModConfig.Reloading configEvent) {
         Spoiled.LOGGER.debug("Spoiled's config just got changed on the file system!");
+    }
+
+    @SubscribeEvent
+    public static void onReload(final ModConfig.ModConfigEvent configEvent) {
+        SpoiledConfigCache.refreshCache();
     }
 }

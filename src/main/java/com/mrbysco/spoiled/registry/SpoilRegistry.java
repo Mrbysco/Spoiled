@@ -1,12 +1,11 @@
 package com.mrbysco.spoiled.registry;
 
 import com.google.common.collect.Maps;
-import com.mrbysco.spoiled.config.SpoiledConfig;
+import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Map;
 
@@ -22,15 +21,12 @@ public class SpoilRegistry {
 
     public void initializeSpoiling() {
         spoilMap.clear();
-        if(SpoiledConfig.SERVER.initializeSpoiling.get()) {
-            int defaultTime = SpoiledConfig.SERVER.defaultSpoilTime.get();
-            String defaultItemValue = SpoiledConfig.SERVER.defaultSpoilItem.get();
+        if(SpoiledConfigCache.initializeSpoiling) {
+            int defaultTime = SpoiledConfigCache.defaultSpoilTime;
+            Item defaultItemValue = SpoiledConfigCache.defaultSpoilItem;
             ItemStack defaultItemstack = ItemStack.EMPTY;
-            if(!defaultItemValue.isEmpty()) {
-                Item defaultItem = ForgeRegistries.ITEMS.getValue(new ResourceLocation(defaultItemValue));
-                if(defaultItem != null) {
-                    defaultItemstack = new ItemStack(defaultItem);
-                }
+            if(defaultItemValue != Items.AIR) {
+                defaultItemstack = new ItemStack(defaultItemValue);
             }
             registerSpoiling(new SpoilInfo("apple", new ItemStack(Items.APPLE), defaultItemstack, defaultTime));
             registerSpoiling(new SpoilInfo("baked_potato", new ItemStack(Items.BAKED_POTATO), defaultItemstack, defaultTime));
