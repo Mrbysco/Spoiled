@@ -36,8 +36,11 @@ public class SpoilHandler {
                     TileEntity te = iterator.next();
                     if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
                         ResourceLocation location = te.getType().getRegistryName();
-                        boolean spoilFlag = location == null || (SpoiledConfigCache.containerModifier.containsKey(location) &&
-                                (SpoiledConfigCache.containerModifier.get(location) == 0.0D || world.rand.nextDouble() <= SpoiledConfigCache.containerModifier.get(location)));
+                        double spoilRate = 1.0D;
+                        if(location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
+                            spoilRate = SpoiledConfigCache.containerModifier.get(location);
+                        }
+                        boolean spoilFlag = spoilRate == 0.0D || world.rand.nextDouble() <= spoilRate;
                         if(spoilFlag) {
                             te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
                                 for(int i = 0; i < itemHandler.getSlots(); i++) {
