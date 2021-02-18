@@ -133,7 +133,7 @@ public class SpoilHandler {
         SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
         ItemStack spoiledStack = info.getSpoilStack().copy();
         int oldStackCount = stack.getCount();
-        stack.shrink(64);
+        stack.setCount(stack.getCount());
         if(!spoiledStack.isEmpty()) {
             spoiledStack.setCount(oldStackCount);
             if(player.addItemStackToInventory(spoiledStack)) {
