@@ -9,10 +9,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class SpoilReloadManager implements IResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
-        SpoilRegistry.instance().initializeSpoiling();
+        SpoilRegistry.instance().reloadSpoiling();
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(this);
     }

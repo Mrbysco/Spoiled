@@ -6,6 +6,7 @@ import com.mrbysco.spoiled.registry.SpoilInfo;
 import com.mrbysco.spoiled.registry.SpoilRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ActionAddModSpoiling implements IUndoableAction {
@@ -30,16 +31,22 @@ public class ActionAddModSpoiling implements IUndoableAction {
 
     @Override
     public void apply() {
-        for(Item foundItem : ForgeRegistries.ITEMS.getValues()) {
-            if(foundItem.isFood() && foundItem.getRegistryName().getNamespace().equals(modName)) {
-                SpoilRegistry.instance().registerSpoiling(new SpoilInfo(modName + ":" + foundItem.getRegistryName().getPath(), new ItemStack(foundItem), spoilStack, spoilTime, sanity));
+        if(ModList.get().isLoaded(modName)) {
+            for(Item foundItem : ForgeRegistries.ITEMS.getValues()) {
+                if(foundItem.getRegistryName().getNamespace().equals(modName) && foundItem.isFood()) {
+                    SpoilRegistry.instance().registerSpoiling(new SpoilInfo(foundItem.getRegistryName().toString(), new ItemStack(foundItem), spoilStack, spoilTime, sanity));
+                }
             }
         }
     }
 
     @Override
     public String describe() {
-        return "Adding spoiling to all food items from the mod with the following id: " + modName;
+        if(ModList.get().isLoaded(modName)) {
+            return "Adding spoiling to all food items from the mod with the following id: " + modName;
+        } else {
+            return "Can't add spoiling spoiling to all food items from the mod with the following id: " + modName + " because the mod couldn't be found. Did you type the modid correctly?";
+        }
     }
 
     @Override

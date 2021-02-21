@@ -19,8 +19,12 @@ public class SpoilRegistry {
         return INSTANCE;
     }
 
-    public void initializeSpoiling() {
+    public void reloadSpoiling() {
         spoilMap.clear();
+        this.initializeSpoiling();
+    }
+
+    public void initializeSpoiling() {
         if(SpoiledConfigCache.initializeSpoiling) {
             int defaultTime = SpoiledConfigCache.defaultSpoilTime;
             Item defaultItemValue = SpoiledConfigCache.defaultSpoilItem;
