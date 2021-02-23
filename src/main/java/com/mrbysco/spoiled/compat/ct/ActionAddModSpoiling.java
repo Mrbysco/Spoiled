@@ -33,7 +33,7 @@ public class ActionAddModSpoiling implements IUndoableAction {
     public void apply() {
         if(ModList.get().isLoaded(modName)) {
             for(Item foundItem : ForgeRegistries.ITEMS.getValues()) {
-                if(foundItem.getRegistryName().getNamespace().equals(modName) && foundItem.isFood()) {
+                if(foundItem != spoilStack.getItem() && foundItem.getRegistryName().getNamespace().equals(modName) && foundItem.isFood()) {
                     SpoilRegistry.instance().registerSpoiling(new SpoilInfo(foundItem.getRegistryName().toString(), new ItemStack(foundItem), spoilStack, spoilTime, sanity));
                 }
             }

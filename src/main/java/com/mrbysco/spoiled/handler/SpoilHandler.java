@@ -71,10 +71,12 @@ public class SpoilHandler {
     private void spoilItemInTE(IItemHandler itemHandler, int slot, ItemStack stack) {
         SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
         ItemStack spoiledStack = info.getSpoilStack().copy();
-        spoiledStack.setCount(stack.getCount());
-        stack.shrink(stack.getCount());
-
-        itemHandler.insertItem(slot, spoiledStack, false);
+        int oldStackCount = stack.getCount();
+        stack.setCount(0);
+        if(!spoiledStack.isEmpty()) {
+            spoiledStack.setCount(oldStackCount);
+            itemHandler.insertItem(slot, spoiledStack, false);
+        }
     }
 
     @SubscribeEvent
@@ -133,10 +135,10 @@ public class SpoilHandler {
         SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
         ItemStack spoiledStack = info.getSpoilStack().copy();
         int oldStackCount = stack.getCount();
-        stack.setCount(stack.getCount());
+        stack.setCount(0);
         if(!spoiledStack.isEmpty()) {
             spoiledStack.setCount(oldStackCount);
-            if(player.addItemStackToInventory(spoiledStack)) {
+            if(!player.addItemStackToInventory(spoiledStack)) {
                 ItemEntity itemEntity = new ItemEntity(player.world, player.getPosX(), player.getPosY(), player.getPosZ());
                 itemEntity.setItem(spoiledStack);
                 player.world.addEntity(itemEntity);
