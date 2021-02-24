@@ -36,8 +36,8 @@ public class SpoiledConfig {
         public final ConfigValue<String> defaultSpoilItem;
 
         Server(ForgeConfigSpec.Builder builder) {
-            builder.comment("Server settings")
-                    .push("Server");
+            builder.comment("General settings")
+                    .push("General");
 
             String[] containers = new String[]
                     {
@@ -72,18 +72,18 @@ public class SpoiledConfig {
     }
 
     public static final ForgeConfigSpec clientSpec;
-    public static final SpoiledConfig.Client CLIENT;
+    public static final Client CLIENT;
     static {
-        final Pair<SpoiledConfig.Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SpoiledConfig.Client::new);
+        final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
         clientSpec = specPair.getRight();
         CLIENT = specPair.getLeft();
     }
 
     public static final ForgeConfigSpec serverSpec;
-    public static final SpoiledConfig.Server SERVER;
+    public static final Server SERVER;
 
     static {
-        final Pair<SpoiledConfig.Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(SpoiledConfig.Server::new);
+        final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
         serverSpec = specPair.getRight();
         SERVER = specPair.getLeft();
     }
@@ -91,15 +91,12 @@ public class SpoiledConfig {
     @SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) {
         Spoiled.LOGGER.debug("Loaded Spoiled's config file {}", configEvent.getConfig().getFileName());
+        SpoiledConfigCache.refreshCache();
     }
 
     @SubscribeEvent
     public static void onFileChange(final ModConfig.Reloading configEvent) {
         Spoiled.LOGGER.debug("Spoiled's config just got changed on the file system!");
-    }
-
-    @SubscribeEvent
-    public static void onReload(final ModConfig.ModConfigEvent configEvent) {
         SpoiledConfigCache.refreshCache();
     }
 }

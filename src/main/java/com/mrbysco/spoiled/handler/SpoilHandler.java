@@ -8,6 +8,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -30,9 +31,9 @@ public class SpoilHandler {
         if(event.phase == TickEvent.Phase.START && !event.world.isRemote && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
             World world = event.world;
             if(!world.tickableTileEntities.isEmpty()) {
-                List<TileEntity> tickableTileEntities = new CopyOnWriteArrayList<>(world.tickableTileEntities);
+                List<TileEntity> tileEntities = new CopyOnWriteArrayList<>(world.loadedTileEntityList);
                 Iterator<TileEntity> iterator;
-                for (iterator = tickableTileEntities.iterator(); iterator.hasNext();) {
+                for (iterator = tileEntities.iterator(); iterator.hasNext();) {
                     TileEntity te = iterator.next();
                     if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
                         ResourceLocation location = te.getType().getRegistryName();

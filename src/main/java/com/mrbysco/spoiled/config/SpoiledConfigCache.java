@@ -16,31 +16,25 @@ public class SpoiledConfigCache {
 
     public static Map<ResourceLocation, Double> containerModifier;
     public static long spoilRate;
-    public static boolean initializeSpoiling;
-    public static int defaultSpoilTime;
-    public static Item defaultSpoilItem;
 
     public static void refreshCache() {
+        Spoiled.LOGGER.info("Refreshing config cache");
         showPercentage = SpoiledConfig.CLIENT.showPercentage.get();
 
         generateContainerModifier(SpoiledConfig.SERVER.containerModifier.get());
         spoilRate = SpoiledConfig.SERVER.spoilRate.get() * 20L;
-        initializeSpoiling = SpoiledConfig.SERVER.initializeSpoiling.get();
-        defaultSpoilTime = SpoiledConfig.SERVER.defaultSpoilTime.get();
-        setDefaultSpoilItem(SpoiledConfig.SERVER.defaultSpoilItem.get());
-
     }
 
-    public static void setDefaultSpoilItem(String value) {
+    public static Item getDefaultSpoilItem(String value) {
         if(value.isEmpty()) {
-            defaultSpoilItem = Items.AIR;
+            return Items.AIR;
         } else {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(value));
             if(item != null) {
-                defaultSpoilItem = item;
+                return item;
             } else {
                 Spoiled.LOGGER.error("'defaultSpoilItem' couldn't be parsed, using default");
-                defaultSpoilItem = Items.ROTTEN_FLESH;
+                return Items.ROTTEN_FLESH;
             }
         }
     }
