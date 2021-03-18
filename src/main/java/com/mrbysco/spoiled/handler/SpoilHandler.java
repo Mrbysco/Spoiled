@@ -8,7 +8,6 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -41,7 +40,7 @@ public class SpoilHandler {
                         if(location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
                             spoilRate = SpoiledConfigCache.containerModifier.get(location);
                         }
-                        boolean spoilFlag = spoilRate == 0.0D || world.rand.nextDouble() <= spoilRate;
+                        boolean spoilFlag = spoilRate != 0.0D || world.rand.nextDouble() <= spoilRate;
                         if(spoilFlag) {
                             te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
                                 for(int i = 0; i < itemHandler.getSlots(); i++) {
@@ -49,14 +48,12 @@ public class SpoilHandler {
                                     if(SpoilRegistry.instance().doesSpoil(stack)) {
                                         updateSpoilingStack(stack);
 
-                                        if(stack.getTag() != null && !stack.getTag().isEmpty()) {
-                                            CompoundNBT tag = stack.getTag();
-                                            if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-                                                int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-                                                int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-                                                if(getOldTime >= getMaxTime) {
-                                                    spoilItemInTE(itemHandler, i, stack);
-                                                }
+                                        CompoundNBT tag = stack.getOrCreateTag();
+                                        if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+                                            int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+                                            int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                                            if(getOldTime >= getMaxTime) {
+                                                spoilItemInTE(itemHandler, i, stack);
                                             }
                                         }
                                     }
@@ -92,11 +89,29 @@ public class SpoilHandler {
         for(int i = 0; i < invCount; i++) {
             ItemStack stack = player.inventory.getStackInSlot(i);
             if(!stack.isEmpty()) {
-                if(SpoilRegistry.instance().doesSpoil(stack)) {
-                    updateSpoilingStack(stack);
+                if(stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+                    stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
+                        for(int j = 0; j < itemHandler.getSlots(); j++) {
+                            ItemStack nestedStack = itemHandler.getStackInSlot(j);
+                            if(SpoilRegistry.instance().doesSpoil(nestedStack)) {
+                                updateSpoilingStack(nestedStack);
 
-                    if(stack.getTag() != null && !stack.getTag().isEmpty()) {
-                        CompoundNBT tag = stack.getTag();
+                                CompoundNBT tag = nestedStack.getOrCreateTag();
+                                if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+                                    int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+                                    int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                                    if(getOldTime >= getMaxTime) {
+                                        spoilItemInTE(itemHandler, j, nestedStack);
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    if(SpoilRegistry.instance().doesSpoil(stack)) {
+                        updateSpoilingStack(stack);
+
+                        CompoundNBT tag = stack.getOrCreateTag();
                         int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                         int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
                         if(getOldTime >= getMaxTime) {
@@ -110,13 +125,16 @@ public class SpoilHandler {
 
     public void updateSpoilingStack(ItemStack stack) {
         SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
-        if(stack.getTag() == null || stack.getTag().isEmpty()) {
-            CompoundNBT tag = new CompoundNBT();
-            tag.putInt(Reference.SPOIL_TAG, 0);
-            tag.putInt(Reference.SPOIL_TIME_TAG, info.getSpoilTime());
+        CompoundNBT tag = stack.getOrCreateTag();
+        if(tag.isEmpty()) {
+            if(!tag.contains(Reference.SPOIL_TAG)) {
+                tag.putInt(Reference.SPOIL_TAG, 0);
+            }
+            if(!tag.contains(Reference.SPOIL_TIME_TAG)) {
+                tag.putInt(Reference.SPOIL_TIME_TAG, info.getSpoilTime());
+            }
             stack.setTag(tag);
         } else {
-            CompoundNBT tag = stack.getTag();
             if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
                 int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                 int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
