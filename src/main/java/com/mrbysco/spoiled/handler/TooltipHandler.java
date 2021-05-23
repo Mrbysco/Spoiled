@@ -27,7 +27,7 @@ public class TooltipHandler {
                 component = (TextComponent)new TranslationTextComponent("spoiled.spoiling").mergeStyle(TextFormatting.YELLOW);
                 ITextComponent amount = new StringTextComponent(String.valueOf(percentage)).mergeStyle(TextFormatting.RED);
                 ITextComponent percentageComponent = new StringTextComponent("%").mergeStyle(TextFormatting.YELLOW);
-                component.append(amount).append(percentageComponent);
+                component.appendSibling(amount).appendSibling(percentageComponent);
             } else {
                 if(percentage >= 0 && percentage <= 24) {
                     component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.0").mergeStyle(TextFormatting.GREEN);

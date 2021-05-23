@@ -3,17 +3,15 @@ package com.mrbysco.spoiled;
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.handler.TooltipHandler;
-import com.mrbysco.spoiled.registry.SpoilRegistry;
-import com.mrbysco.spoiled.registry.SpoilReloadManager;
+import com.mrbysco.spoiled.recipe.SpoiledRecipes;
+import com.mrbysco.spoiled.recipe.condition.SpoiledConditions;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,17 +26,14 @@ public class Spoiled {
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
         eventBus.register(SpoiledConfig.class);
 
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.register(new SpoilHandler());
-        MinecraftForge.EVENT_BUS.register(new SpoilReloadManager());
+        SpoiledRecipes.RECIPE_SERIALIZERS.register(eventBus);
 
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+        MinecraftForge.EVENT_BUS.register(new SpoilHandler());
+
+        eventBus.register(new SpoiledConditions());
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             MinecraftForge.EVENT_BUS.register(new TooltipHandler());
         });
-    }
-
-    @SubscribeEvent
-    public void serverStart(FMLServerStartedEvent event) {
-        SpoilRegistry.instance().initializeSpoiling();
     }
 }

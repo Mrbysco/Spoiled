@@ -1,3 +1,5 @@
+[![build](https://github.com/Mrbysco/spoiled/actions/workflows/build.yml/badge.svg)](https://github.com/Mrbysco/spoiled/actions/workflows/build.yml) [![](http://cf.way2muchnoise.eu/versions/364918_latest.svg)](https://minecraft.curseforge.com/projects/spoiled)
+
 # Spoiled #
 
 ## About ##
@@ -9,4 +11,4 @@ Spoiling the end of your food supply since 2020.
   - [![License](https://img.shields.io/badge/License-MIT-red.svg?style=flat)](http://opensource.org/licenses/MIT)
 
 ## Downloads ##
-Downloads are not yet available
+Downloads can be found on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/spoiled)

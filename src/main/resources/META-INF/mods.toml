@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[36,)"
+loaderVersion="[35,)"
 issueTrackerURL="https://github.com/Mrbysco/Spoiled"
 license="MIT"
 
@@ -12,3 +12,9 @@ authors="Mrbysco, ShyNieke"
 description='''
 I'm sorry if I'm spoiling it for you. But you might wanna keep an eye on your food.
 '''
+[[dependencies.spoiled]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.16.4,1.17)"
+ordering="NONE"
+side="BOTH"

@@ -2,8 +2,10 @@ package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
-import com.mrbysco.spoiled.registry.SpoilInfo;
-import com.mrbysco.spoiled.registry.SpoilRegistry;
+import com.mrbysco.spoiled.recipe.SpoilRecipe;
+import com.mrbysco.spoiled.recipe.SpoiledRecipes;
+import com.mrbysco.spoiled.util.InventoryHelper;
+import com.mrbysco.spoiled.util.SingularInventory;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -45,18 +47,20 @@ public class SpoilHandler {
                             te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
                                 for(int i = 0; i < itemHandler.getSlots(); i++) {
                                     ItemStack stack = itemHandler.getStackInSlot(i);
-                                    if(SpoilRegistry.instance().doesSpoil(stack)) {
-                                        updateSpoilingStack(stack);
+                                    SingularInventory inventory = InventoryHelper.createSingularInventory(stack);
+                                    int slot = i;
+                                    world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+                                        updateSpoilingStack(stack, recipe);
 
                                         CompoundNBT tag = stack.getOrCreateTag();
                                         if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
                                             int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                                             int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
                                             if(getOldTime >= getMaxTime) {
-                                                spoilItemInTE(itemHandler, i, stack);
+                                                spoilItemInItemhandler(itemHandler, slot, stack, recipe);
                                             }
                                         }
-                                    }
+                                    });
                                 }
                             });
                         }
@@ -66,9 +70,8 @@ public class SpoilHandler {
         }
     }
 
-    private void spoilItemInTE(IItemHandler itemHandler, int slot, ItemStack stack) {
-        SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
-        ItemStack spoiledStack = info.getSpoilStack().copy();
+    private void spoilItemInItemhandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
+        ItemStack spoiledStack = recipe.getRecipeOutput().copy();
         int oldStackCount = stack.getCount();
         stack.setCount(0);
         if(!spoiledStack.isEmpty()) {
@@ -85,6 +88,7 @@ public class SpoilHandler {
     }
 
     private void updateInventory(PlayerEntity player) {
+        World world = player.world;
         int invCount = player.inventory.getSizeInventory();
         for(int i = 0; i < invCount; i++) {
             ItemStack stack = player.inventory.getStackInSlot(i);
@@ -92,54 +96,58 @@ public class SpoilHandler {
                 if(stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
                     stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
                         for(int j = 0; j < itemHandler.getSlots(); j++) {
-                            ItemStack nestedStack = itemHandler.getStackInSlot(j);
-                            if(SpoilRegistry.instance().doesSpoil(nestedStack)) {
-                                updateSpoilingStack(nestedStack);
+                            int slot = j;
+                            ItemStack nestedStack = itemHandler.getStackInSlot(slot);
+                            SingularInventory inventory = InventoryHelper.createSingularInventory(nestedStack);
+                            world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+                                updateSpoilingStack(nestedStack, recipe);
 
                                 CompoundNBT tag = nestedStack.getOrCreateTag();
                                 if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
                                     int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                                     int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
                                     if(getOldTime >= getMaxTime) {
-                                        spoilItemInTE(itemHandler, j, nestedStack);
+                                        spoilItemInItemhandler(itemHandler, slot, nestedStack, recipe);
                                     }
                                 }
-                            }
+                            });
                         }
                     });
                 } else {
-                    if(SpoilRegistry.instance().doesSpoil(stack)) {
-                        updateSpoilingStack(stack);
+                    SingularInventory inventory = InventoryHelper.createSingularInventory(stack);
+                    world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+                        updateSpoilingStack(stack, recipe);
 
                         CompoundNBT tag = stack.getOrCreateTag();
-                        int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-                        int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-                        if(getOldTime >= getMaxTime) {
-                            spoilItemForPlayer(player, stack);
+                        if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+                            int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+                            int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                            if(getOldTime >= getMaxTime) {
+                                spoilItemForPlayer(player, stack, recipe);
+                            }
                         }
-                    }
+                    });
                 }
             }
         }
     }
 
-    public void updateSpoilingStack(ItemStack stack) {
-        SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
+    public void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
         CompoundNBT tag = stack.getOrCreateTag();
         if(tag.isEmpty()) {
             if(!tag.contains(Reference.SPOIL_TAG)) {
                 tag.putInt(Reference.SPOIL_TAG, 0);
             }
             if(!tag.contains(Reference.SPOIL_TIME_TAG)) {
-                tag.putInt(Reference.SPOIL_TIME_TAG, info.getSpoilTime());
+                tag.putInt(Reference.SPOIL_TIME_TAG, recipe.getSpoilTime());
             }
             stack.setTag(tag);
         } else {
             if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
                 int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                 int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-                if(getMaxTime != info.getSpoilTime()) {
-                    tag.putInt(Reference.SPOIL_TIME_TAG, info.getSpoilTime());
+                if(getMaxTime != recipe.getSpoilTime()) {
+                    tag.putInt(Reference.SPOIL_TIME_TAG, recipe.getSpoilTime());
                 }
                 if(getOldTime < getMaxTime) {
                     getOldTime++;
@@ -150,9 +158,8 @@ public class SpoilHandler {
         }
     }
 
-    public void spoilItemForPlayer(PlayerEntity player, ItemStack stack) {
-        SpoilInfo info = SpoilRegistry.instance().getSpoilMap().get(stack.getItem().getRegistryName());
-        ItemStack spoiledStack = info.getSpoilStack().copy();
+    public void spoilItemForPlayer(PlayerEntity player, ItemStack stack, SpoilRecipe recipe) {
+        ItemStack spoiledStack = recipe.getRecipeOutput().copy();
         int oldStackCount = stack.getCount();
         stack.setCount(0);
         if(!spoiledStack.isEmpty()) {

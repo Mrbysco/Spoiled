@@ -2,6 +2,7 @@ package com.mrbysco.spoiled.config;
 
 import com.mrbysco.spoiled.Spoiled;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -21,20 +22,21 @@ public class SpoiledConfigCache {
         Spoiled.LOGGER.info("Refreshing config cache");
         showPercentage = SpoiledConfig.CLIENT.showPercentage.get();
 
-        generateContainerModifier(SpoiledConfig.SERVER.containerModifier.get());
-        spoilRate = SpoiledConfig.SERVER.spoilRate.get() * 20L;
+        generateContainerModifier(SpoiledConfig.COMMON.containerModifier.get());
+        spoilRate = SpoiledConfig.COMMON.spoilRate.get() * 20L;
     }
 
-    public static Item getDefaultSpoilItem(String value) {
+    public static ItemStack getDefaultSpoilItem() {
+        String value = SpoiledConfig.COMMON.defaultSpoilItem.get();
         if(value.isEmpty()) {
-            return Items.AIR;
+            return ItemStack.EMPTY;
         } else {
             Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(value));
             if(item != null) {
-                return item;
+                return new ItemStack(item);
             } else {
                 Spoiled.LOGGER.error("'defaultSpoilItem' couldn't be parsed, using default");
-                return Items.ROTTEN_FLESH;
+                return new ItemStack(ForgeRegistries.ITEMS.getValue(Items.ROTTEN_FLESH.getRegistryName()));
             }
         }
     }

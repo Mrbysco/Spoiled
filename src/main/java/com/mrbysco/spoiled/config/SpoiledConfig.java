@@ -28,14 +28,14 @@ public class SpoiledConfig {
         }
     }
 
-    public static class Server {
+    public static class Common {
         public final ConfigValue<List<? extends String>> containerModifier;
         public final IntValue spoilRate;
         public final BooleanValue initializeSpoiling;
         public final IntValue defaultSpoilTime;
         public final ConfigValue<String> defaultSpoilItem;
 
-        Server(ForgeConfigSpec.Builder builder) {
+        Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General settings")
                     .push("General");
 
@@ -80,12 +80,12 @@ public class SpoiledConfig {
     }
 
     public static final ForgeConfigSpec serverSpec;
-    public static final Server SERVER;
+    public static final Common COMMON;
 
     static {
-        final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
+        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
         serverSpec = specPair.getRight();
-        SERVER = specPair.getLeft();
+        COMMON = specPair.getLeft();
     }
 
     @SubscribeEvent

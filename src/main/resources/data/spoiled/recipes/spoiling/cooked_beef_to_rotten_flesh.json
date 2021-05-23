@@ -1,0 +1,18 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "spoiled:initialize_spoiling"
+        }
+      ],
+      "recipe": {
+        "type": "spoiled:spoil_recipe",
+        "ingredient": {
+          "item": "minecraft:cooked_beef"
+        }
+      }
+    }
+  ]
+}
