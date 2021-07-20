@@ -14,7 +14,7 @@ public class ForgeHooksClientMixin {
     @Inject(at = @At("RETURN"), method = "shouldCauseReequipAnimation(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;I)Z", cancellable = true, remap = false)
     private static void cancelShouldCauseReequipAnimation(@Nonnull ItemStack from, @Nonnull ItemStack to, int slot, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         if(from.hasTag() && from.getTag() != null && to.hasTag() && to.getTag() != null
-                && from.getTag().contains("spoiled:SpoilTimer") && to.getTag().contains("spoiled:SpoilTimer")) {
+                && from.getTag().getInt("spoiled:SpoilTimer") != to.getTag().getInt("spoiled:SpoilTimer")) {
             callbackInfoReturnable.setReturnValue(false);
         }
     }
