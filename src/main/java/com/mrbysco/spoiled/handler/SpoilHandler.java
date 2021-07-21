@@ -42,7 +42,7 @@ public class SpoilHandler {
                         if(location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
                             spoilRate = SpoiledConfigCache.containerModifier.get(location);
                         }
-                        boolean spoilFlag = spoilRate != 0.0D || world.rand.nextDouble() <= spoilRate;
+                        boolean spoilFlag = spoilRate > 0 && world.rand.nextDouble() <= spoilRate;
                         if(spoilFlag) {
                             te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
                                 for(int i = 0; i < itemHandler.getSlots(); i++) {
