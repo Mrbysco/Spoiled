@@ -16,8 +16,8 @@ public class TooltipHandler {
     @SubscribeEvent
     public void onItemPickup(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
-        if(!stack.getOrCreateTag().isEmpty() && stack.getOrCreateTag().contains(Reference.SPOIL_TAG)) {
-            CompoundNBT tag = stack.getOrCreateTag();
+        if(stack.hasTag() && !stack.getTag().isEmpty() && stack.getTag().contains(Reference.SPOIL_TAG)) {
+            CompoundNBT tag = stack.getTag();
             int timer = tag.getInt(Reference.SPOIL_TAG);
             int timeMax = tag.getInt(Reference.SPOIL_TIME_TAG);
             int percentage = (int)(((double)timer / timeMax) * 100);
