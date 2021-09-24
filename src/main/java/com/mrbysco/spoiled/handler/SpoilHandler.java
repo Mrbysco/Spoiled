@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
@@ -20,6 +21,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import java.util.Iterator;
 import java.util.List;
@@ -44,25 +46,34 @@ public class SpoilHandler {
                         }
                         boolean spoilFlag = spoilRate > 0 && world.rand.nextDouble() <= spoilRate;
                         if(spoilFlag) {
-                            te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
-                                for(int i = 0; i < itemHandler.getSlots(); i++) {
-                                    ItemStack stack = itemHandler.getStackInSlot(i);
-                                    SingularInventory inventory = InventoryHelper.createSingularInventory(stack);
-                                    int slot = i;
-                                    world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
-                                        updateSpoilingStack(stack, recipe);
+                            IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+                            if(itemHandler instanceof SidedInvWrapper) {
+                                itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN).orElse(null);
+                            }
+                            if(itemHandler != null) {
+                                if(itemHandler.getSlots() > 0) {
+                                    for(int i = 0; i < itemHandler.getSlots(); i++) {
+                                        ItemStack stack = itemHandler.getStackInSlot(i);
+                                        if(!stack.isEmpty()) {
+                                            SingularInventory inventory = InventoryHelper.createSingularInventory(stack);
+                                            int slot = i;
+                                            SpoilRecipe recipe = world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).orElse(null);
+                                            if(recipe != null) {
+                                                updateSpoilingStack(stack, recipe);
 
-                                        CompoundNBT tag = stack.getOrCreateTag();
-                                        if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-                                            int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-                                            int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-                                            if(getOldTime >= getMaxTime) {
-                                                spoilItemInItemhandler(itemHandler, slot, stack, recipe);
+                                                CompoundNBT tag = stack.getOrCreateTag();
+                                                if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+                                                    int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+                                                    int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                                                    if(getOldTime >= getMaxTime) {
+                                                        spoilItemInItemhandler(itemHandler, slot, stack, recipe);
+                                                    }
+                                                }
                                             }
                                         }
-                                    });
+                                    }
                                 }
-                            });
+                            }
                         }
                     }
                 }
@@ -95,22 +106,26 @@ public class SpoilHandler {
             if(!stack.isEmpty()) {
                 if(stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
                     stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
-                        for(int j = 0; j < itemHandler.getSlots(); j++) {
-                            int slot = j;
-                            ItemStack nestedStack = itemHandler.getStackInSlot(slot);
-                            SingularInventory inventory = InventoryHelper.createSingularInventory(nestedStack);
-                            world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
-                                updateSpoilingStack(nestedStack, recipe);
+                        if(itemHandler.getSlots() > 0) {
+                            for(int j = 0; j < itemHandler.getSlots(); j++) {
+                                int slot = j;
+                                ItemStack nestedStack = itemHandler.getStackInSlot(slot);
+                                if(!nestedStack.isEmpty()) {
+                                    SingularInventory inventory = InventoryHelper.createSingularInventory(nestedStack);
+                                    world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+                                        updateSpoilingStack(nestedStack, recipe);
 
-                                CompoundNBT tag = nestedStack.getOrCreateTag();
-                                if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-                                    int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-                                    int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-                                    if(getOldTime >= getMaxTime) {
-                                        spoilItemInItemhandler(itemHandler, slot, nestedStack, recipe);
-                                    }
+                                        CompoundNBT tag = nestedStack.getOrCreateTag();
+                                        if(tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+                                            int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+                                            int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+                                            if(getOldTime >= getMaxTime) {
+                                                spoilItemInItemhandler(itemHandler, slot, nestedStack, recipe);
+                                            }
+                                        }
+                                    });
                                 }
-                            });
+                            }
                         }
                     });
                 } else {
