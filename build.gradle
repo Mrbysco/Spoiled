@@ -5,13 +5,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'maven-publish'
 
 version = "${version}"
 group = 'com.mrbysco.spoiled' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -93,16 +94,19 @@ repositories {
         url = "https://dvs1.progwml6.com/files/maven"
     }
 	maven {
-        url "http://maven.blamejared.com"
+        url = "https://maven.blamejared.com"
 	}
-	maven { 
-		url 'https://maven.mcmoddev.com' 
+	maven {
+		url = 'https://maven.mcmoddev.com'
+	}
+	maven {
+		url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
 	}
     maven {
         url = 'https://www.cursemaven.com'
-    }
-    maven {
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup "curse.maven"
+        }
     }
 }
 
@@ -112,16 +116,16 @@ mixin {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
-    compile fg.deobf("com.blamejared.crafttweaker:CraftTweaker-${mc_version}:${crafttweaker_version}")
-    compileOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.16.5:${jei_version}")
+    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-${mc_version}:${crafttweaker_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 
-    compile fg.deobf("curse.maven:Locks-253456:3324065")
-    compile fg.deobf("curse.maven:ManaAndArtifice-406360:3391266")
-    compile fg.deobf("curse.maven:Curios-309927:3456953")
-    implementation fg.deobf('software.bernie.geckolib:geckolib-forge-1.16.5:3.0.46')
+    implementation fg.deobf("curse.maven:Locks-253456:3324065")
+    implementation fg.deobf("curse.maven:Curios-309927:3456953")
+    implementation fg.deobf("curse.maven:ManaAndArtifice-406360:3391266")
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${mc_version}:3.0.46")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -140,7 +144,33 @@ jar {
     }
 }
 
-jar.finalizedBy('reobfJar')
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(reobfArtifact) {
+                builtBy reobfArtifact
+                artifactId = archivesBaseName
+                classifier null
+            }
+        }
+    }
+    repositories {
+        if (System.getenv().SAP_SECRET) {
+            maven {
+                url "https://maven.saps.dev/minecraft"
+                credentials {
+                    username = "mrbysco"
+                    password = "${System.getenv().SAP_SECRET}"
+                }
+            }
+        }
+    }
+}
 
 ////////////////
 // IntelliJ Project Import
