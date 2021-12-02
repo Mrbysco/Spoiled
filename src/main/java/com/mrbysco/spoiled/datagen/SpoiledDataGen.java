@@ -152,6 +152,9 @@ public class SpoiledDataGen {
 					.addRecipe(SpoilRecipeBuilder.spoilRecipe(Ingredient.of(Items.SWEET_BERRIES), Items.ROTTEN_FLESH)::build)
 					.build(consumer, Reference.MOD_ID , folder + "sweet_berries" + toRotten);
 			ConditionalRecipe.builder().addCondition(new InitializeSpoilingCondition())
+					.addRecipe(SpoilRecipeBuilder.spoilRecipe(Ingredient.of(Items.GLOW_BERRIES), Items.ROTTEN_FLESH)::build)
+					.build(consumer, Reference.MOD_ID , folder + "glow_berries" + toRotten);
+			ConditionalRecipe.builder().addCondition(new InitializeSpoilingCondition())
 					.addRecipe(SpoilRecipeBuilder.spoilRecipe(Ingredient.of(Items.TROPICAL_FISH), Items.ROTTEN_FLESH)::build)
 					.build(consumer, Reference.MOD_ID , folder + "tropical_fish" + toRotten);
 		}
