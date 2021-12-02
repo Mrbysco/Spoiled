@@ -41,10 +41,10 @@ public class SpoilManager implements IRecipeManager {
     public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime) {
         if(ModList.get().isLoaded(modName)) {
             for(Item foundItem : ForgeRegistries.ITEMS.getValues()) {
-                if(foundItem != spoilStack.getInternal().getItem() && foundItem.getRegistryName().getNamespace().equals(modName) && foundItem.isFood()) {
+                if(foundItem != spoilStack.getInternal().getItem() && foundItem.getRegistryName().getNamespace().equals(modName) && foundItem.isEdible()) {
                     String itemLocation = foundItem.getRegistryName().toString().replace(":", "_");
                     ResourceLocation id = new ResourceLocation("crafttweaker", itemLocation);
-                    SpoilRecipe recipe = new SpoilRecipe(id, "", Ingredient.fromStacks(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime);
+                    SpoilRecipe recipe = new SpoilRecipe(id, "", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime);
                     CraftTweakerAPI.apply(new ActionAddRecipe(this, recipe));
                 }
             }

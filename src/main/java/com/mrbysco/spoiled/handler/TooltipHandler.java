@@ -24,21 +24,21 @@ public class TooltipHandler {
 
             TextComponent component;
             if(SpoiledConfigCache.showPercentage) {
-                component = (TextComponent)new TranslationTextComponent("spoiled.spoiling").mergeStyle(TextFormatting.YELLOW);
-                ITextComponent amount = new StringTextComponent(String.valueOf(percentage)).mergeStyle(TextFormatting.RED);
-                ITextComponent percentageComponent = new StringTextComponent("%").mergeStyle(TextFormatting.YELLOW);
-                component.appendSibling(amount).appendSibling(percentageComponent);
+                component = (TextComponent)new TranslationTextComponent("spoiled.spoiling").withStyle(TextFormatting.YELLOW);
+                ITextComponent amount = new StringTextComponent(String.valueOf(percentage)).withStyle(TextFormatting.RED);
+                ITextComponent percentageComponent = new StringTextComponent("%").withStyle(TextFormatting.YELLOW);
+                component.append(amount).append(percentageComponent);
             } else {
                 if(percentage >= 0 && percentage <= 24) {
-                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.0").mergeStyle(TextFormatting.GREEN);
+                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.0").withStyle(TextFormatting.GREEN);
                 } else if (percentage >= 25 && percentage <= 49) {
-                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.25").mergeStyle(TextFormatting.GREEN);
+                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.25").withStyle(TextFormatting.GREEN);
                 } else if (percentage >= 50 && percentage <= 74) {
-                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.50").mergeStyle(TextFormatting.YELLOW);
+                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.50").withStyle(TextFormatting.YELLOW);
                 } else if (percentage >= 75 && percentage <= 99) {
-                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.75").mergeStyle(TextFormatting.YELLOW);
+                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.75").withStyle(TextFormatting.YELLOW);
                 } else {
-                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.100").mergeStyle(TextFormatting.RED);
+                    component = (TextComponent)new TranslationTextComponent("spoiled.spoiling.100").withStyle(TextFormatting.RED);
                 }
             }
 

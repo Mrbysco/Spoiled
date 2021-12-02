@@ -51,22 +51,22 @@ public class SpoilRecipeBuilder {
 			this.serializer = serializerIn;
 		}
 
-		public void serialize(JsonObject json) {
+		public void serializeRecipeData(JsonObject json) {
 			if (!this.group.isEmpty()) {
 				json.addProperty("group", this.group);
 			}
 
-			json.add("ingredient", this.ingredient.serialize());
+			json.add("ingredient", this.ingredient.toJson());
 		}
 
-		public IRecipeSerializer<?> getSerializer() {
+		public IRecipeSerializer<?> getType() {
 			return this.serializer;
 		}
 
 		/**
 		 * Gets the ID for the recipe.
 		 */
-		public ResourceLocation getID() {
+		public ResourceLocation getId() {
 			return this.id;
 		}
 
@@ -74,7 +74,7 @@ public class SpoilRecipeBuilder {
 		 * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
 		 */
 		@Nullable
-		public JsonObject getAdvancementJson() {
+		public JsonObject serializeAdvancement() {
 			return null;
 		}
 
@@ -83,7 +83,7 @@ public class SpoilRecipeBuilder {
 		 * is non-null.
 		 */
 		@Nullable
-		public ResourceLocation getAdvancementID() {
+		public ResourceLocation getAdvancementId() {
 			return null;
 		}
 	}

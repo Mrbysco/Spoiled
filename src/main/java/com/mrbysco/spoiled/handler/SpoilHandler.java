@@ -31,20 +31,20 @@ public class SpoilHandler {
 
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onWorldTick(WorldTickEvent event) {
-        if(event.phase == TickEvent.Phase.START && !event.world.isRemote && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
+        if(event.phase == TickEvent.Phase.START && !event.world.isClientSide && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
             World world = event.world;
-            if(!world.tickableTileEntities.isEmpty()) {
-                List<TileEntity> tileEntities = new CopyOnWriteArrayList<>(world.loadedTileEntityList);
+            if(!world.tickableBlockEntities.isEmpty()) {
+                List<TileEntity> tileEntities = new CopyOnWriteArrayList<>(world.blockEntityList);
                 Iterator<TileEntity> iterator;
                 for (iterator = tileEntities.iterator(); iterator.hasNext();) {
                     TileEntity te = iterator.next();
-                    if(te != null && !te.isRemoved() && te.hasWorld() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+                    if(te != null && !te.isRemoved() && te.hasLevel() && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
                         ResourceLocation location = te.getType().getRegistryName();
                         double spoilRate = 1.0D;
                         if(location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
                             spoilRate = SpoiledConfigCache.containerModifier.get(location);
                         }
-                        boolean spoilFlag = spoilRate > 0 && world.rand.nextDouble() <= spoilRate;
+                        boolean spoilFlag = spoilRate > 0 && world.random.nextDouble() <= spoilRate;
                         if(spoilFlag) {
                             IItemHandler itemHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
                             if(itemHandler instanceof SidedInvWrapper) {
@@ -57,7 +57,7 @@ public class SpoilHandler {
                                         if(!stack.isEmpty()) {
                                             SingularInventory inventory = InventoryHelper.createSingularInventory(stack);
                                             int slot = i;
-                                            SpoilRecipe recipe = world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).orElse(null);
+                                            SpoilRecipe recipe = world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).orElse(null);
                                             if(recipe != null) {
                                                 updateSpoilingStack(stack, recipe);
 
@@ -82,7 +82,7 @@ public class SpoilHandler {
     }
 
     private void spoilItemInItemhandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
-        ItemStack spoiledStack = recipe.getRecipeOutput().copy();
+        ItemStack spoiledStack = recipe.getResultItem().copy();
         int oldStackCount = stack.getCount();
         stack.setCount(0);
         if(!spoiledStack.isEmpty()) {
@@ -93,16 +93,16 @@ public class SpoilHandler {
 
     @SubscribeEvent
     public void onPlayerTick(PlayerTickEvent event) {
-        if(event.phase == TickEvent.Phase.END && !event.player.world.isRemote && event.player.world.getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.abilities.isCreativeMode) {
+        if(event.phase == TickEvent.Phase.END && !event.player.level.isClientSide && event.player.level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.abilities.instabuild) {
             updateInventory(event.player);
         }
     }
 
     private void updateInventory(PlayerEntity player) {
-        World world = player.world;
-        int invCount = player.inventory.getSizeInventory();
+        World world = player.level;
+        int invCount = player.inventory.getContainerSize();
         for(int i = 0; i < invCount; i++) {
-            ItemStack stack = player.inventory.getStackInSlot(i);
+            ItemStack stack = player.inventory.getItem(i);
             if(!stack.isEmpty()) {
                 if(stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
                     stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
@@ -112,7 +112,7 @@ public class SpoilHandler {
                                 ItemStack nestedStack = itemHandler.getStackInSlot(slot);
                                 if(!nestedStack.isEmpty()) {
                                     SingularInventory inventory = InventoryHelper.createSingularInventory(nestedStack);
-                                    world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+                                    world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
                                         updateSpoilingStack(nestedStack, recipe);
 
                                         CompoundNBT tag = nestedStack.getOrCreateTag();
@@ -130,7 +130,7 @@ public class SpoilHandler {
                     });
                 } else {
                     SingularInventory inventory = InventoryHelper.createSingularInventory(stack);
-                    world.getRecipeManager().getRecipe(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+                    world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
                         updateSpoilingStack(stack, recipe);
 
                         CompoundNBT tag = stack.getOrCreateTag();
@@ -174,15 +174,15 @@ public class SpoilHandler {
     }
 
     public void spoilItemForPlayer(PlayerEntity player, ItemStack stack, SpoilRecipe recipe) {
-        ItemStack spoiledStack = recipe.getRecipeOutput().copy();
+        ItemStack spoiledStack = recipe.getResultItem().copy();
         int oldStackCount = stack.getCount();
         stack.setCount(0);
         if(!spoiledStack.isEmpty()) {
             spoiledStack.setCount(oldStackCount);
-            if(!player.addItemStackToInventory(spoiledStack)) {
-                ItemEntity itemEntity = new ItemEntity(player.world, player.getPosX(), player.getPosY(), player.getPosZ());
+            if(!player.addItem(spoiledStack)) {
+                ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ());
                 itemEntity.setItem(spoiledStack);
-                player.world.addEntity(itemEntity);
+                player.level.addFreshEntity(itemEntity);
             }
         }
     }

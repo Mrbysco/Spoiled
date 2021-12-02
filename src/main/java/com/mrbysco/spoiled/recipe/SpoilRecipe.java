@@ -43,14 +43,14 @@ public class SpoilRecipe implements IRecipe<IInventory> {
 
 	@Override
 	public boolean matches(IInventory inv, World worldIn) {
-		return this.ingredient.test(inv.getStackInSlot(0));
+		return this.ingredient.test(inv.getItem(0));
 	}
 
-	public ItemStack getCraftingResult(IInventory inventory) {
+	public ItemStack assemble(IInventory inventory) {
 		return this.result.copy();
 	}
 
-	public boolean canFit(int x, int y) {
+	public boolean canCraftInDimensions(int x, int y) {
 		return true;
 	}
 
@@ -60,7 +60,7 @@ public class SpoilRecipe implements IRecipe<IInventory> {
 		return nonnulllist;
 	}
 
-	public ItemStack getRecipeOutput() {
+	public ItemStack getResultItem() {
 		return this.result;
 	}
 
@@ -83,16 +83,16 @@ public class SpoilRecipe implements IRecipe<IInventory> {
 
 	public static class SerializerSpoilRecipe extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<SpoilRecipe> {
 		@Override
-		public SpoilRecipe read(ResourceLocation recipeId, JsonObject jsonObject) {
-			String s = JSONUtils.getString(jsonObject, "group", "");
-			JsonElement jsonelement = (JsonElement)(JSONUtils.isJsonArray(jsonObject, "ingredient") ? JSONUtils.getJsonArray(jsonObject, "ingredient") : JSONUtils.getJsonObject(jsonObject, "ingredient"));
-			Ingredient ingredient = Ingredient.deserialize(jsonelement);
+		public SpoilRecipe fromJson(ResourceLocation recipeId, JsonObject jsonObject) {
+			String s = JSONUtils.getAsString(jsonObject, "group", "");
+			JsonElement jsonelement = (JsonElement)(JSONUtils.isArrayNode(jsonObject, "ingredient") ? JSONUtils.getAsJsonArray(jsonObject, "ingredient") : JSONUtils.getAsJsonObject(jsonObject, "ingredient"));
+			Ingredient ingredient = Ingredient.fromJson(jsonelement);
 			//Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
 			ItemStack itemstack;
 			if(jsonObject.has("result")) {
-				if (jsonObject.get("result").isJsonObject()) itemstack = ShapedRecipe.deserializeItem(JSONUtils.getJsonObject(jsonObject, "result"));
+				if (jsonObject.get("result").isJsonObject()) itemstack = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(jsonObject, "result"));
 				else {
-					String s1 = JSONUtils.getString(jsonObject, "result");
+					String s1 = JSONUtils.getAsString(jsonObject, "result");
 					ResourceLocation resourcelocation = new ResourceLocation(s1);
 					itemstack = new ItemStack(Registry.ITEM.getOptional(resourcelocation).orElseThrow(() -> {
 						return new IllegalStateException("Item: " + s1 + " does not exist");
@@ -102,25 +102,25 @@ public class SpoilRecipe implements IRecipe<IInventory> {
 				itemstack = SpoiledConfigCache.getDefaultSpoilItem();
 			}
 
-			int spoilTime = JSONUtils.getInt(jsonObject, "spoiltime", SpoiledConfig.COMMON.defaultSpoilTime.get());
+			int spoilTime = JSONUtils.getAsInt(jsonObject, "spoiltime", SpoiledConfig.COMMON.defaultSpoilTime.get());
 			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime);
 		}
 
 		@Nullable
 		@Override
-		public SpoilRecipe read(ResourceLocation recipeId, PacketBuffer buffer) {
-			String s = buffer.readString(32767);
-			Ingredient ingredient = Ingredient.read(buffer);
-			ItemStack itemstack = buffer.readItemStack();
+		public SpoilRecipe fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) {
+			String s = buffer.readUtf(32767);
+			Ingredient ingredient = Ingredient.fromNetwork(buffer);
+			ItemStack itemstack = buffer.readItem();
 			int spoilTime = buffer.readVarInt();
 			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime);
 		}
 
 		@Override
-		public void write(PacketBuffer buffer, SpoilRecipe recipe) {
-			buffer.writeString(recipe.group);
-			recipe.ingredient.write(buffer);
-			buffer.writeItemStack(recipe.result);
+		public void toNetwork(PacketBuffer buffer, SpoilRecipe recipe) {
+			buffer.writeUtf(recipe.group);
+			recipe.ingredient.toNetwork(buffer);
+			buffer.writeItem(recipe.result);
 			buffer.writeVarInt(recipe.spoilTime);
 		}
 	}

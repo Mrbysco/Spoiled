@@ -19,7 +19,7 @@ import java.util.List;
 public class SpoiledCommands {
 	public static void initializeCommands (CommandDispatcher<CommandSource> dispatcher) {
 		final LiteralArgumentBuilder<CommandSource> root = Commands.literal(Reference.MOD_ID);
-		root.requires((commandSource) -> commandSource.hasPermissionLevel(2))
+		root.requires((commandSource) -> commandSource.hasPermission(2))
 				.then(Commands.literal("tileentity").then(Commands.literal("list").executes(SpoiledCommands::listTiles)));
 		dispatcher.register(root);
 	}
@@ -27,11 +27,11 @@ public class SpoiledCommands {
 	private static int listTiles(CommandContext<CommandSource> ctx) {
 		CommandSource source = ctx.getSource();
 
-		ITextComponent text = new TranslationTextComponent("spoiled:tileentity.list.message").mergeStyle(TextFormatting.YELLOW);
-		source.sendFeedback(text, true);
+		ITextComponent text = new TranslationTextComponent("spoiled:tileentity.list.message").withStyle(TextFormatting.YELLOW);
+		source.sendSuccess(text, true);
 
 		List<ResourceLocation> keys = new ArrayList<>(ForgeRegistries.TILE_ENTITIES.getKeys());
-		Spoiled.LOGGER.info("List of TileEntities requested by " + source.getName() + ":");
+		Spoiled.LOGGER.info("List of TileEntities requested by " + source.getTextName() + ":");
 		keys.forEach(t -> Spoiled.LOGGER.info(t.toString()));
 
 		return 0;
