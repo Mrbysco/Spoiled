@@ -3,13 +3,13 @@ package com.mrbysco.spoiled.datagen;
 import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -18,33 +18,33 @@ public class SpoilRecipeBuilder {
 	private final Item result;
 	private final Ingredient ingredient;
 	private String group;
-	private final IRecipeSerializer<SpoilRecipe> recipeSerializer;
+	private final RecipeSerializer<SpoilRecipe> recipeSerializer;
 
-	private SpoilRecipeBuilder(IItemProvider resultIn, Ingredient ingredientIn, IRecipeSerializer<SpoilRecipe> serializer) {
+	private SpoilRecipeBuilder(ItemLike resultIn, Ingredient ingredientIn, RecipeSerializer<SpoilRecipe> serializer) {
 		this.result = resultIn.asItem();
 		this.ingredient = ingredientIn;
 		this.recipeSerializer = serializer;
 	}
 
-	public static SpoilRecipeBuilder spoilRecipe(Ingredient ingredientIn, IItemProvider resultIn) {
+	public static SpoilRecipeBuilder spoilRecipe(Ingredient ingredientIn, ItemLike resultIn) {
 		return new SpoilRecipeBuilder(resultIn, ingredientIn, SpoiledRecipes.SPOILING_SERIALIZER.get());
 	}
 
-	public void build(Consumer<IFinishedRecipe> consumerIn) {
+	public void build(Consumer<FinishedRecipe> consumerIn) {
 		this.build(consumerIn, Registry.ITEM.getKey(this.result));
 	}
 
-	public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
+	public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
 		consumerIn.accept(new SpoilRecipeBuilder.Result(id, this.group == null ? "" : this.group, this.ingredient, this.recipeSerializer));
 	}
 
-	public static class Result implements IFinishedRecipe {
+	public static class Result implements FinishedRecipe {
 		private final ResourceLocation id;
 		private final String group;
 		private final Ingredient ingredient;
-		private final IRecipeSerializer<SpoilRecipe> serializer;
+		private final RecipeSerializer<SpoilRecipe> serializer;
 
-		public Result(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, IRecipeSerializer<SpoilRecipe> serializerIn) {
+		public Result(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, RecipeSerializer<SpoilRecipe> serializerIn) {
 			this.id = idIn;
 			this.group = groupIn;
 			this.ingredient = ingredientIn;
@@ -59,7 +59,7 @@ public class SpoilRecipeBuilder {
 			json.add("ingredient", this.ingredient.toJson());
 		}
 
-		public IRecipeSerializer<?> getType() {
+		public RecipeSerializer<?> getType() {
 			return this.serializer;
 		}
 
@@ -79,7 +79,7 @@ public class SpoilRecipeBuilder {
 		}
 
 		/**
-		 * Gets the ID for the advancement associated with this recipe. Should not be null if {@link #getAdvancementJson}
+		 * Gets the ID for the advancement associated with this recipe. Should not be null if {@link #getAdvancementId()}
 		 * is non-null.
 		 */
 		@Nullable

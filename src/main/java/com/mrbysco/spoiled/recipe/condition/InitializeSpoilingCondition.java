@@ -3,7 +3,7 @@ package com.mrbysco.spoiled.recipe.condition;
 import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.config.SpoiledConfig;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 

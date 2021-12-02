@@ -4,17 +4,17 @@ import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 
 import java.nio.file.Path;
 import java.util.function.Consumer;
@@ -40,7 +40,7 @@ public class SpoiledDataGen {
 		}
 
 		@Override
-		protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+		protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
 			String folder = "spoiling/";
 			String toRotten = "_to_rotten_flesh";
 			ConditionalRecipe.builder().addCondition(new InitializeSpoilingCondition())
@@ -157,7 +157,7 @@ public class SpoiledDataGen {
 		}
 
 		@Override
-		protected void saveAdvancement(DirectoryCache cache, JsonObject advancementJson, Path path) {
+		protected void saveAdvancement(HashCache cache, JsonObject advancementJson, Path path) {
 			// Nope
 		}
 	}
@@ -171,7 +171,7 @@ public class SpoiledDataGen {
 		protected void addTranslations() {
 			add("spoiled.spoiling", "Spoiling progress: ");
 			add("spoiled.spoiling.0", "Fresh");
-			add("spoiled.spoiling.25", "s");
+			add("spoiled.spoiling.25", "");
 			add("spoiled.spoiling.50", "Stale");
 			add("spoiled.spoiling.75", "Stale");
 			add("spoiled.spoiling.100", "Rotten");
