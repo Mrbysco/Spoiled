@@ -18,7 +18,7 @@ version = "${version}"
 group = 'com.mrbysco.spoiled' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "Spoiled-${mc_version}"
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17) // Mojang ships Java 8 to end users, so your mod should target Java 8.
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
@@ -89,10 +89,10 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven {
-        name 'JEI maven'
-        url = "https://dvs1.progwml6.com/files/maven"
-    }
+//    maven {
+//        name 'JEI maven'
+//        url = "https://dvs1.progwml6.com/files/maven"
+//    }
 //	maven {
 //        url = "https://maven.blamejared.com"
 //	}
@@ -116,11 +116,11 @@ mixin {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
 //    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-${mc_version}:${crafttweaker_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+//    compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+//    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 
 //    implementation fg.deobf("curse.maven:Locks-253456:3324065")
 //    implementation fg.deobf("curse.maven:Curios-309927:3456953")
