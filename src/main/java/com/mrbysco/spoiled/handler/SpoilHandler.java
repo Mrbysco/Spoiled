@@ -2,25 +2,20 @@ package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
-import com.mrbysco.spoiled.mixin.ChunkMapAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
+import com.mrbysco.spoiled.util.ChunkHelper;
 import com.mrbysco.spoiled.util.InventoryHelper;
 import com.mrbysco.spoiled.util.SingularInventory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -31,7 +26,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SpoilHandler {
@@ -40,7 +34,7 @@ public class SpoilHandler {
     public void onWorldTick(WorldTickEvent event) {
         if(event.phase == Phase.END && !event.world.isClientSide && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
             Level level = event.world;
-            List<BlockPos> blockEntityPositions = getBlockEntityPositions(level);
+            List<BlockPos> blockEntityPositions = ChunkHelper.getBlockEntityPositions(level);
             if(!blockEntityPositions.isEmpty()) {
                 for(BlockPos pos : blockEntityPositions) {
                     if (level.isAreaLoaded(pos, 1)) {
@@ -73,7 +67,7 @@ public class SpoilHandler {
                                                         int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                                                         int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
                                                         if (getOldTime >= getMaxTime) {
-                                                            spoilItemInItemhandler(itemHandler, slot, stack, recipe);
+                                                            spoilItemInHandler(itemHandler, slot, stack, recipe);
                                                         }
                                                     }
                                                 }
@@ -89,28 +83,7 @@ public class SpoilHandler {
         }
     }
 
-    public List<BlockPos> getBlockEntityPositions(Level level) {
-        ChunkSource source = level.getChunkSource();
-        List<BlockPos> positions = new ArrayList<>();
-
-        if (source instanceof ServerChunkCache cache) {
-
-            for (ChunkHolder chunk : ((ChunkMapAccessor) cache.chunkMap).callGetChunks()) {
-                LevelChunk levelChunk = chunk.getTickingChunk();
-
-                if (levelChunk != null) {
-                    ChunkAccess access = chunk.getLastAvailable();
-
-                    if (access != null) {
-                        positions.addAll(access.getBlockEntitiesPos());
-                    }
-                }
-            }
-        }
-        return positions;
-    }
-
-    private void spoilItemInItemhandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
+    private void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
         ItemStack spoiledStack = recipe.getResultItem().copy();
         int oldStackCount = stack.getCount();
         stack.setCount(0);
@@ -149,7 +122,7 @@ public class SpoilHandler {
                                             int getOldTime = tag.getInt(Reference.SPOIL_TAG);
                                             int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
                                             if(getOldTime >= getMaxTime) {
-                                                spoilItemInItemhandler(itemHandler, slot, nestedStack, recipe);
+                                                spoilItemInHandler(itemHandler, slot, nestedStack, recipe);
                                             }
                                         }
                                     });
