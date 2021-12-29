@@ -5,8 +5,10 @@
   "refmap": "spoiled.refmap.json",
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "ChunkMapAccessor"
+  ],
   "client": [
-    "ChunkMapAccessor",
     "ForgeHooksClientMixin"
   ],
   "injectors": {
