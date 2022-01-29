@@ -32,7 +32,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
             arg "-mixin.config=spoiled.mixins.json"
-            property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // Recommended logging data for a userdev environment
             // property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -50,7 +51,8 @@ minecraft {
         server {
             workingDirectory project.file('run')
             arg "-mixin.config=spoiled.mixins.json"
-            property 'mixin.env.disableRefMap', 'true'
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // Recommended logging data for a userdev environment
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -67,6 +69,9 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
 
             // Recommended logging data for a userdev environment
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -90,24 +95,17 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven {
-        name 'JEI maven'
         url = "https://dvs1.progwml6.com/files/maven"
     }
-//	maven {
-//        url = "https://maven.blamejared.com"
-//	}
-//	maven {
-//		url = 'https://maven.mcmoddev.com'
-//	}
-//	maven {
-//		url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-//	}
-//    maven {
-//        url = 'https://www.cursemaven.com'
-//        content {
-//            includeGroup "curse.maven"
-//        }
-//    }
+    maven {
+        url "https://maven.blamejared.com"
+    }
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 mixin {
@@ -118,13 +116,10 @@ dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-//    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-${mc_version}:${crafttweaker_version}")
     implementation fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
 
-//    implementation fg.deobf("curse.maven:Locks-253456:3324065")
-//    implementation fg.deobf("curse.maven:Curios-309927:3456953")
-//    implementation fg.deobf("curse.maven:ManaAndArtifice-406360:3391266")
-//    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${mc_version}:3.0.46")
+    runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:3596744")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

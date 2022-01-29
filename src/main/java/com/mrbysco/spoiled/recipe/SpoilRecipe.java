@@ -81,6 +81,11 @@ public class SpoilRecipe implements Recipe<Container> {
 		return SpoiledRecipes.SPOILING_SERIALIZER.get();
 	}
 
+	@Override
+	public boolean isSpecial() {
+		return true;
+	}
+
 	public static class SerializerSpoilRecipe extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<SpoilRecipe> {
 		@Override
 		public SpoilRecipe fromJson(ResourceLocation recipeId, JsonObject jsonObject) {
