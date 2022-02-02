@@ -55,7 +55,7 @@ public class SpoilHandler {
                                     if (itemHandler.getSlots() > 0) {
                                         for (int i = 0; i < itemHandler.getSlots(); i++) {
                                             ItemStack stack = itemHandler.getStackInSlot(i);
-                                            if (!stack.isEmpty()) {
+                                            if (stack != null && !stack.isEmpty()) {
                                                 SingularInventory inventory = InventoryHelper.createSingularInventory(stack);
                                                 int slot = i;
                                                 SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, level).orElse(null);
@@ -112,7 +112,7 @@ public class SpoilHandler {
                             for(int j = 0; j < itemHandler.getSlots(); j++) {
                                 int slot = j;
                                 ItemStack nestedStack = itemHandler.getStackInSlot(slot);
-                                if(!nestedStack.isEmpty()) {
+                                if(nestedStack != null && !nestedStack.isEmpty()) {
                                     SingularInventory inventory = InventoryHelper.createSingularInventory(nestedStack);
                                     world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
                                         updateSpoilingStack(nestedStack, recipe);
