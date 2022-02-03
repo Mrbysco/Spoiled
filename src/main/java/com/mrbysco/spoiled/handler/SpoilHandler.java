@@ -2,6 +2,7 @@ package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
+import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.util.ChunkHelper;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
@@ -40,6 +42,8 @@ public class SpoilHandler {
                     if (level.isAreaLoaded(pos, 1)) {
                         BlockEntity be = level.getBlockEntity(pos);
                         if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+                            if(be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor)randomizeInventory).getLootTable() != null) return;
+
                             ResourceLocation location = be.getType().getRegistryName();
                             double spoilRate = 1.0D;
                             if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {

@@ -6,7 +6,8 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ChunkMapAccessor"
+    "ChunkMapAccessor",
+    "RandomizableContainerBlockEntityAccessor"
   ],
   "client": [
     "ForgeHooksClientMixin"
