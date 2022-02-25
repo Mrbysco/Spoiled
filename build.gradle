@@ -93,21 +93,6 @@ repositories {
         name 'JEI maven'
         url = "https://dvs1.progwml6.com/files/maven"
     }
-//	maven {
-//        url = "https://maven.blamejared.com"
-//	}
-//	maven {
-//		url = 'https://maven.mcmoddev.com'
-//	}
-//	maven {
-//		url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-//	}
-//    maven {
-//        url = 'https://www.cursemaven.com'
-//        content {
-//            includeGroup "curse.maven"
-//        }
-//    }
 }
 
 mixin {
