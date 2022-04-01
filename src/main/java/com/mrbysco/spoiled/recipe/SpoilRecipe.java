@@ -38,7 +38,7 @@ public class SpoilRecipe implements Recipe<Container> {
 
 	@Override
 	public RecipeType<?> getType() {
-		return SpoiledRecipeTypes.SPOIL_RECIPE_TYPE;
+		return SpoiledRecipes.SPOIL_RECIPE_TYPE.get();
 	}
 
 	@Override

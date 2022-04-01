@@ -4,7 +4,6 @@ import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
-import com.mrbysco.spoiled.recipe.SpoiledRecipeTypes;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.util.ChunkHelper;
 import net.minecraft.core.BlockPos;
@@ -63,7 +62,7 @@ public class SpoilHandler {
 											if (stack != null && !stack.isEmpty()) {
 												SimpleContainer inventory = new SimpleContainer(stack);
 												int slot = i;
-												SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipeTypes.SPOIL_RECIPE_TYPE, inventory, level).orElse(null);
+												SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(null);
 												if (recipe != null) {
 													updateSpoilingStack(stack, recipe);
 
@@ -119,7 +118,7 @@ public class SpoilHandler {
 								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
 									SimpleContainer inventory = new SimpleContainer(nestedStack);
-									world.getRecipeManager().getRecipeFor(SpoiledRecipeTypes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+									world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).ifPresent(recipe -> {
 										updateSpoilingStack(nestedStack, recipe);
 
 										CompoundTag tag = nestedStack.getOrCreateTag();
@@ -137,7 +136,7 @@ public class SpoilHandler {
 					});
 				} else {
 					SimpleContainer inventory = new SimpleContainer(stack);
-					world.getRecipeManager().getRecipeFor(SpoiledRecipeTypes.SPOIL_RECIPE_TYPE, inventory, world).ifPresent(recipe -> {
+					world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).ifPresent(recipe -> {
 						updateSpoilingStack(stack, recipe);
 
 						CompoundTag tag = stack.getOrCreateTag();

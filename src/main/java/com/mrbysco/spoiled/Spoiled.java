@@ -4,7 +4,6 @@ import com.mrbysco.spoiled.commands.SpoiledCommands;
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.handler.TooltipHandler;
-import com.mrbysco.spoiled.recipe.SpoiledRecipeTypes;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.SpoiledConditions;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,7 +14,6 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,23 +28,16 @@ public class Spoiled {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
 		eventBus.register(SpoiledConfig.class);
 
-		eventBus.addListener(this::setup);
 		eventBus.register(new SpoiledConditions());
 
 		SpoiledRecipes.RECIPE_SERIALIZERS.register(eventBus);
+		SpoiledRecipes.RECIPE_TYPES.register(eventBus);
 
 		MinecraftForge.EVENT_BUS.register(new SpoilHandler());
 		MinecraftForge.EVENT_BUS.addListener(this::onCommandRegister);
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			MinecraftForge.EVENT_BUS.register(new TooltipHandler());
-		});
-	}
-
-	private void setup(final FMLCommonSetupEvent event) {
-		event.enqueueWork(() -> {
-			//Initialize
-			SpoiledRecipeTypes.init();
 		});
 	}
 

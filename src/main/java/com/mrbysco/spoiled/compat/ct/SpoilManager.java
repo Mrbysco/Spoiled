@@ -56,6 +56,6 @@ public class SpoilManager /*implements IRecipeManager<SpoilRecipe>*/ {
 
 	@Override
 	public RecipeType<SpoilRecipe> getRecipeType() {
-		return SpoiledRecipeTypes.SPOIL_RECIPE_TYPE;
+		return SpoiledRecipes.SPOIL_RECIPE_TYPE.get();
 	}*/
 }
