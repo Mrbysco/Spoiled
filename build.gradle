@@ -97,9 +97,9 @@ repositories {
     maven {
         url = "https://dvs1.progwml6.com/files/maven"
     }
-//    maven {
-//        url "https://maven.blamejared.com"
-//    }
+    maven {
+        url "https://maven.blamejared.com"
+    }
     maven {
         url "https://cursemaven.com"
         content {
@@ -117,7 +117,7 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     implementation fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
-//    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
+    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
 
     runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:3672647")
 }

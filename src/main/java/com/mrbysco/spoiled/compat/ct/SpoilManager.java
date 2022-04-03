@@ -1,13 +1,12 @@
 package com.mrbysco.spoiled.compat.ct;
 
-/*import com.blamejared.crafttweaker.api.CraftTweakerAPI;
+import com.blamejared.crafttweaker.api.CraftTweakerAPI;
 import com.blamejared.crafttweaker.api.action.recipe.ActionAddRecipe;
 import com.blamejared.crafttweaker.api.annotation.ZenRegister;
 import com.blamejared.crafttweaker.api.ingredient.IIngredient;
 import com.blamejared.crafttweaker.api.item.IItemStack;
 import com.blamejared.crafttweaker.api.recipe.manager.base.IRecipeManager;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
-import com.mrbysco.spoiled.recipe.SpoiledRecipeTypes;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -18,13 +17,13 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.openzen.zencode.java.ZenCodeGlobals;
 import org.openzen.zencode.java.ZenCodeType.Method;
-import org.openzen.zencode.java.ZenCodeType.Name;*/
+import org.openzen.zencode.java.ZenCodeType.Name;
 
-/*@ZenRegister
-@Name("mods.spoiled.SpoilingManager")*/
-public class SpoilManager /*implements IRecipeManager<SpoilRecipe>*/ {
+@ZenRegister
+@Name("mods.spoiled.SpoilingManager")
+public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 
-	/*@ZenCodeGlobals.Global("spoiling")
+	@ZenCodeGlobals.Global("spoiling")
 	public static final SpoilManager INSTANCE = new SpoilManager();
 
 	private SpoilManager() {
@@ -57,5 +56,5 @@ public class SpoilManager /*implements IRecipeManager<SpoilRecipe>*/ {
 	@Override
 	public RecipeType<SpoilRecipe> getRecipeType() {
 		return SpoiledRecipes.SPOIL_RECIPE_TYPE.get();
-	}*/
+	}
 }
