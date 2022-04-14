@@ -1,6 +1,7 @@
 package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
+import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
@@ -14,6 +15,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
@@ -62,7 +64,7 @@ public class SpoilHandler {
 											if (stack != null && !stack.isEmpty()) {
 												SimpleContainer inventory = new SimpleContainer(stack);
 												int slot = i;
-												SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(null);
+												SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
 												if (recipe != null) {
 													updateSpoilingStack(stack, recipe);
 
@@ -85,6 +87,17 @@ public class SpoilHandler {
 				}
 			}
 		}
+	}
+
+	private SpoilRecipe getDefaultSpoilRecipe(ItemStack stack) {
+		if (SpoiledConfig.COMMON.spoilEverything.get() && stack.isEdible() &&
+				!SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stack.getItem().getRegistryName().toString())) {
+			ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
+			String result = spoilStack.isEmpty() ? "to_air" : "to_" + spoilStack.getItem().getRegistryName().getPath();
+			String recipePath = "everything_" + stack.getItem().getRegistryName().getPath() + result;
+			return new SpoilRecipe(new ResourceLocation(Reference.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, SpoiledConfig.COMMON.defaultSpoilTime.get());
+		}
+		return null;
 	}
 
 	private void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
@@ -118,7 +131,8 @@ public class SpoilHandler {
 								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
 									SimpleContainer inventory = new SimpleContainer(nestedStack);
-									world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).ifPresent(recipe -> {
+									SpoilRecipe recipe = world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).orElse(getDefaultSpoilRecipe(stack));
+									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
 
 										CompoundTag tag = nestedStack.getOrCreateTag();
@@ -129,14 +143,15 @@ public class SpoilHandler {
 												spoilItemInHandler(itemHandler, slot, nestedStack, recipe);
 											}
 										}
-									});
+									}
 								}
 							}
 						}
 					});
 				} else {
 					SimpleContainer inventory = new SimpleContainer(stack);
-					world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).ifPresent(recipe -> {
+					SpoilRecipe recipe = world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).orElse(getDefaultSpoilRecipe(stack));
+					if (recipe != null) {
 						updateSpoilingStack(stack, recipe);
 
 						CompoundTag tag = stack.getOrCreateTag();
@@ -147,7 +162,7 @@ public class SpoilHandler {
 								spoilItemForPlayer(player, stack, recipe);
 							}
 						}
-					});
+					}
 				}
 			}
 		}
