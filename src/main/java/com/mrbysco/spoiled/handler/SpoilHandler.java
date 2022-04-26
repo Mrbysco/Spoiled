@@ -11,7 +11,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,6 +31,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
@@ -36,7 +40,7 @@ public class SpoilHandler {
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onWorldTick(WorldTickEvent event) {
 		if (event.phase == Phase.END && !event.world.isClientSide && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
-			Level level = event.world;
+			ServerLevel level = (ServerLevel) event.world;
 			List<BlockPos> blockEntityPositions = ChunkHelper.getBlockEntityPositions(level);
 			if (!blockEntityPositions.isEmpty()) {
 				for (BlockPos pos : blockEntityPositions) {
@@ -86,6 +90,13 @@ public class SpoilHandler {
 					}
 				}
 			}
+			List<Entity> entityList = Lists.newArrayList();
+			level.getAllEntities().forEach(entityList::add);
+			for (Entity entity : entityList) {
+				if (entity instanceof Container containerEntity && entity.isAlive()) {
+					updateContainer(level, entity, containerEntity);
+				}
+			}
 		}
 	}
 
@@ -118,7 +129,7 @@ public class SpoilHandler {
 	}
 
 	private void updateInventory(Player player) {
-		Level world = player.level;
+		Level level = player.level;
 		int invCount = player.getInventory().getContainerSize();
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
@@ -131,7 +142,7 @@ public class SpoilHandler {
 								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
 									SimpleContainer inventory = new SimpleContainer(nestedStack);
-									SpoilRecipe recipe = world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).orElse(getDefaultSpoilRecipe(stack));
+									SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
 									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
 
@@ -150,7 +161,7 @@ public class SpoilHandler {
 					});
 				} else {
 					SimpleContainer inventory = new SimpleContainer(stack);
-					SpoilRecipe recipe = world.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, world).orElse(getDefaultSpoilRecipe(stack));
+					SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
 					if (recipe != null) {
 						updateSpoilingStack(stack, recipe);
 
@@ -166,6 +177,95 @@ public class SpoilHandler {
 				}
 			}
 		}
+	}
+
+	public void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
+		ItemStack spoiledStack = recipe.getResultItem().copy();
+		int oldStackCount = stack.getCount();
+		stack.setCount(0);
+		if (!spoiledStack.isEmpty()) {
+			spoiledStack.setCount(oldStackCount);
+			if (!player.addItem(spoiledStack)) {
+				ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), spoiledStack);
+				player.level.addFreshEntity(itemEntity);
+			}
+		}
+	}
+
+	private void updateContainer(Level level, Entity entity, Container container) {
+		int invCount = container.getContainerSize();
+		for (int i = 0; i < invCount; i++) {
+			ItemStack stack = container.getItem(i);
+			if (!stack.isEmpty()) {
+				if (stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+					stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
+						if (itemHandler.getSlots() > 0) {
+							for (int j = 0; j < itemHandler.getSlots(); j++) {
+								int slot = j;
+								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
+								if (nestedStack != null && !nestedStack.isEmpty()) {
+									SimpleContainer inventory = new SimpleContainer(nestedStack);
+									SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+									if (recipe != null) {
+										updateSpoilingStack(nestedStack, recipe);
+
+										CompoundTag tag = nestedStack.getOrCreateTag();
+										if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+											int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+											int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+											if (getOldTime >= getMaxTime) {
+												spoilItemInHandler(itemHandler, slot, nestedStack, recipe);
+											}
+										}
+									}
+								}
+							}
+						}
+					});
+				} else {
+					SimpleContainer inventory = new SimpleContainer(stack);
+					SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+					if (recipe != null) {
+						updateSpoilingStack(stack, recipe);
+
+						CompoundTag tag = stack.getOrCreateTag();
+						if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+							int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+							int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+							if (getOldTime >= getMaxTime) {
+								spoilItemForEntity(container, entity, stack, recipe);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public void spoilItemForEntity(Container container, Entity entity, ItemStack stack, SpoilRecipe recipe) {
+		ItemStack spoiledStack = recipe.getResultItem().copy();
+		int oldStackCount = stack.getCount();
+		stack.setCount(0);
+		if (!spoiledStack.isEmpty()) {
+			spoiledStack.setCount(oldStackCount);
+			int freeSlot = getFreeSlot(container);
+			if (freeSlot != -1) {
+				container.setItem(freeSlot, spoiledStack);
+			} else {
+				ItemEntity itemEntity = new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(), spoiledStack);
+				entity.level.addFreshEntity(itemEntity);
+			}
+		}
+	}
+
+	private int getFreeSlot(Container container) {
+		for (int i = 0; i < container.getContainerSize(); ++i) {
+			if (container.getItem(i).isEmpty()) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 
 	public void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
@@ -190,19 +290,6 @@ public class SpoilHandler {
 					tag.putInt(Reference.SPOIL_TAG, getOldTime);
 					stack.setTag(tag);
 				}
-			}
-		}
-	}
-
-	public void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem().copy();
-		int oldStackCount = stack.getCount();
-		stack.setCount(0);
-		if (!spoiledStack.isEmpty()) {
-			spoiledStack.setCount(oldStackCount);
-			if (!player.addItem(spoiledStack)) {
-				ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), spoiledStack);
-				player.level.addFreshEntity(itemEntity);
 			}
 		}
 	}
