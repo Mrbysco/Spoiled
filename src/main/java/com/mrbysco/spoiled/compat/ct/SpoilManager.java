@@ -15,7 +15,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.openzen.zencode.java.ZenCodeGlobals;
 import org.openzen.zencode.java.ZenCodeType.Method;
 import org.openzen.zencode.java.ZenCodeType.Name;
 
@@ -23,7 +22,6 @@ import org.openzen.zencode.java.ZenCodeType.Name;
 @Name("mods.spoiled.SpoilingManager")
 public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 
-	@ZenCodeGlobals.Global("spoiling")
 	public static final SpoilManager INSTANCE = new SpoilManager();
 
 	private SpoilManager() {
@@ -42,8 +40,7 @@ public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 	public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime) {
 		if (ModList.get().isLoaded(modName)) {
 			for (Item foundItem : ForgeRegistries.ITEMS.getValues()) {
-				if (foundItem != spoilStack.getInternal().getItem() && foundItem.getRegistryName() != null &&
-						foundItem.getRegistryName().getNamespace().equals(modName) && foundItem.isEdible()) {
+				if (foundItem != spoilStack.getInternal().getItem() && foundItem.getRegistryName() != null && foundItem.getRegistryName().getNamespace().equals(modName) && foundItem.isEdible()) {
 					String itemLocation = foundItem.getRegistryName().toString().replace(":", "_");
 					ResourceLocation id = new ResourceLocation("crafttweaker", itemLocation);
 					SpoilRecipe recipe = new SpoilRecipe(id, "", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime);
