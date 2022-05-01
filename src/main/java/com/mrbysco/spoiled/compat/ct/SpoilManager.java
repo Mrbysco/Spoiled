@@ -22,11 +22,6 @@ import org.openzen.zencode.java.ZenCodeType.Name;
 @Name("mods.spoiled.SpoilingManager")
 public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 
-	public static final SpoilManager INSTANCE = new SpoilManager();
-
-	private SpoilManager() {
-	}
-
 	@Method
 	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime) {
 		final ResourceLocation id = new ResourceLocation("crafttweaker", name);
