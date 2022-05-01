@@ -1,6 +1,6 @@
 {
   "required": true,
-  "minVersion": "0.8",
+  "minVersion": "0.8.4",
   "package": "com.mrbysco.spoiled.mixin",
   "refmap": "spoiled.refmap.json",
   "target": "@env(DEFAULT)",

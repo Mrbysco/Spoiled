@@ -77,6 +77,11 @@ public class SpoilRecipe implements IRecipe<IInventory> {
 	}
 
 	@Override
+	public boolean isSpecial() {
+		return true;
+	}
+
+	@Override
 	public IRecipeSerializer<?> getSerializer() {
 		return SpoiledRecipes.SPOILING_SERIALIZER.get();
 	}
@@ -85,12 +90,13 @@ public class SpoilRecipe implements IRecipe<IInventory> {
 		@Override
 		public SpoilRecipe fromJson(ResourceLocation recipeId, JsonObject jsonObject) {
 			String s = JSONUtils.getAsString(jsonObject, "group", "");
-			JsonElement jsonelement = (JsonElement)(JSONUtils.isArrayNode(jsonObject, "ingredient") ? JSONUtils.getAsJsonArray(jsonObject, "ingredient") : JSONUtils.getAsJsonObject(jsonObject, "ingredient"));
+			JsonElement jsonelement = (JsonElement) (JSONUtils.isArrayNode(jsonObject, "ingredient") ? JSONUtils.getAsJsonArray(jsonObject, "ingredient") : JSONUtils.getAsJsonObject(jsonObject, "ingredient"));
 			Ingredient ingredient = Ingredient.fromJson(jsonelement);
 			//Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
 			ItemStack itemstack;
-			if(jsonObject.has("result")) {
-				if (jsonObject.get("result").isJsonObject()) itemstack = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(jsonObject, "result"));
+			if (jsonObject.has("result")) {
+				if (jsonObject.get("result").isJsonObject())
+					itemstack = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(jsonObject, "result"));
 				else {
 					String s1 = JSONUtils.getAsString(jsonObject, "result");
 					ResourceLocation resourcelocation = new ResourceLocation(s1);

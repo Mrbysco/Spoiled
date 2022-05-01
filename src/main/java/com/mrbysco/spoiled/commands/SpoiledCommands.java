@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpoiledCommands {
-	public static void initializeCommands (CommandDispatcher<CommandSource> dispatcher) {
+	public static void initializeCommands(CommandDispatcher<CommandSource> dispatcher) {
 		final LiteralArgumentBuilder<CommandSource> root = Commands.literal(Reference.MOD_ID);
 		root.requires((commandSource) -> commandSource.hasPermission(2))
 				.then(Commands.literal("tileentity").then(Commands.literal("list").executes(SpoiledCommands::listTiles)));

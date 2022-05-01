@@ -20,28 +20,28 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(Reference.MOD_ID)
 public class Spoiled {
-    public static final Logger LOGGER = LogManager.getLogger();
+	public static final Logger LOGGER = LogManager.getLogger();
 
-    public Spoiled() {
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
-        eventBus.register(SpoiledConfig.class);
+	public Spoiled() {
+		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
+		eventBus.register(SpoiledConfig.class);
 
-        SpoiledRecipes.RECIPE_SERIALIZERS.register(eventBus);
+		SpoiledRecipes.RECIPE_SERIALIZERS.register(eventBus);
 
-        MinecraftForge.EVENT_BUS.register(new SpoilHandler());
+		MinecraftForge.EVENT_BUS.register(new SpoilHandler());
 
-        eventBus.register(new SpoiledConditions());
+		eventBus.register(new SpoiledConditions());
 
-        MinecraftForge.EVENT_BUS.addListener(this::onCommandRegister);
+		MinecraftForge.EVENT_BUS.addListener(this::onCommandRegister);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            MinecraftForge.EVENT_BUS.register(new TooltipHandler());
-        });
-    }
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
+			MinecraftForge.EVENT_BUS.register(new TooltipHandler());
+		});
+	}
 
-    public void onCommandRegister(RegisterCommandsEvent event) {
-        SpoiledCommands.initializeCommands(event.getDispatcher());
-    }
+	public void onCommandRegister(RegisterCommandsEvent event) {
+		SpoiledCommands.initializeCommands(event.getDispatcher());
+	}
 }

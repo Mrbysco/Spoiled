@@ -10,7 +10,7 @@
       "recipe": {
         "type": "spoiled:spoil_recipe",
         "ingredient": {
-          "item": "minecraft:golden_apple"
+          "tag": "spoiled:foods/vanilla"
         }
       }
     }
