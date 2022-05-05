@@ -4,5 +4,8 @@
   "spoiled.spoiling.100": "Zkažené",
   "spoiled.spoiling.25": "",
   "spoiled.spoiling.50": "Staré",
-  "spoiled.spoiling.75": "Staré"
+  "spoiled.spoiling.75": "Staré",
+
+  "spoiled.gui.jei.category.spoiling": "Spoiling",
+  "spoiled.gui.jei.spoil_time": "Spoil Time: %s"
 }

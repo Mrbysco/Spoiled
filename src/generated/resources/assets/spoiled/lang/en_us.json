@@ -1,4 +1,6 @@
 {
+  "spoiled.gui.jei.category.spoiling": "Spoiling",
+  "spoiled.gui.jei.spoil_time": "Spoil Time: %s",
   "spoiled.spoiling": "Spoiling progress: ",
   "spoiled.spoiling.0": "Fresh",
   "spoiled.spoiling.100": "Rotten",

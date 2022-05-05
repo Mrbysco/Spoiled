@@ -31,6 +31,7 @@ public class SpoiledConfig {
 		public final ConfigValue<List<? extends String>> containerModifier;
 		public final IntValue spoilRate;
 		public final BooleanValue initializeSpoiling;
+		public final BooleanValue mergeSpoilingFood;
 		public final BooleanValue spoilEverything;
 		public final ConfigValue<List<? extends String>> spoilEverythingBlacklist;
 		public final IntValue defaultSpoilTime;
@@ -57,11 +58,15 @@ public class SpoiledConfig {
 					.defineInRange("spoilRate", 30, 1, Integer.MAX_VALUE);
 
 			initializeSpoiling = builder
-					.comment("When enabled Spoiled initializes spoiling for all vanilla food")
+					.comment("When enabled Spoiled initializes spoiling for all vanilla food [default: true]")
 					.define("initializeSpoiling", true);
 
+			mergeSpoilingFood = builder
+					.comment("When enabled enables a special recipe to merge spoiling food together [default: true]")
+					.define("mergeSpoilingFood", false);
+
 			spoilEverything = builder
-					.comment("When enabled Spoiled makes every edible item spoil into the specified Spoil Item")
+					.comment("When enabled Spoiled makes every edible item spoil into the specified Spoil Item [default: false]")
 					.define("spoilEverything", false);
 
 			String[] spoilBlacklist = new String[]

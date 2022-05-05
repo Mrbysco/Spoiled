@@ -2,14 +2,18 @@ package com.mrbysco.spoiled.datagen;
 
 import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.Reference;
+import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
+import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import com.mrbysco.spoiled.util.SpoiledTags;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -53,10 +57,16 @@ public class SpoiledDataGen {
 		@Override
 		protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
 			makeConditionalRecipe(consumer, "vanilla", Ingredient.of(SpoiledTags.FOODS_VANILLA));
+
+			ConditionalRecipe.builder()
+					.addCondition(new InitializeSpoilingCondition())
+					.addRecipe(c -> SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get()).save(c, new ResourceLocation("merge_food").toString()))
+					.build(consumer, new ResourceLocation("merge_food"));
 		}
 
 		private void makeConditionalRecipe(Consumer<FinishedRecipe> consumer, String name, Ingredient ingredient) {
-			ConditionalRecipe.builder().addCondition(new InitializeSpoilingCondition())
+			ConditionalRecipe.builder()
+					.addCondition(new InitializeSpoilingCondition())
 					.addRecipe(SpoilRecipeBuilder.spoilRecipe(ingredient, Items.ROTTEN_FLESH)::build)
 					.build(consumer, Reference.MOD_ID, folder + name + toRotten);
 		}
@@ -80,6 +90,9 @@ public class SpoiledDataGen {
 			add("spoiled.spoiling.50", "Stale");
 			add("spoiled.spoiling.75", "Stale");
 			add("spoiled.spoiling.100", "Rotten");
+
+			add("spoiled.gui.jei.category.spoiling", "Spoiling");
+			add("spoiled.gui.jei.spoil_time", "Spoil Time: %s");
 		}
 	}
 

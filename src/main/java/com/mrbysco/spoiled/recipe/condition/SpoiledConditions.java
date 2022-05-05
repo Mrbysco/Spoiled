@@ -9,5 +9,6 @@ public class SpoiledConditions {
 	@SubscribeEvent
 	public void onRegisterSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
 		CraftingHelper.register(InitializeSpoilingCondition.Serializer.INSTANCE);
+		CraftingHelper.register(MergeRecipeCondition.Serializer.INSTANCE);
 	}
 }

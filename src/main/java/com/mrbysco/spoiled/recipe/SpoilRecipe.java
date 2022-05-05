@@ -43,7 +43,7 @@ public class SpoilRecipe implements Recipe<Container> {
 
 	@Override
 	public boolean matches(Container inv, Level worldIn) {
-		return this.ingredient.test(inv.getItem(0));
+		return this.getIngredients().get(0).test(inv.getItem(0));
 	}
 
 	public ItemStack assemble(Container inventory) {

@@ -5,20 +5,18 @@ import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
-import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.util.ChunkHelper;
+import com.mrbysco.spoiled.util.SpoilHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
@@ -26,6 +24,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -36,6 +35,16 @@ import org.apache.commons.compress.utils.Lists;
 import java.util.List;
 
 public class SpoilHandler {
+
+	@SubscribeEvent(priority = EventPriority.HIGH)
+	public void onWorldTick(ItemCraftedEvent event) {
+		if(SpoiledConfig.COMMON.mergeSpoilingFood.get() && SpoilHelper.isSpoiling(event.getCrafting())) {
+			Container container = event.getInventory();
+			for(int i = 0; i < container.getContainerSize(); i++) {
+				container.setItem(i, ItemStack.EMPTY);
+			}
+		}
+	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onWorldTick(WorldTickEvent event) {
@@ -66,9 +75,8 @@ public class SpoilHandler {
 										for (int i = 0; i < itemHandler.getSlots(); i++) {
 											ItemStack stack = itemHandler.getStackInSlot(i);
 											if (stack != null && !stack.isEmpty()) {
-												SimpleContainer inventory = new SimpleContainer(stack);
 												int slot = i;
-												SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+												SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
 												if (recipe != null) {
 													updateSpoilingStack(stack, recipe);
 
@@ -98,17 +106,6 @@ public class SpoilHandler {
 				}
 			}
 		}
-	}
-
-	private SpoilRecipe getDefaultSpoilRecipe(ItemStack stack) {
-		if (SpoiledConfig.COMMON.spoilEverything.get() && stack.isEdible() &&
-				!SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stack.getItem().getRegistryName().toString())) {
-			ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
-			String result = spoilStack.isEmpty() ? "to_air" : "to_" + spoilStack.getItem().getRegistryName().getPath();
-			String recipePath = "everything_" + stack.getItem().getRegistryName().getPath() + result;
-			return new SpoilRecipe(new ResourceLocation(Reference.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, SpoiledConfig.COMMON.defaultSpoilTime.get());
-		}
-		return null;
 	}
 
 	private void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
@@ -141,8 +138,7 @@ public class SpoilHandler {
 								int slot = j;
 								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
-									SimpleContainer inventory = new SimpleContainer(nestedStack);
-									SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
 									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
 
@@ -160,8 +156,7 @@ public class SpoilHandler {
 						}
 					});
 				} else {
-					SimpleContainer inventory = new SimpleContainer(stack);
-					SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+					SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
 					if (recipe != null) {
 						updateSpoilingStack(stack, recipe);
 
@@ -204,8 +199,7 @@ public class SpoilHandler {
 								int slot = j;
 								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
-									SimpleContainer inventory = new SimpleContainer(nestedStack);
-									SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
 									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
 
@@ -223,8 +217,7 @@ public class SpoilHandler {
 						}
 					});
 				} else {
-					SimpleContainer inventory = new SimpleContainer(stack);
-					SpoilRecipe recipe = level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+					SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
 					if (recipe != null) {
 						updateSpoilingStack(stack, recipe);
 

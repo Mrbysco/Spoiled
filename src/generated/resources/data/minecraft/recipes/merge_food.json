@@ -1,0 +1,15 @@
+{
+  "type": "forge:conditional",
+  "recipes": [
+    {
+      "conditions": [
+        {
+          "type": "spoiled:initialize_spoiling"
+        }
+      ],
+      "recipe": {
+        "type": "spoiled:stack_food"
+      }
+    }
+  ]
+}
