@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
-import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import com.mrbysco.spoiled.util.SpoiledTags;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;

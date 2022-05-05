@@ -16,9 +16,9 @@ public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
 		SimpleContainer inventory = new SimpleContainer(stack);
-		for(SpoilRecipe recipe : level.getRecipeManager().getAllRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get())) {
+		for (SpoilRecipe recipe : level.getRecipeManager().getAllRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get())) {
 			ItemStack[] stacks = recipe.getIngredients().get(0).getItems();
-			for(ItemStack theStack : stacks) {
+			for (ItemStack theStack : stacks) {
 				System.out.println(theStack.getItem().getRegistryName());
 			}
 		}
