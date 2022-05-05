@@ -1,5 +1,6 @@
 package com.mrbysco.spoiled.handler;
 
+import com.google.common.collect.Lists;
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
@@ -30,7 +31,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 
