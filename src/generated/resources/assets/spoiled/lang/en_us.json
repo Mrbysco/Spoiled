@@ -1,4 +1,5 @@
 {
+  "spoiled.command.tile_list.message": "A list of Tile Entities has been output into the log",
   "spoiled.gui.jei.category.spoiling": "Spoiling",
   "spoiled.gui.jei.spoil_time": "Spoil Time: %s",
   "spoiled.spoiling": "Spoiling progress: ",

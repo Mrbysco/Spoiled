@@ -27,7 +27,7 @@ public class SpoiledCommands {
 	private static int listTiles(CommandContext<CommandSourceStack> ctx) {
 		CommandSourceStack source = ctx.getSource();
 
-		Component text = new TranslatableComponent("spoiled:tileentity.list.message").withStyle(ChatFormatting.YELLOW);
+		Component text = new TranslatableComponent("spoiled.command.tile_list.message").withStyle(ChatFormatting.YELLOW);
 		source.sendSuccess(text, true);
 
 		List<ResourceLocation> keys = new ArrayList<>(ForgeRegistries.BLOCK_ENTITIES.getKeys());
