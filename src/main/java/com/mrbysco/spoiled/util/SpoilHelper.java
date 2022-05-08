@@ -15,14 +15,8 @@ import net.minecraft.world.level.Level;
 public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
-		SimpleContainer inventory = new SimpleContainer(stack);
-		for (SpoilRecipe recipe : level.getRecipeManager().getAllRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get())) {
-			ItemStack[] stacks = recipe.getIngredients().get(0).getItems();
-			for (ItemStack theStack : stacks) {
-				System.out.println(theStack.getItem().getRegistryName());
-			}
-		}
-		return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), inventory, level).orElse(getDefaultSpoilRecipe(stack));
+		return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
+				new SimpleContainer(stack), level).orElse(getDefaultSpoilRecipe(stack));
 	}
 
 	private static SpoilRecipe getDefaultSpoilRecipe(ItemStack stack) {

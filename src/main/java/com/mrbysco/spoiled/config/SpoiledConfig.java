@@ -62,7 +62,7 @@ public class SpoiledConfig {
 					.define("initializeSpoiling", true);
 
 			mergeSpoilingFood = builder
-					.comment("When enabled enables a special recipe to merge spoiling food together [default: true]")
+					.comment("When enabled enables a special recipe to merge spoiling food together [default: false]")
 					.define("mergeSpoilingFood", false);
 
 			spoilEverything = builder
