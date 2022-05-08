@@ -4,7 +4,7 @@
     {
       "conditions": [
         {
-          "type": "spoiled:initialize_spoiling"
+          "type": "spoiled:merge_food"
         }
       ],
       "recipe": {

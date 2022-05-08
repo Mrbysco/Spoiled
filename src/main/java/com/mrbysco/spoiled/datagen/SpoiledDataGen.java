@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.Reference;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
+import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import com.mrbysco.spoiled.util.SpoiledTags;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
@@ -58,7 +59,7 @@ public class SpoiledDataGen {
 			makeConditionalRecipe(consumer, "vanilla", Ingredient.of(SpoiledTags.FOODS_VANILLA));
 
 			ConditionalRecipe.builder()
-					.addCondition(new InitializeSpoilingCondition())
+					.addCondition(new MergeRecipeCondition())
 					.addRecipe(c -> SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get()).save(c, new ResourceLocation("merge_food").toString()))
 					.build(consumer, new ResourceLocation("merge_food"));
 		}
