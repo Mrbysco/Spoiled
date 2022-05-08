@@ -2,6 +2,7 @@ package com.mrbysco.spoiled.datagen;
 
 import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.Reference;
+import com.mrbysco.spoiled.Spoiled;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
@@ -60,8 +61,8 @@ public class SpoiledDataGen {
 
 			ConditionalRecipe.builder()
 					.addCondition(new MergeRecipeCondition())
-					.addRecipe(c -> SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get()).save(c, new ResourceLocation("merge_food").toString()))
-					.build(consumer, new ResourceLocation("merge_food"));
+					.addRecipe(c -> SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get()).save(c, new ResourceLocation(Reference.MOD_ID, "merge_food").toString()))
+					.build(consumer, new ResourceLocation(Reference.MOD_ID, "merge_food"));
 		}
 
 		private void makeConditionalRecipe(Consumer<FinishedRecipe> consumer, String name, Ingredient ingredient) {
