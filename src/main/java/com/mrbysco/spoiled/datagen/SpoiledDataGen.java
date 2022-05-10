@@ -2,7 +2,6 @@ package com.mrbysco.spoiled.datagen;
 
 import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.Reference;
-import com.mrbysco.spoiled.Spoiled;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;

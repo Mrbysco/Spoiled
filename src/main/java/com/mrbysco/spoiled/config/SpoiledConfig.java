@@ -66,7 +66,7 @@ public class SpoiledConfig {
 					.define("mergeSpoilingFood", false);
 
 			spoilEverything = builder
-					.comment("When enabled Spoiled makes every edible item spoil into the specified Spoil Item [default: false]")
+					.comment("When enabled Spoiled makes every edible item spoil into the specified Spoil Item (This overwrites json spoiling completely) [default: false]")
 					.define("spoilEverything", false);
 
 			String[] spoilBlacklist = new String[]

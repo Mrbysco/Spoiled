@@ -15,17 +15,16 @@ import net.minecraft.world.level.Level;
 public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
-		return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
-				new SimpleContainer(stack), level).orElse(getDefaultSpoilRecipe(stack));
-	}
-
-	private static SpoilRecipe getDefaultSpoilRecipe(ItemStack stack) {
-		if (SpoiledConfig.COMMON.spoilEverything.get() && stack.isEdible() &&
-				!SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stack.getItem().getRegistryName().toString())) {
-			ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
-			String result = spoilStack.isEmpty() ? "to_air" : "to_" + spoilStack.getItem().getRegistryName().getPath();
-			String recipePath = "everything_" + stack.getItem().getRegistryName().getPath() + result;
-			return new SpoilRecipe(new ResourceLocation(Reference.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, SpoiledConfig.COMMON.defaultSpoilTime.get());
+		if (SpoiledConfig.COMMON.spoilEverything.get()) {
+			if (stack.isEdible() && !SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stack.getItem().getRegistryName().toString())) {
+				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
+				String result = spoilStack.isEmpty() ? "to_air" : "to_" + spoilStack.getItem().getRegistryName().getPath();
+				String recipePath = "everything_" + stack.getItem().getRegistryName().getPath() + result;
+				return new SpoilRecipe(new ResourceLocation(Reference.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, SpoiledConfig.COMMON.defaultSpoilTime.get());
+			}
+		} else {
+			return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
+					new SimpleContainer(stack), level).orElse(null);
 		}
 		return null;
 	}
