@@ -37,7 +37,7 @@ import java.util.List;
 public class SpoilHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void onWorldTick(ItemCraftedEvent event) {
+	public void onSpoilFoodStacking(ItemCraftedEvent event) {
 		if (SpoiledConfig.COMMON.mergeSpoilingFood.get() && SpoilHelper.isSpoiling(event.getCrafting())) {
 			Container container = event.getInventory();
 			for (int i = 0; i < container.getContainerSize(); i++) {
