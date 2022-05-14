@@ -2,7 +2,6 @@ package com.mrbysco.spoiled.handler;
 
 import com.google.common.collect.Lists;
 import com.mrbysco.spoiled.Reference;
-import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
@@ -25,7 +24,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -35,16 +33,6 @@ import net.minecraftforge.items.wrapper.SidedInvWrapper;
 import java.util.List;
 
 public class SpoilHandler {
-
-	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void onSpoilFoodStacking(ItemCraftedEvent event) {
-		if (SpoiledConfig.COMMON.mergeSpoilingFood.get() && SpoilHelper.isSpoiling(event.getCrafting())) {
-			Container container = event.getInventory();
-			for (int i = 0; i < container.getContainerSize(); i++) {
-				container.setItem(i, ItemStack.EMPTY);
-			}
-		}
-	}
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onWorldTick(WorldTickEvent event) {

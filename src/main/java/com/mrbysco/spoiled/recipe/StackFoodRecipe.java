@@ -2,6 +2,7 @@ package com.mrbysco.spoiled.recipe;
 
 import com.google.common.collect.Lists;
 import com.mrbysco.spoiled.util.SpoilHelper;
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -69,6 +70,14 @@ public class StackFoodRecipe extends CustomRecipe {
 		}
 
 		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
+		for (int i = 0; i < container.getContainerSize(); i++) {
+			container.setItem(i, ItemStack.EMPTY);
+		}
+		return super.getRemainingItems(container);
 	}
 
 	public boolean totalUnderMax(ItemStack stack1, ItemStack stack2) {
