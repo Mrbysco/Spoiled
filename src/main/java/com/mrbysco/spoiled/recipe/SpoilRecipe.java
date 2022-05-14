@@ -51,7 +51,7 @@ public class SpoilRecipe implements Recipe<Container> {
 	}
 
 	public boolean canCraftInDimensions(int x, int y) {
-		return true;
+		return false;
 	}
 
 	public NonNullList<Ingredient> getIngredients() {
