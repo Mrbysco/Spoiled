@@ -15,6 +15,7 @@ public class MergeRecipeCondition implements ICondition {
 		return ID;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public boolean test() {
 		return SpoiledConfig.COMMON.mergeSpoilingFood.get();

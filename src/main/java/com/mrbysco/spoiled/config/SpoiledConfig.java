@@ -80,7 +80,8 @@ public class SpoiledConfig {
 					.defineListAllowEmpty(List.of("spoilEverythingBlacklist"), () -> List.of(spoilBlacklist), o -> (o instanceof String));
 
 			defaultSpoilTime = builder
-					.comment("Defines the default amount of spoilTime (in second) that is used to initialize Spoiling when 'initializeSpoiling' is enabled [default: 40]")
+					.comment("Defines the total amount of spoiling updates that is used by the default initialized spoiling when 'initializeSpoiling' is enabled \n" +
+							"(If the 'spoilRate' is 10 and the 'defaultSpoilTime' is set to 20 then the food will spoil after 20 * 10 seconds = 200 seconds) [default: 40]")
 					.defineInRange("defaultSpoilTime", 40, 1, Integer.MAX_VALUE);
 
 			defaultSpoilItem = builder
