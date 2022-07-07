@@ -53,8 +53,9 @@ public class SpoiledConfig {
 					.defineListAllowEmpty(List.of("containerModifier"), () -> List.of(containers), o -> (o instanceof String));
 
 			spoilRate = builder
-					.comment("Defines the default amount of seconds in between which the spoiling updates, " +
-							"if this is changed you should update the 'defaultSpoilTime' to accommodate for the extra time [default: 30]")
+					.comment("Defines the default total amount of spoiling updates for each food item \n" +
+							"(For example, a defaultSpoilTime of 40 means any default food item will have 40 total updates before it spoils. \n" +
+							"This can be altered when custom food spoiling is set using a datapack) [default: 30]")
 					.defineInRange("spoilRate", 30, 1, Integer.MAX_VALUE);
 
 			initializeSpoiling = builder

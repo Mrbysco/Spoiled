@@ -26,6 +26,7 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.TickEvent.WorldTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
@@ -36,7 +37,7 @@ public class SpoilHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onWorldTick(WorldTickEvent event) {
-		if (event.phase == Phase.END && !event.world.isClientSide && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
+		if (event.phase == Phase.END && event.side == LogicalSide.SERVER && event.haveTime() && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
 			ServerLevel level = (ServerLevel) event.world;
 			List<BlockPos> blockEntityPositions = ChunkHelper.getBlockEntityPositions(level);
 			if (!blockEntityPositions.isEmpty()) {
@@ -52,12 +53,9 @@ public class SpoilHandler {
 							if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 								spoilRate = SpoiledConfigCache.containerModifier.get(location);
 							}
-							boolean spoilFlag = spoilRate > 0 && level.random.nextDouble() <= spoilRate;
+							boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
 							if (spoilFlag) {
 								IItemHandler itemHandler = be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
-								if (itemHandler instanceof SidedInvWrapper) {
-									itemHandler = be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN).orElse(null);
-								}
 								if (itemHandler != null) {
 									if (itemHandler.getSlots() > 0) {
 										for (int i = 0; i < itemHandler.getSlots(); i++) {
