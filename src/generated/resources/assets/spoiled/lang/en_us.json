@@ -1,5 +1,6 @@
 {
-  "spoiled.command.tile_list.message": "A list of Tile Entities has been output into the log",
+  "spoiled.command.blockentity_list.message": "A list of Block Entities has been output into the log",
+  "spoiled.command.food_list.message": "A list of Food has been output into the log",
   "spoiled.gui.jei.category.spoiling": "Spoiling",
   "spoiled.gui.jei.spoil_time": "Spoil Time: %s",
   "spoiled.spoiling": "Spoiling progress: ",

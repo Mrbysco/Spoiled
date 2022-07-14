@@ -93,7 +93,8 @@ public class SpoiledDataGen {
 
 			add("spoiled.gui.jei.category.spoiling", "Spoiling");
 			add("spoiled.gui.jei.spoil_time", "Spoil Time: %s");
-			add("spoiled.command.tile_list.message", "A list of Tile Entities has been output into the log");
+			add("spoiled.command.blockentity_list.message", "A list of Block Entities has been output into the log");
+			add("spoiled.command.food_list.message", "A list of Food has been output into the log");
 		}
 	}
 
