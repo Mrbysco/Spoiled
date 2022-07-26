@@ -1,0 +1,9 @@
+{
+  "type": "spoiled:spoil_recipe",
+  "ingredient": {
+	"item": "minecraft:bread"
+  },
+  "result": {
+    "item": "minecraft:stone"
+  }
+}
