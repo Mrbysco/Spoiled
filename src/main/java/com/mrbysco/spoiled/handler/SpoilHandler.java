@@ -35,44 +35,34 @@ public class SpoilHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onWorldTick(WorldTickEvent event) {
-		if (event.phase == Phase.END && event.side == LogicalSide.SERVER && event.haveTime() && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
+		if (event.phase == Phase.END && event.side == LogicalSide.SERVER && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
 			ServerLevel level = (ServerLevel) event.world;
-			List<BlockPos> blockEntityPositions = ChunkHelper.getBlockEntityPositions(level);
+			List<BlockPos> blockEntityPositions = ChunkHelper.getBlockEntityPositions(level).stream().filter(pos -> level.isAreaLoaded(pos, 1)).toList();
 			if (!blockEntityPositions.isEmpty()) {
 				for (BlockPos pos : blockEntityPositions) {
-					if (level.isAreaLoaded(pos, 1)) {
-						BlockEntity be = level.getBlockEntity(pos);
-						if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
-							if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
-								return;
+					BlockEntity be = level.getBlockEntity(pos);
+					if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
+							continue;
 
-							ResourceLocation location = be.getType().getRegistryName();
-							double spoilRate = 1.0D;
-							if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
-								spoilRate = SpoiledConfigCache.containerModifier.get(location);
-							}
-							boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
-							if (spoilFlag) {
-								IItemHandler itemHandler = be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
-								if (itemHandler != null) {
-									if (itemHandler.getSlots() > 0) {
-										for (int i = 0; i < itemHandler.getSlots(); i++) {
-											ItemStack stack = itemHandler.getStackInSlot(i);
-											if (stack != null && !stack.isEmpty()) {
-												int slot = i;
-												SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-												if (recipe != null) {
-													updateSpoilingStack(stack, recipe);
-
-													CompoundTag tag = stack.getOrCreateTag();
-													if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-														int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-														int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-														if (getOldTime >= getMaxTime) {
-															spoilItemInHandler(itemHandler, slot, stack, recipe);
-														}
-													}
-												}
+						ResourceLocation location = be.getType().getRegistryName();
+						double spoilRate = 1.0D;
+						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
+							spoilRate = SpoiledConfigCache.containerModifier.get(location);
+						}
+						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
+						if (spoilFlag) {
+							IItemHandler itemHandler = be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+							if (itemHandler != null && itemHandler.getSlots() > 0) {
+								for (int i = 0; i < itemHandler.getSlots(); i++) {
+									ItemStack stack = itemHandler.getStackInSlot(i);
+									if (stack != null && !stack.isEmpty()) {
+										int slot = i;
+										SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
+										if (recipe != null) {
+											updateSpoilingStack(stack, recipe);
+											if (isSpoiled(stack)) {
+												spoilItemInHandler(itemHandler, slot, stack, recipe);
 											}
 										}
 									}
@@ -84,10 +74,9 @@ public class SpoilHandler {
 			}
 			List<Entity> entityList = Lists.newArrayList();
 			level.getAllEntities().forEach(entityList::add);
-			for (Entity entity : entityList) {
-				if (entity instanceof Container containerEntity && entity.isAlive()) {
-					updateContainer(level, entity, containerEntity);
-				}
+			List<Entity> containerEntities = entityList.stream().filter(e -> e instanceof Container && e.isAlive()).toList();
+			for (Entity entity : containerEntities) {
+				updateContainer(level, entity, (Container) entity);
 			}
 		}
 	}
@@ -104,13 +93,14 @@ public class SpoilHandler {
 
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && !event.player.level.isClientSide && event.player.level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
+		if (event.phase == TickEvent.Phase.END && !event.player.level.isClientSide &&
+				event.player.level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
 			updateInventory(event.player);
 		}
 	}
 
 	private void updateInventory(Player player) {
-		Level level = player.level;
+		final Level level = player.level;
 		int invCount = player.getInventory().getContainerSize();
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
@@ -119,20 +109,13 @@ public class SpoilHandler {
 					stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
 						if (itemHandler.getSlots() > 0) {
 							for (int j = 0; j < itemHandler.getSlots(); j++) {
-								int slot = j;
-								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
+								ItemStack nestedStack = itemHandler.getStackInSlot(j);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
 									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
 									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
-
-										CompoundTag tag = nestedStack.getOrCreateTag();
-										if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-											int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-											int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-											if (getOldTime >= getMaxTime) {
-												spoilItemInHandler(itemHandler, slot, nestedStack, recipe);
-											}
+										if (isSpoiled(nestedStack)) {
+											spoilItemInHandler(itemHandler, j, nestedStack, recipe);
 										}
 									}
 								}
@@ -143,14 +126,8 @@ public class SpoilHandler {
 					SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
 					if (recipe != null) {
 						updateSpoilingStack(stack, recipe);
-
-						CompoundTag tag = stack.getOrCreateTag();
-						if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-							int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-							int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-							if (getOldTime >= getMaxTime) {
-								spoilItemForPlayer(player, stack, recipe);
-							}
+						if (isSpoiled(stack)) {
+							spoilItemForPlayer(player, stack, recipe);
 						}
 					}
 				}
@@ -161,7 +138,7 @@ public class SpoilHandler {
 	public void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
 		ItemStack spoiledStack = recipe.getResultItem().copy();
 		int oldStackCount = stack.getCount();
-		stack.setCount(0);
+		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {
 			spoiledStack.setCount(oldStackCount);
 			if (!player.addItem(spoiledStack)) {
@@ -180,20 +157,13 @@ public class SpoilHandler {
 					stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
 						if (itemHandler.getSlots() > 0) {
 							for (int j = 0; j < itemHandler.getSlots(); j++) {
-								int slot = j;
-								ItemStack nestedStack = itemHandler.getStackInSlot(slot);
+								ItemStack nestedStack = itemHandler.getStackInSlot(j);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
 									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
 									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
-
-										CompoundTag tag = nestedStack.getOrCreateTag();
-										if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-											int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-											int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-											if (getOldTime >= getMaxTime) {
-												spoilItemInHandler(itemHandler, slot, nestedStack, recipe);
-											}
+										if (isSpoiled(nestedStack)) {
+											spoilItemInHandler(itemHandler, j, nestedStack, recipe);
 										}
 									}
 								}
@@ -204,14 +174,8 @@ public class SpoilHandler {
 					SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
 					if (recipe != null) {
 						updateSpoilingStack(stack, recipe);
-
-						CompoundTag tag = stack.getOrCreateTag();
-						if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
-							int getOldTime = tag.getInt(Reference.SPOIL_TAG);
-							int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-							if (getOldTime >= getMaxTime) {
-								spoilItemForEntity(container, entity, stack, recipe);
-							}
+						if (isSpoiled(stack)) {
+							spoilItemForEntity(container, entity, stack, recipe);
 						}
 					}
 				}
@@ -222,7 +186,7 @@ public class SpoilHandler {
 	public void spoilItemForEntity(Container container, Entity entity, ItemStack stack, SpoilRecipe recipe) {
 		ItemStack spoiledStack = recipe.getResultItem().copy();
 		int oldStackCount = stack.getCount();
-		stack.setCount(0);
+		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {
 			spoiledStack.setCount(oldStackCount);
 			int freeSlot = getFreeSlot(container);
@@ -269,5 +233,17 @@ public class SpoilHandler {
 				}
 			}
 		}
+	}
+
+	public boolean isSpoiled(ItemStack stack) {
+		CompoundTag tag = stack.getOrCreateTag();
+		if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
+			int getOldTime = tag.getInt(Reference.SPOIL_TAG);
+			int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
+			if (getOldTime >= getMaxTime) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
