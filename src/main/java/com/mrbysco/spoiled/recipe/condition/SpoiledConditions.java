@@ -1,14 +1,16 @@
 package com.mrbysco.spoiled.recipe.condition;
 
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 public class SpoiledConditions {
 	@SubscribeEvent
-	public void onRegisterSerializers(RegistryEvent.Register<RecipeSerializer<?>> event) {
-		CraftingHelper.register(InitializeSpoilingCondition.Serializer.INSTANCE);
-		CraftingHelper.register(MergeRecipeCondition.Serializer.INSTANCE);
+	public void onRegisterSerializers(RegisterEvent event) {
+		if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
+			CraftingHelper.register(InitializeSpoilingCondition.Serializer.INSTANCE);
+			CraftingHelper.register(MergeRecipeCondition.Serializer.INSTANCE);
+		}
 	}
 }

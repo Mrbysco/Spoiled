@@ -6,8 +6,8 @@ import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import com.mrbysco.spoiled.util.SpoiledTags;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
@@ -21,9 +21,9 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.nio.file.Path;
@@ -38,11 +38,11 @@ public class SpoiledDataGen {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(new Recipes(generator));
-			generator.addProvider(new SpoiledItemTags(generator, new BlockTagsProvider(generator, Reference.MOD_ID, helper), helper));
+			generator.addProvider(event.includeServer(), new Recipes(generator));
+			generator.addProvider(event.includeServer(), new SpoiledItemTags(generator, new BlockTagsProvider(generator, Reference.MOD_ID, helper), helper));
 		}
 		if (event.includeClient()) {
-			generator.addProvider(new Language(generator));
+			generator.addProvider(event.includeServer(), new Language(generator));
 		}
 	}
 
@@ -72,7 +72,7 @@ public class SpoiledDataGen {
 		}
 
 		@Override
-		protected void saveAdvancement(HashCache cache, JsonObject advancementJson, Path path) {
+		protected void saveAdvancement(CachedOutput cache, JsonObject advancementJson, Path path) {
 			// Nope
 		}
 	}
@@ -110,7 +110,7 @@ public class SpoiledDataGen {
 
 		private void addModFood(TagKey<Item> tag, String modID, List<Item> blacklist) {
 			for (Item item : ForgeRegistries.ITEMS) {
-				if (!blacklist.contains(item) && item.isEdible() && item.getRegistryName().getNamespace().equals(modID)) {
+				if (!blacklist.contains(item) && item.isEdible() && ForgeRegistries.ITEMS.getKey(item).getNamespace().equals(modID)) {
 					this.tag(tag).add(item);
 				}
 			}

@@ -2,7 +2,6 @@ package com.mrbysco.spoiled.compat.jei.category;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrbysco.spoiled.Reference;
-import com.mrbysco.spoiled.compat.jei.JEICompat;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -17,8 +16,7 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -32,26 +30,14 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 
 	public SpoilCategory(IGuiHelper guiHelper) {
 		this.background = guiHelper.createBlankDrawable(140, 40);
-		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Items.ROTTEN_FLESH));
-		this.title = new TranslatableComponent("spoiled.gui.jei.category.spoiling");
+		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.ROTTEN_FLESH));
+		this.title = Component.translatable("spoiled.gui.jei.category.spoiling");
 		this.slotDrawable = guiHelper.getSlotDrawable();
-	}
-
-	@SuppressWarnings("removal")
-	@Override
-	public ResourceLocation getUid() {
-		return JEICompat.SPOILING;
 	}
 
 	@Override
 	public RecipeType<SpoilRecipe> getRecipeType() {
 		return TYPE;
-	}
-
-	@SuppressWarnings("removal")
-	@Override
-	public Class<? extends SpoilRecipe> getRecipeClass() {
-		return SpoilRecipe.class;
 	}
 
 	@Override
@@ -84,7 +70,7 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 		stack.pushPose();
 		stack.translate(1, 0, 0);
 		Font font = Minecraft.getInstance().font;
-		TranslatableComponent component = new TranslatableComponent("spoiled.gui.jei.spoil_time", recipe.getSpoilTime());
+		MutableComponent component = Component.translatable("spoiled.gui.jei.spoil_time", recipe.getSpoilTime());
 		font.draw(stack, component, 0, 0, 8);
 		stack.popPose();
 

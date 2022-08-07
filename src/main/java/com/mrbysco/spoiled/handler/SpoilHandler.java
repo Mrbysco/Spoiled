@@ -20,23 +20,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.LevelTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.TickEvent.WorldTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
 
 public class SpoilHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGH)
-	public void onWorldTick(WorldTickEvent event) {
-		if (event.phase == Phase.END && event.side == LogicalSide.SERVER && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
-			ServerLevel level = (ServerLevel) event.world;
+	public void onWorldTick(LevelTickEvent event) {
+		if (event.phase == Phase.END && event.side == LogicalSide.SERVER && event.level.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
+			ServerLevel level = (ServerLevel) event.level;
 			List<BlockPos> blockEntityPositions = ChunkHelper.getBlockEntityPositions(level).stream().filter(pos -> level.isAreaLoaded(pos, 1)).toList();
 			if (!blockEntityPositions.isEmpty()) {
 				for (BlockPos pos : blockEntityPositions) {
@@ -45,7 +46,7 @@ public class SpoilHandler {
 						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
 							continue;
 
-						ResourceLocation location = be.getType().getRegistryName();
+						ResourceLocation location = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(be.getType());
 						double spoilRate = 1.0D;
 						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 							spoilRate = SpoiledConfigCache.containerModifier.get(location);

@@ -17,7 +17,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
@@ -86,7 +85,7 @@ public class SpoilRecipe implements Recipe<Container> {
 		return true;
 	}
 
-	public static class SerializerSpoilRecipe extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<SpoilRecipe> {
+	public static class SerializerSpoilRecipe implements RecipeSerializer<SpoilRecipe> {
 		@Override
 		public SpoilRecipe fromJson(ResourceLocation recipeId, JsonObject jsonObject) {
 			String s = GsonHelper.getAsString(jsonObject, "group", "");

@@ -6,13 +6,13 @@
   "target": "@env(DEFAULT)",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ChunkMapAccessor",
-    "RandomizableContainerBlockEntityAccessor"
+	"ChunkMapAccessor",
+	"RandomizableContainerBlockEntityAccessor"
   ],
   "client": [
-    "ForgeHooksClientMixin"
+	"ForgeHooksClientMixin"
   ],
   "injectors": {
-    "defaultRequire": 1
+	"defaultRequire": 1
   }
 }

@@ -9,7 +9,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -31,10 +31,10 @@ public class SpoiledCommands {
 	private static int listBlockEntities(CommandContext<CommandSourceStack> ctx) {
 		CommandSourceStack source = ctx.getSource();
 
-		Component text = new TranslatableComponent("spoiled.command.blockentity_list.message").withStyle(ChatFormatting.YELLOW);
+		MutableComponent text = Component.translatable("spoiled.command.blockentity_list.message").withStyle(ChatFormatting.YELLOW);
 		source.sendSuccess(text, true);
 
-		List<ResourceLocation> keys = new ArrayList<>(ForgeRegistries.BLOCK_ENTITIES.getKeys());
+		List<ResourceLocation> keys = new ArrayList<>(ForgeRegistries.BLOCK_ENTITY_TYPES.getKeys());
 		Spoiled.LOGGER.info("List of Block Entities requested by " + source.getTextName() + ":");
 		keys.forEach(t -> Spoiled.LOGGER.info(t.toString()));
 
@@ -44,7 +44,7 @@ public class SpoiledCommands {
 	private static int listFood(CommandContext<CommandSourceStack> ctx) {
 		CommandSourceStack source = ctx.getSource();
 
-		Component text = new TranslatableComponent("spoiled.command.food_list.message").withStyle(ChatFormatting.YELLOW);
+		MutableComponent text = Component.translatable("spoiled.command.food_list.message").withStyle(ChatFormatting.YELLOW);
 		source.sendSuccess(text, true);
 
 		List<Item> foodItems = new ArrayList<>(ForgeRegistries.ITEMS.getValues().stream().filter(item -> item.isEdible()).collect(Collectors.toList()));

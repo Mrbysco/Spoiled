@@ -11,15 +11,17 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
 		if (SpoiledConfig.COMMON.spoilEverything.get()) {
-			if (stack.isEdible() && !SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stack.getItem().getRegistryName().toString())) {
+			final ResourceLocation stackLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
+			if (stack.isEdible() && !SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stackLocation.toString())) {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
-				String result = spoilStack.isEmpty() ? "to_air" : "to_" + spoilStack.getItem().getRegistryName().getPath();
-				String recipePath = "everything_" + stack.getItem().getRegistryName().getPath() + result;
+				String result = spoilStack.isEmpty() ? "to_air" : "to_" + ForgeRegistries.ITEMS.getKey(spoilStack.getItem()).getPath();
+				String recipePath = "everything_" + stackLocation.getPath() + result;
 				return new SpoilRecipe(new ResourceLocation(Reference.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, SpoiledConfig.COMMON.defaultSpoilTime.get());
 			}
 		} else {

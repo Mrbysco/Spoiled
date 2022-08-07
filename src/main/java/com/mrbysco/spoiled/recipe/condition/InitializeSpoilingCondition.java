@@ -15,9 +15,8 @@ public class InitializeSpoilingCondition implements ICondition {
 		return ID;
 	}
 
-	@SuppressWarnings("removal")
 	@Override
-	public boolean test() {
+	public boolean test(IContext context) {
 		return SpoiledConfig.COMMON.initializeSpoiling.get();
 	}
 

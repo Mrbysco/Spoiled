@@ -4,7 +4,6 @@ import com.mrbysco.spoiled.Spoiled;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -36,7 +35,7 @@ public class SpoiledConfigCache {
 				return new ItemStack(item);
 			} else {
 				Spoiled.LOGGER.error("'defaultSpoilItem' couldn't be parsed, using default");
-				return new ItemStack(ForgeRegistries.ITEMS.getValue(Items.ROTTEN_FLESH.getRegistryName()));
+				return new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("rotten_flesh")));
 			}
 		}
 	}
