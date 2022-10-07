@@ -1,0 +1,10 @@
+{
+  "type": "spoiled:spoil_recipe",
+  "ingredient": {
+	"item": "minecraft:apple"
+  },
+  "spoiltime": 100,
+  "result": {
+    "item": "minecraft:dirt"
+  }
+}
