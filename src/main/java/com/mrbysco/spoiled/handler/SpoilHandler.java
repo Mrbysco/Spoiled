@@ -81,7 +81,7 @@ public class SpoilHandler {
 		}
 	}
 
-	private void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
+	public static void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
 		ItemStack spoiledStack = recipe.getResultItem().copy();
 		int oldStackCount = stack.getCount();
 		stack.setCount(0);
@@ -135,7 +135,7 @@ public class SpoilHandler {
 		}
 	}
 
-	public void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
+	public static void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
 		ItemStack spoiledStack = recipe.getResultItem().copy();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
@@ -183,7 +183,7 @@ public class SpoilHandler {
 		}
 	}
 
-	public void spoilItemForEntity(Container container, Entity entity, ItemStack stack, SpoilRecipe recipe) {
+	public static void spoilItemForEntity(Container container, Entity entity, ItemStack stack, SpoilRecipe recipe) {
 		ItemStack spoiledStack = recipe.getResultItem().copy();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
@@ -199,7 +199,7 @@ public class SpoilHandler {
 		}
 	}
 
-	private int getFreeSlot(Container container) {
+	private static int getFreeSlot(Container container) {
 		for (int i = 0; i < container.getContainerSize(); ++i) {
 			if (container.getItem(i).isEmpty()) {
 				return i;
@@ -209,7 +209,7 @@ public class SpoilHandler {
 		return -1;
 	}
 
-	public void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
+	public static void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
 		CompoundTag tag = stack.getOrCreateTag();
 		if (tag.isEmpty()) {
 			if (!tag.contains(Reference.SPOIL_TAG)) {
@@ -235,7 +235,7 @@ public class SpoilHandler {
 		}
 	}
 
-	public boolean isSpoiled(ItemStack stack) {
+	public static boolean isSpoiled(ItemStack stack) {
 		CompoundTag tag = stack.getOrCreateTag();
 		if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
 			int getOldTime = tag.getInt(Reference.SPOIL_TAG);
