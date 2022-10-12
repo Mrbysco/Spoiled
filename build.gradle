@@ -12,8 +12,8 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17) // Mojang ships Java
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings  channel: "${mcp_channel}", version: "${mcp_mappings}"
-    
+    mappings channel: "${mcp_channel}", version: "${mcp_mappings}"
+
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
@@ -88,10 +88,13 @@ repositories {
         url = "https://dvs1.progwml6.com/files/maven"
     }
     maven {
-        url "https://maven.blamejared.com"
+        url = "https://maven.blamejared.com"
     }
     maven {
-        url "https://cursemaven.com"
+        url = "https://maven.theillusivec4.top/"
+    }
+    maven {
+        url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
@@ -110,23 +113,26 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
-//    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
+    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
 
     runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:3872906")
+
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
+    runtimeOnly fg.deobf("curse.maven:NamelessTrinkets-541466:4025040")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         attributes([
-            "Specification-Title": "spoiled",
-            "Specification-Vendor": "Mrbysco",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Mrbysco",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "MixinConfigs": "spoiled.mixins.json"
+                "Specification-Title"     : "spoiled",
+                "Specification-Vendor"    : "Mrbysco",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "Mrbysco",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs"            : "spoiled.mixins.json"
         ])
     }
 }

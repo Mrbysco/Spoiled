@@ -11,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -35,6 +36,10 @@ public class Spoiled {
 
 		MinecraftForge.EVENT_BUS.register(new SpoilHandler());
 		MinecraftForge.EVENT_BUS.addListener(this::onCommandRegister);
+
+		if (ModList.get().isLoaded("curios")) {
+			MinecraftForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
+		}
 
 		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
 			MinecraftForge.EVENT_BUS.register(new TooltipHandler());

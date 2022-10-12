@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.LevelTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -26,7 +27,6 @@ import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -42,7 +42,7 @@ public class SpoilHandler {
 			if (!blockEntityPositions.isEmpty()) {
 				for (BlockPos pos : blockEntityPositions) {
 					BlockEntity be = level.getBlockEntity(pos);
-					if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+					if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
 						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
 							continue;
 
@@ -53,7 +53,7 @@ public class SpoilHandler {
 						}
 						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
 						if (spoilFlag) {
-							IItemHandler itemHandler = be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).orElse(null);
+							IItemHandler itemHandler = be.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
 							if (itemHandler != null && itemHandler.getSlots() > 0) {
 								for (int i = 0; i < itemHandler.getSlots(); i++) {
 									ItemStack stack = itemHandler.getStackInSlot(i);
@@ -82,7 +82,7 @@ public class SpoilHandler {
 		}
 	}
 
-	private void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
+	public static void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
 		ItemStack spoiledStack = recipe.getResultItem().copy();
 		int oldStackCount = stack.getCount();
 		stack.setCount(0);
@@ -106,8 +106,8 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
 			if (!stack.isEmpty()) {
-				if (stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
-					stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
+				if (stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
+					stack.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
 						if (itemHandler.getSlots() > 0) {
 							for (int j = 0; j < itemHandler.getSlots(); j++) {
 								ItemStack nestedStack = itemHandler.getStackInSlot(j);
@@ -136,7 +136,7 @@ public class SpoilHandler {
 		}
 	}
 
-	public void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
+	public static void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
 		ItemStack spoiledStack = recipe.getResultItem().copy();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
@@ -154,8 +154,8 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = container.getItem(i);
 			if (!stack.isEmpty()) {
-				if (stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
-					stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(itemHandler -> {
+				if (stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
+					stack.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
 						if (itemHandler.getSlots() > 0) {
 							for (int j = 0; j < itemHandler.getSlots(); j++) {
 								ItemStack nestedStack = itemHandler.getStackInSlot(j);
@@ -210,7 +210,7 @@ public class SpoilHandler {
 		return -1;
 	}
 
-	public void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
+	public static void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
 		CompoundTag tag = stack.getOrCreateTag();
 		if (tag.isEmpty()) {
 			if (!tag.contains(Reference.SPOIL_TAG)) {
@@ -236,14 +236,12 @@ public class SpoilHandler {
 		}
 	}
 
-	public boolean isSpoiled(ItemStack stack) {
+	public static boolean isSpoiled(ItemStack stack) {
 		CompoundTag tag = stack.getOrCreateTag();
 		if (tag.contains(Reference.SPOIL_TAG) && tag.contains(Reference.SPOIL_TIME_TAG)) {
 			int getOldTime = tag.getInt(Reference.SPOIL_TAG);
 			int getMaxTime = tag.getInt(Reference.SPOIL_TIME_TAG);
-			if (getOldTime >= getMaxTime) {
-				return true;
-			}
+			return getOldTime >= getMaxTime;
 		}
 		return false;
 	}
