@@ -43,7 +43,7 @@ public class JEICompat implements IModPlugin {
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-		registration.addRecipeCatalyst(VanillaTypes.ITEM, new ItemStack(Items.ROTTEN_FLESH), SpoilCategory.TYPE);
+		registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, new ItemStack(Items.ROTTEN_FLESH), SpoilCategory.TYPE);
 	}
 
 	@Override

@@ -32,7 +32,7 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 
 	public SpoilCategory(IGuiHelper guiHelper) {
 		this.background = guiHelper.createBlankDrawable(140, 40);
-		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Items.ROTTEN_FLESH));
+		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.ROTTEN_FLESH));
 		this.title = new TranslatableComponent("spoiled.gui.jei.category.spoiling");
 		this.slotDrawable = guiHelper.getSlotDrawable();
 	}
