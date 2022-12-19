@@ -89,9 +89,11 @@ public class SpoilRecipe implements Recipe<Container> {
 		@Override
 		public SpoilRecipe fromJson(ResourceLocation recipeId, JsonObject jsonObject) {
 			String s = GsonHelper.getAsString(jsonObject, "group", "");
-			JsonElement jsonelement = (JsonElement) (GsonHelper.isArrayNode(jsonObject, "ingredient") ? GsonHelper.getAsJsonArray(jsonObject, "ingredient") : GsonHelper.getAsJsonObject(jsonObject, "ingredient"));
+			JsonElement jsonelement = (JsonElement) (GsonHelper.isArrayNode(jsonObject, "ingredient") ?
+					GsonHelper.getAsJsonArray(jsonObject, "ingredient") :
+					GsonHelper.getAsJsonObject(jsonObject, "ingredient"));
 			Ingredient ingredient = Ingredient.fromJson(jsonelement);
-			//Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
+			//Forge: Check if primitive string to keep vanilla or an object which can contain a count field.
 			ItemStack itemstack;
 			if (jsonObject.has("result")) {
 				if (jsonObject.get("result").isJsonObject())
