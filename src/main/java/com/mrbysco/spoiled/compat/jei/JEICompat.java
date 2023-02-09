@@ -17,7 +17,6 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.plugins.vanilla.crafting.CategoryRecipeValidator;
-import mezz.jei.util.ErrorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
@@ -60,7 +59,7 @@ public class JEICompat implements IModPlugin {
 
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
-		ErrorUtil.checkNotNull(spoilCategory, "spoilCategory");
+		assert spoilCategory != null;
 
 		registration.addRecipes(SpoilCategory.TYPE, getVatRecipes(spoilCategory));
 	}
