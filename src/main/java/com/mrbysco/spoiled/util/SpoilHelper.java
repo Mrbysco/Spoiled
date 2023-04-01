@@ -16,9 +16,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
+		String itemPath = stack.getItem().getRegistryName().toString();
+		if (!SpoiledConfig.COMMON.spoilBlacklist.get().isEmpty() && SpoiledConfig.COMMON.spoilBlacklist.get().contains(itemPath)) {
+			return null;
+		}
 		if (SpoiledConfig.COMMON.spoilEverything.get()) {
 			final ResourceLocation stackLocation = ForgeRegistries.ITEMS.getKey(stack.getItem());
-			if (stack.isEdible() && !SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stackLocation.toString())) {
+			if (stack.isEdible()) {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + ForgeRegistries.ITEMS.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
