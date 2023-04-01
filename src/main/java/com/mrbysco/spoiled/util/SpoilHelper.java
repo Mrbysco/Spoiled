@@ -16,7 +16,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
-		String itemPath = stack.getItem().getRegistryName().toString();
+		String itemPath = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
 		if (!SpoiledConfig.COMMON.spoilBlacklist.get().isEmpty() && SpoiledConfig.COMMON.spoilBlacklist.get().contains(itemPath)) {
 			return null;
 		}
