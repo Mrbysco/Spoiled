@@ -21,6 +21,6 @@ side="BOTH"
 [[dependencies.spoiled]]
 modId="forge"
 mandatory=true
-versionRange="[40.0.35,)"
+versionRange="[40.1.0,)"
 ordering="NONE"
 side="BOTH"
