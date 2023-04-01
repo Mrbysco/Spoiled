@@ -15,8 +15,12 @@ import net.minecraft.world.level.Level;
 public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
+		String itemPath = stack.getItem().getRegistryName().toString();
+		if (!SpoiledConfig.COMMON.spoilBlacklist.get().isEmpty() && SpoiledConfig.COMMON.spoilBlacklist.get().contains(itemPath)) {
+			return null;
+		}
 		if (SpoiledConfig.COMMON.spoilEverything.get()) {
-			if (stack.isEdible() && !SpoiledConfig.COMMON.spoilEverythingBlacklist.get().contains(stack.getItem().getRegistryName().toString())) {
+			if (stack.isEdible()) {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + spoilStack.getItem().getRegistryName().getPath();
 				String recipePath = "everything_" + stack.getItem().getRegistryName().getPath() + result;

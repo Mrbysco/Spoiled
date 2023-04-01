@@ -12,6 +12,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 
 public class SpoiledConfig {
+	public final static List<String> DEFAULT_SPOIL_BLACKLIST = List.of("minecraft:rotten_flesh", "minecraft:enchanted_golden_apple");
+
 	public static class Client {
 		public final BooleanValue showPercentage;
 
@@ -33,7 +35,7 @@ public class SpoiledConfig {
 		public final BooleanValue initializeSpoiling;
 		public final BooleanValue mergeSpoilingFood;
 		public final BooleanValue spoilEverything;
-		public final ConfigValue<List<? extends String>> spoilEverythingBlacklist;
+		public final ConfigValue<List<? extends String>> spoilBlacklist;
 		public final IntValue defaultSpoilTime;
 		public final ConfigValue<String> defaultSpoilItem;
 
@@ -70,15 +72,9 @@ public class SpoiledConfig {
 					.comment("When enabled Spoiled makes every edible item spoil into the specified Spoil Item (This overwrites json spoiling completely) [default: false]")
 					.define("spoilEverything", false);
 
-			String[] spoilBlacklist = new String[]
-					{
-							"minecraft:rotten_flesh",
-							"minecraft:enchanted_golden_apple"
-					};
-
-			spoilEverythingBlacklist = builder
-					.comment("Defines a list of items that you do not want to spoil when 'spoilEverything' is enabled")
-					.defineListAllowEmpty(List.of("spoilEverythingBlacklist"), () -> List.of(spoilBlacklist), o -> (o instanceof String));
+			spoilBlacklist = builder
+					.comment("Defines a list of items that are never allowed to spoil")
+					.defineListAllowEmpty(List.of("spoilBlacklist"), () -> DEFAULT_SPOIL_BLACKLIST, o -> (o instanceof String));
 
 			defaultSpoilTime = builder
 					.comment("Defines the total amount of spoiling updates that is used by the default initialized spoiling when 'initializeSpoiling' is enabled \n" +
