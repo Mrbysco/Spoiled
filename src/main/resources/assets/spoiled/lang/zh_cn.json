@@ -1,0 +1,12 @@
+{
+  "spoiled.command.blockentity_list.message": "一个方块实体列表已输出至日志",
+  "spoiled.command.food_list.message": "一个食物列表已输出至日志",
+  "spoiled.gui.jei.category.spoiling": "变质",
+  "spoiled.gui.jei.spoil_time": "变质耗时: %s",
+  "spoiled.spoiling": "变质中: ",
+  "spoiled.spoiling.0": "新鲜的",
+  "spoiled.spoiling.100": "腐烂的",
+  "spoiled.spoiling.25": "",
+  "spoiled.spoiling.50": "不新鲜的",
+  "spoiled.spoiling.75": "不新鲜的"
+}
