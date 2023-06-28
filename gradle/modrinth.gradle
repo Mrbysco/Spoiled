@@ -12,5 +12,11 @@ if (System.getenv().MODRINTH_KEY) {
         changelog = fileContents
         gameVersions = ["${mc_version}"]
         loaders = ["forge"]
+
+        dependencies {
+            optional.project "jei"
+            optional.project "curios"
+            optional.project "crafttweaker"
+        }
     }
 }

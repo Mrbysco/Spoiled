@@ -1,1 +1,1 @@
-* Update JEI compat
+* Fix issue where the timer will tick multiple times 

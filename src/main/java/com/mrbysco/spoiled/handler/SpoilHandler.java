@@ -37,6 +37,8 @@ public class SpoilHandler {
 	public void onWorldTick(WorldTickEvent event) {
 		if (event.phase == Phase.END && event.side == LogicalSide.SERVER && event.world.getGameTime() % SpoiledConfigCache.spoilRate == 0) {
 			ServerLevel level = (ServerLevel) event.world;
+			if (level.dimension() != Level.OVERWORLD) return;
+
 			List<BlockPos> blockEntityPositions = ChunkHelper.getBlockEntityPositions(level).stream().filter(pos -> level.isAreaLoaded(pos, 1)).toList();
 			if (!blockEntityPositions.isEmpty()) {
 				for (BlockPos pos : blockEntityPositions) {
