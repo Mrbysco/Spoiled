@@ -5,12 +5,18 @@ if (System.getenv().MODRINTH_KEY) {
     modrinth {
         token = System.getenv().MODRINTH_KEY
         projectId = project.modrinth_id
-        versionType = "release"
+        versionType = "beta"
         versionName = "${mod_name} ${mc_version}"
         versionNumber = project.version
         uploadFile = jar
         changelog = fileContents
         gameVersions = ["${mc_version}"]
         loaders = ["forge"]
+
+        dependencies {
+            optional.project "jei"
+            optional.project "curios"
+            optional.project "crafttweaker"
+        }
     }
 }

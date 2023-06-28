@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[43,)"
+loaderVersion="[44,)"
 issueTrackerURL="https://github.com/Mrbysco/Spoiled/issues"
 license="MIT"
 
@@ -15,6 +15,6 @@ I'm sorry if I'm spoiling it for you. But you might wanna keep an eye on your fo
 [[dependencies.spoiled]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.19.2,1.20)"
+versionRange="[1.19.3,1.20)"
 ordering="NONE"
 side="BOTH"

@@ -4,6 +4,7 @@ import com.mrbysco.spoiled.Spoiled;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -17,12 +18,22 @@ public class SpoiledConfigCache {
 	public static Map<ResourceLocation, Double> containerModifier;
 	public static long spoilRate;
 
-	public static void refreshCache() {
+	public static void refreshCache(ModConfig.Type type) {
 		Spoiled.LOGGER.info("Refreshing config cache");
-		showPercentage = SpoiledConfig.CLIENT.showPercentage.get();
+		if (type == ModConfig.Type.CLIENT) {
+			setShowPercentage(SpoiledConfig.CLIENT.showPercentage.get());
+		} else if (type == ModConfig.Type.COMMON) {
+			setSpoilRate(SpoiledConfig.COMMON.spoilRate.get());
+			generateContainerModifier(SpoiledConfig.COMMON.containerModifier.get());
+		}
+	}
 
-		generateContainerModifier(SpoiledConfig.COMMON.containerModifier.get());
-		spoilRate = SpoiledConfig.COMMON.spoilRate.get() * 20L;
+	public static void setShowPercentage(boolean value) {
+		showPercentage = value;
+	}
+
+	public static void setSpoilRate(int value) {
+		spoilRate = value * 20L;
 	}
 
 	public static ItemStack getDefaultSpoilItem() {

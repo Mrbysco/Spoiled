@@ -6,28 +6,33 @@ import com.mrbysco.spoiled.recipe.SpoiledRecipes;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import com.mrbysco.spoiled.util.SpoiledTags;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
-import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
-import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -35,19 +40,28 @@ public class SpoiledDataGen {
 	@SubscribeEvent
 	public static void gatherData(GatherDataEvent event) {
 		DataGenerator generator = event.getGenerator();
+		PackOutput packOutput = generator.getPackOutput();
+		CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(event.includeServer(), new Recipes(generator));
-			generator.addProvider(event.includeServer(), new SpoiledItemTags(generator, new BlockTagsProvider(generator, Reference.MOD_ID, helper), helper));
+			generator.addProvider(event.includeServer(), new Recipes(packOutput));
+			BlockTagsProvider blockTagsProvider;
+			generator.addProvider(event.includeServer(), blockTagsProvider = new BlockTagsProvider(packOutput, lookupProvider, Reference.MOD_ID, helper) {
+				@Override
+				protected void addTags(HolderLookup.Provider provider) {
+
+				}
+			});
+			generator.addProvider(event.includeServer(), new SpoiledItemTags(packOutput, lookupProvider, blockTagsProvider, helper));
 		}
 		if (event.includeClient()) {
-			generator.addProvider(event.includeServer(), new Language(generator));
+			generator.addProvider(event.includeServer(), new Language(packOutput));
 		}
 	}
 
 	private static class Recipes extends RecipeProvider {
-		public Recipes(DataGenerator gen) {
+		public Recipes(PackOutput gen) {
 			super(gen);
 		}
 
@@ -55,12 +69,13 @@ public class SpoiledDataGen {
 		private final String toRotten = "_to_rotten_flesh";
 
 		@Override
-		protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer) {
+		protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
 			makeConditionalRecipe(consumer, "vanilla", Ingredient.of(SpoiledTags.FOODS_VANILLA));
 
 			ConditionalRecipe.builder()
 					.addCondition(new MergeRecipeCondition())
-					.addRecipe(c -> SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get()).save(c, new ResourceLocation(Reference.MOD_ID, "merge_food").toString()))
+					.addRecipe(c -> SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get())
+							.save(c, new ResourceLocation(Reference.MOD_ID, "merge_food").toString()))
 					.build(consumer, new ResourceLocation(Reference.MOD_ID, "merge_food"));
 		}
 
@@ -72,14 +87,14 @@ public class SpoiledDataGen {
 		}
 
 		@Override
-		protected void saveAdvancement(CachedOutput cache, JsonObject advancementJson, Path path) {
-			// Nope
+		protected @Nullable CompletableFuture<?> saveAdvancement(CachedOutput output, FinishedRecipe finishedRecipe, JsonObject advancementJson) {
+			return null;
 		}
 	}
 
 	private static class Language extends LanguageProvider {
-		public Language(DataGenerator gen) {
-			super(gen, Reference.MOD_ID, "en_us");
+		public Language(PackOutput packOutput) {
+			super(packOutput, Reference.MOD_ID, "en_us");
 		}
 
 		@Override
@@ -99,12 +114,13 @@ public class SpoiledDataGen {
 	}
 
 	public static class SpoiledItemTags extends ItemTagsProvider {
-		public SpoiledItemTags(DataGenerator dataGenerator, BlockTagsProvider blockTagsProvider, ExistingFileHelper existingFileHelper) {
-			super(dataGenerator, blockTagsProvider, Reference.MOD_ID, existingFileHelper);
+		public SpoiledItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
+							   TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper) {
+			super(output, lookupProvider, blockTagProvider, Reference.MOD_ID, existingFileHelper);
 		}
 
 		@Override
-		protected void addTags() {
+		public void addTags(HolderLookup.Provider lookupProvider) {
 			addModFood(SpoiledTags.FOODS_VANILLA, "minecraft", List.of(Items.ROTTEN_FLESH, Items.ENCHANTED_GOLDEN_APPLE));
 		}
 

@@ -3,7 +3,7 @@ package com.mrbysco.spoiled.datagen;
 import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.recipe.SpoiledRecipes;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -31,7 +31,7 @@ public class SpoilRecipeBuilder {
 	}
 
 	public void build(Consumer<FinishedRecipe> consumerIn) {
-		this.build(consumerIn, Registry.ITEM.getKey(this.result));
+		this.build(consumerIn, BuiltInRegistries.ITEM.getKey(this.result));
 	}
 
 	public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {

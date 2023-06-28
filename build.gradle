@@ -120,10 +120,10 @@ dependencies {
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
     implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
 
-    runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:4412866")
+    runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:4470704")
 
     implementation fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
-    runtimeOnly fg.deobf("curse.maven:NamelessTrinkets-541466:4378162")
+//    runtimeOnly fg.deobf("curse.maven:NamelessTrinkets-541466:4378162")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
