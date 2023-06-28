@@ -15,10 +15,10 @@ import top.theillusivec4.curios.api.CuriosApi;
 
 public class CuriosCompat {
 	public static void onCuriosTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && !event.player.level.isClientSide &&
-				event.player.level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
+		if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide &&
+				event.player.level().getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
 			final Player player = event.player;
-			final Level level = player.level;
+			final Level level = player.level();
 			LazyOptional<IItemHandlerModifiable> optionalEquipped = CuriosApi.getCuriosHelper().getEquippedCurios(player);
 			optionalEquipped.ifPresent(equipped -> {
 				int slots = equipped.getSlots();

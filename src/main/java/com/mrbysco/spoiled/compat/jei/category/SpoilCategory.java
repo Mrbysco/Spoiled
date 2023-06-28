@@ -15,6 +15,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -71,19 +72,17 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 	}
 
 	@Override
-	public void draw(SpoilRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack stack, double mouseX, double mouseY) {
-		IRecipeCategory.super.draw(recipe, recipeSlotsView, stack, mouseX, mouseY);
+	public void draw(SpoilRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+		this.slotDrawable.draw(guiGraphics, 9, 13);
 
-		this.slotDrawable.draw(stack, 9, 13);
-
-		stack.pushPose();
-		stack.translate(1, 0, 0);
+		PoseStack poseStack = guiGraphics.pose();
+		poseStack.pushPose();
+		poseStack.translate(1, 0, 0);
 		Font font = Minecraft.getInstance().font;
 		MutableComponent component = Component.translatable("spoiled.gui.jei.spoil_time", recipe.getSpoilTime());
-		font.draw(stack, component, 0, 0, 8);
-		stack.popPose();
+		guiGraphics.drawString(font, component, 0, 0, 8, false);
+		poseStack.popPose();
 
-		this.slotDrawable.draw(stack, 112, 13);
-
+		this.slotDrawable.draw(guiGraphics, 112, 13);
 	}
 }

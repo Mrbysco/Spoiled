@@ -1,40 +1,51 @@
 plugins {
+    id 'idea'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.+'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.spongepowered.mixin'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'com.modrinth.minotaur' version "2.+"
 }
 
 version = "${version}"
-group = 'com.mrbysco.spoiled' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Spoiled-${mc_version}"
+group = "${mod_group}"
+base {
+    archivesName = "${mod_archive_name}-${mc_version}"
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
 minecraft {
-    mappings channel: "${mcp_channel}", version: "${mcp_mappings}"
+    mappings channel: "${mapping_channel}", version: "${mapping_version}"
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    copyIdeResources = true
+
+    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
     runs {
         client {
             workingDirectory project.file('run')
-            arg "-mixin.config=spoiled.mixins.json"
+            arg "--mixin.config=${mod_id}.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // Recommended logging data for a userdev environment
             // property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', "${mod_id}"
+
             mods {
-                spoiled {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
@@ -42,18 +53,22 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            arg "-mixin.config=spoiled.mixins.json"
+            arg "--mixin.config=${mod_id}.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
             // Recommended logging data for a userdev environment
-            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
+            // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+            property 'forge.enabledGameTestNamespaces', "${mod_id}"
+
             mods {
-                spoiled {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
@@ -61,20 +76,22 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
+            arg "--mixin.config=${mod_id}.mixins.json"
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
 
-
             // Recommended logging data for a userdev environment
-            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.markers', 'REGISTRIES'
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'spoiled', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+            args '--mod', "${mod_id}", '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
-                spoiled {
+                "${mod_id}" {
                     source sourceSets.main
                 }
             }
@@ -85,10 +102,11 @@ minecraft {
 // Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+}
+
 repositories {
-    maven {
-        url = "https://dvs1.progwml6.com/files/maven"
-    }
     maven {
         url = "https://maven.blamejared.com"
     }
@@ -106,10 +124,6 @@ repositories {
     }
 }
 
-mixin {
-    add sourceSets.main, "spoiled.refmap.json"
-}
-
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
@@ -118,26 +132,25 @@ dependencies {
     compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
 
     runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+
     implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
+    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
 
-    runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:4473166")
-
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
-//    runtimeOnly fg.deobf("curse.maven:NamelessTrinkets-541466:4378162")
+    runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:4612671")
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
+// Example for how to get properties into the manifest for reading at runtime.
 jar {
     manifest {
         attributes([
-                "Specification-Title"     : "spoiled",
+                "Specification-Title"     : "${mod_id}",
                 "Specification-Vendor"    : "Mrbysco",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
+                "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "Mrbysco",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs"            : "spoiled.mixins.json"
+                "MixinConfigs"            : "${mod_id}.mixins.json"
         ])
     }
 }

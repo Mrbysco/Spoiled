@@ -79,7 +79,7 @@ public class SpoilRecipeBuilder {
 		}
 
 		/**
-		 * Gets the ID for the advancement associated with this recipe. Should not be null if {@link #getAdvancementId()}
+		 * Gets the ID for the advancement associated with this recipe.
 		 * is non-null.
 		 */
 		@Nullable

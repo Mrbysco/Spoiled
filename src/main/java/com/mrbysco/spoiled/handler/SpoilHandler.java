@@ -96,14 +96,14 @@ public class SpoilHandler {
 
 	@SubscribeEvent
 	public void onPlayerTick(PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && !event.player.level.isClientSide &&
-				event.player.level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
+		if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide &&
+				event.player.level().getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
 			updateInventory(event.player);
 		}
 	}
 
 	private void updateInventory(Player player) {
-		final Level level = player.level;
+		final Level level = player.level();
 		int invCount = player.getInventory().getContainerSize();
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
@@ -139,14 +139,14 @@ public class SpoilHandler {
 	}
 
 	public static void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem(player.level.registryAccess()).copy();
+		ItemStack spoiledStack = recipe.getResultItem(player.level().registryAccess()).copy();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {
 			spoiledStack.setCount(oldStackCount);
 			if (!player.addItem(spoiledStack)) {
-				ItemEntity itemEntity = new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), spoiledStack);
-				player.level.addFreshEntity(itemEntity);
+				ItemEntity itemEntity = new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), spoiledStack);
+				player.level().addFreshEntity(itemEntity);
 			}
 		}
 	}
@@ -187,7 +187,7 @@ public class SpoilHandler {
 	}
 
 	public void spoilItemForEntity(Container container, Entity entity, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem(entity.level.registryAccess()).copy();
+		ItemStack spoiledStack = recipe.getResultItem(entity.level().registryAccess()).copy();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {
@@ -196,8 +196,8 @@ public class SpoilHandler {
 			if (freeSlot != -1) {
 				container.setItem(freeSlot, spoiledStack);
 			} else {
-				ItemEntity itemEntity = new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(), spoiledStack);
-				entity.level.addFreshEntity(itemEntity);
+				ItemEntity itemEntity = new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), spoiledStack);
+				entity.level().addFreshEntity(itemEntity);
 			}
 		}
 	}

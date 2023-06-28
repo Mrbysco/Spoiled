@@ -57,7 +57,7 @@ public class StackFoodRecipe extends CustomRecipe {
 		if (list.size() == 2) {
 			ItemStack stack1 = list.get(0);
 			ItemStack stack2 = list.get(1);
-			if (stack1.sameItem(stack2) && SpoilHelper.isSpoiling(stack1) && totalUnderMax(stack1, stack2)) {
+			if (ItemStack.isSameItem(stack1, stack2) && SpoilHelper.isSpoiling(stack1) && totalUnderMax(stack1, stack2)) {
 				int spoil1 = SpoilHelper.getSpoilTime(stack1);
 				int spoil2 = SpoilHelper.getSpoilTime(stack2);
 				int averageSpoil = (int) ((spoil1 + spoil2) / 2.0);

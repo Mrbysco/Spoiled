@@ -50,15 +50,17 @@ public class SpoiledConfig {
 					};
 
 			containerModifier = builder
-					.comment("Determines the spoilrate in specific containers [Syntax: tileentity:spoil_rate]\n" +
-							"Examples: \"minecraft:shulker_box,0\" would make shulker boxes not spoil food\n" +
-							"\"cookingforblockheads:fridge,0.2\" would make a cooking for blockheads fridge spoil at 20% of the usual spoilrate")
+					.comment("""
+							Determines the spoilrate in specific containers [Syntax: tileentity:spoil_rate]
+							Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food
+							"cookingforblockheads:fridge,0.2" would make a cooking for blockheads fridge spoil at 20% of the usual spoilrate""")
 					.defineListAllowEmpty(List.of("containerModifier"), () -> List.of(containers), o -> (o instanceof String));
 
 			spoilRate = builder
-					.comment("Defines the default total amount of spoiling updates for each food item \n" +
-							"(For example, a defaultSpoilTime of 40 means any default food item will have 40 total updates before it spoils. \n" +
-							"This can be altered when custom food spoiling is set using a datapack) [default: 30]")
+					.comment("""
+							Defines the default total amount of spoiling updates for each food item\s
+							(For example, a defaultSpoilTime of 40 means any default food item will have 40 total updates before it spoils.\s
+							This can be altered when custom food spoiling is set using a datapack) [default: 30]""")
 					.defineInRange("spoilRate", 30, 1, Integer.MAX_VALUE);
 
 			initializeSpoiling = builder
