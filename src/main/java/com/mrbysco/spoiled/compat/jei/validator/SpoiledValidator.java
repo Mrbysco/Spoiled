@@ -30,7 +30,7 @@ public class SpoiledValidator {
 		if (recipe.isSpecial()) {
 			return true;
 		}
-		ItemStack recipeOutput = recipe.getResultItem();
+		ItemStack recipeOutput = recipe.getResultItem(null);
 		if (recipeOutput == null || recipeOutput.isEmpty()) {
 			Spoiled.LOGGER.error("Recipe has no output. {}", recipe.getId());
 			return false;

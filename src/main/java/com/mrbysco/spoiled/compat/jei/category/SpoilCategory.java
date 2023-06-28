@@ -15,6 +15,8 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -57,8 +59,15 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, SpoilRecipe recipe, IFocusGroup focuses) {
+		Minecraft minecraft = Minecraft.getInstance();
+		ClientLevel level = minecraft.level;
+		if (level == null) {
+			throw new NullPointerException("level must not be null.");
+		}
+		RegistryAccess registryAccess = level.registryAccess();
+
 		builder.addSlot(RecipeIngredientRole.INPUT, 10, 14).addIngredients(recipe.getIngredients().get(0));
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 14).addItemStack(recipe.getResultItem());
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 14).addItemStack(recipe.getResultItem(registryAccess));
 	}
 
 	@Override

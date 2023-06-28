@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -41,12 +42,12 @@ public class SpoilRecipe implements Recipe<Container> {
 	}
 
 	@Override
-	public boolean matches(Container inv, Level worldIn) {
+	public boolean matches(Container inv, Level level) {
 		return this.getIngredients().get(0).test(inv.getItem(0));
 	}
 
-	public ItemStack assemble(Container inventory) {
-		return this.result.copy();
+	public ItemStack assemble(Container inventory, RegistryAccess registryAccess) {
+		return getResultItem(registryAccess).copy();
 	}
 
 	public boolean canCraftInDimensions(int x, int y) {
@@ -59,7 +60,7 @@ public class SpoilRecipe implements Recipe<Container> {
 		return nonnulllist;
 	}
 
-	public ItemStack getResultItem() {
+	public ItemStack getResultItem(RegistryAccess registryAccess) {
 		return this.result;
 	}
 

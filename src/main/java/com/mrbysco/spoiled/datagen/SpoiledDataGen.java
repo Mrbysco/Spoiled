@@ -53,7 +53,7 @@ public class SpoiledDataGen {
 
 				}
 			});
-			generator.addProvider(event.includeServer(), new SpoiledItemTags(packOutput, lookupProvider, blockTagsProvider, helper));
+			generator.addProvider(event.includeServer(), new SpoiledItemTags(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), helper));
 		}
 		if (event.includeClient()) {
 			generator.addProvider(event.includeServer(), new Language(packOutput));
@@ -115,7 +115,7 @@ public class SpoiledDataGen {
 
 	public static class SpoiledItemTags extends ItemTagsProvider {
 		public SpoiledItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider,
-							   TagsProvider<Block> blockTagProvider, ExistingFileHelper existingFileHelper) {
+							   CompletableFuture<TagsProvider.TagLookup<Block>> blockTagProvider, ExistingFileHelper existingFileHelper) {
 			super(output, lookupProvider, blockTagProvider, Reference.MOD_ID, existingFileHelper);
 		}
 

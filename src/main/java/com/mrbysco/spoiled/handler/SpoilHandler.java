@@ -8,6 +8,7 @@ import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.util.ChunkHelper;
 import com.mrbysco.spoiled.util.SpoilHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -64,7 +65,7 @@ public class SpoilHandler {
 										if (recipe != null) {
 											updateSpoilingStack(stack, recipe);
 											if (isSpoiled(stack)) {
-												spoilItemInHandler(itemHandler, slot, stack, recipe);
+												spoilItemInHandler(itemHandler, slot, stack, recipe, level.registryAccess());
 											}
 										}
 									}
@@ -83,8 +84,8 @@ public class SpoilHandler {
 		}
 	}
 
-	public static void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem().copy();
+	public static void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess) {
+		ItemStack spoiledStack = recipe.getResultItem(registryAccess).copy();
 		int oldStackCount = stack.getCount();
 		stack.setCount(0);
 		if (!spoiledStack.isEmpty()) {
@@ -117,7 +118,7 @@ public class SpoilHandler {
 									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
 										if (isSpoiled(nestedStack)) {
-											spoilItemInHandler(itemHandler, j, nestedStack, recipe);
+											spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
 										}
 									}
 								}
@@ -138,7 +139,7 @@ public class SpoilHandler {
 	}
 
 	public static void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem().copy();
+		ItemStack spoiledStack = recipe.getResultItem(player.level.registryAccess()).copy();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {
@@ -165,7 +166,7 @@ public class SpoilHandler {
 									if (recipe != null) {
 										updateSpoilingStack(nestedStack, recipe);
 										if (isSpoiled(nestedStack)) {
-											spoilItemInHandler(itemHandler, j, nestedStack, recipe);
+											spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
 										}
 									}
 								}
@@ -186,7 +187,7 @@ public class SpoilHandler {
 	}
 
 	public void spoilItemForEntity(Container container, Entity entity, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem().copy();
+		ItemStack spoiledStack = recipe.getResultItem(entity.level.registryAccess()).copy();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {

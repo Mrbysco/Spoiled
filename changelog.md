@@ -1,4 +1,1 @@
-### Config has changed! ###
-* Renamed `spoilEverythingBlacklist` to `spoilBlacklist`.
-* `spoilBlacklist` is now a general spoiling blacklist
-* 
+* Initial update to 1.19.4

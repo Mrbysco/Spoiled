@@ -3,6 +3,7 @@ package com.mrbysco.spoiled.recipe;
 import com.google.common.collect.Lists;
 import com.mrbysco.spoiled.util.SpoilHelper;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +38,7 @@ public class StackFoodRecipe extends CustomRecipe {
 		return list.size() == 2;
 	}
 
-	public ItemStack assemble(CraftingContainer container) {
+	public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
 		List<ItemStack> list = Lists.newArrayList();
 
 		for (int i = 0; i < container.getContainerSize(); ++i) {
