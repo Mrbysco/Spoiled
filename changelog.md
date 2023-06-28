@@ -1,4 +1,1 @@
-### Config has changed! ###
-* Renamed `spoilEverythingBlacklist` to `spoilBlacklist`.
-* `spoilBlacklist` is now a general spoiling blacklist
-* 
+* Fix spoiling sometimes happening twice or even thrice as fast as it should
