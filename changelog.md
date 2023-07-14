@@ -1,1 +1,0 @@
-* Initial update to 1.20

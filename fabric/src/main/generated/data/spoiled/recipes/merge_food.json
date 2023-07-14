@@ -1,0 +1,9 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "spoiled:merge_food"
+    }
+  ],
+  "type": "spoiled:stack_food",
+  "category": "misc"
+}

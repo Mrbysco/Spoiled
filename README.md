@@ -1,4 +1,5 @@
-[![build](https://github.com/Mrbysco/spoiled/actions/workflows/build.yml/badge.svg)](https://github.com/Mrbysco/spoiled/actions/workflows/build.yml) [![](http://cf.way2muchnoise.eu/versions/364918_latest.svg)](https://www.curseforge.com/minecraft/mc-mods/spoiled)
+[![build](https://github.com/Mrbysco/spoiled/actions/workflows/build.yml/badge.svg)](https://github.com/Mrbysco/spoiled/actions/workflows/build.yml) 
+[![](http://cf.way2muchnoise.eu/versions/364918.svg)](https://www.curseforge.com/minecraft/mc-mods/spoiled)
 
 # Spoiled #
 

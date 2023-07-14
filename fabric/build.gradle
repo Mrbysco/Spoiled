@@ -1,0 +1,170 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven-publish'
+    id 'fabric-loom'
+    id 'com.matthewprenger.cursegradle'
+    id 'com.modrinth.minotaur'
+}
+
+base {
+    archivesName = "${mod_name}-fabric-${minecraft_version}"
+}
+
+repositories {
+    maven {
+        url "https://maven.shedaniel.me/"
+    }
+    maven {
+        url "https://maven.terraformersmc.com/"
+        content {
+            includeGroup "com.terraformersmc"
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation project(":common")
+
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+    modImplementation "com.terraformersmc:modmenu:${mod_menu_version}"
+
+    modImplementation("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    modImplementation ("com.blamejared.crafttweaker:CraftTweaker-fabric-${minecraft_version}:${crafttweaker_version}")
+}
+
+loom {
+    if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
+        accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        datagenClient {
+            inherit client
+            name "Fabric Data"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=${mod_id}"
+
+            runDir "build/datagen"
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    'src/main/generated'
+            ]
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    source(project(":common").sourceSets.main.allSource)
+}
+tasks.withType(Javadoc).configureEach {
+    source(project(":common").sourceSets.main.allJava)
+}
+tasks.named("sourcesJar", Jar) {
+    from(project(":common").sourceSets.main.allSource)
+}
+
+processResources {
+    from project(":common").sourceSets.main.resources
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId base.archivesName.get()
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        if (System.getenv().SAP_SECRET) {
+            maven {
+                url "https://maven.saps.dev/releases"
+                credentials {
+                    username = "mrbysco"
+                    password = "${System.getenv().SAP_SECRET}"
+                }
+            }
+        }
+    }
+}
+
+if (System.getenv().CURSEFORGE_KEY) {
+    curseforge {
+        apiKey = System.getenv().CURSEFORGE_KEY
+        project {
+            id = project.curseforge_id
+            releaseType = "alpha"
+            addGameVersion "Fabric"
+            addGameVersion "${minecraft_version}"
+            addGameVersion "Java 17"
+            mainArtifact(remapJar)
+            changelog = file("$project.rootDir/changelog.md")
+            changelogType = 'markdown'
+
+            relations {
+                requiredDependency "fabric-api"
+                requiredDependency "cloth-config"
+
+                optionalDependency "jei"
+                optionalDependency "crafttweaker"
+            }
+        }
+
+        options {
+            forgeGradleIntegration = false
+        }
+    }
+}
+
+if (System.getenv().MODRINTH_KEY) {
+    String fileContents = file("$project.rootDir/changelog.md").text
+    modrinth {
+        token = System.getenv().MODRINTH_KEY
+        projectId = project.modrinth_id
+        versionType = "alpha"
+        versionName = "${mod_name} ${minecraft_version}"
+        versionNumber = project.version
+        uploadFile = remapJar
+        changelog = fileContents
+        gameVersions = ["${minecraft_version}"]
+        loaders = ["fabric"]
+
+        dependencies {
+            required.project "fabric-api"
+            required.project "cloth-config"
+
+            optional.project "jei"
+            optional.project "crafttweaker"
+        }
+    }
+}

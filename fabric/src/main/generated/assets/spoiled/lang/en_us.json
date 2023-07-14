@@ -1,0 +1,22 @@
+{
+  "spoiled.command.blockentity_list.message": "A list of Block Entities has been output into the log",
+  "spoiled.command.food_list.message": "A list of Food has been output into the log",
+  "spoiled.gui.jei.category.spoiling": "Spoiling",
+  "spoiled.gui.jei.spoil_time": "Spoil Time: %s",
+  "spoiled.spoiling": "Spoiling progress: ",
+  "spoiled.spoiling.0": "Fresh",
+  "spoiled.spoiling.100": "Rotten",
+  "spoiled.spoiling.25": "",
+  "spoiled.spoiling.50": "Stale",
+  "spoiled.spoiling.75": "Stale",
+  "text.autoconfig.spoiled.option.general": "General",
+  "text.autoconfig.spoiled.option.general.containerModifier": "Container Modifiers",
+  "text.autoconfig.spoiled.option.general.defaultSpoilItem": "Default Spoil Item",
+  "text.autoconfig.spoiled.option.general.defaultSpoilTime": "Default Spoil Time",
+  "text.autoconfig.spoiled.option.general.initializeSpoiling": "Initialize Spoiling",
+  "text.autoconfig.spoiled.option.general.mergeSpoilingFood": "Merge Spoiling Food",
+  "text.autoconfig.spoiled.option.general.spoilBlacklist": "Spoil Blacklist",
+  "text.autoconfig.spoiled.option.general.spoilEverything": "Spoil Everything",
+  "text.autoconfig.spoiled.option.general.spoilRate": "Spoil Rate",
+  "text.autoconfig.spoiled.title": "Spoiled"
+}

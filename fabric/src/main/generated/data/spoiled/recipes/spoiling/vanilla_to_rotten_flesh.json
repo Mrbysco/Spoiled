@@ -1,0 +1,11 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "spoiled:initialize_spoiling"
+    }
+  ],
+  "type": "spoiled:spoil_recipe",
+  "ingredient": {
+    "tag": "spoiled:foods/vanilla"
+  }
+}

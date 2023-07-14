@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "spoiled",
+  "version": "${version}",
+  "name": "Spoiled",
+  "description": "I'm sorry if I'm spoiling it for you. But you might wanna keep an eye on your food.",
+  "authors": [
+    "Mrbysco",
+    "ShyNieke"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/spoiled\"",
+    "sources": "https://github.com/Mrbysco/Spoiled",
+    "issues": "https://github.com/Mrbysco/Spoiled/issues"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "com.mrbysco.spoiled.datagen.SpoiledDataGen"
+    ],
+    "main": [
+      "com.mrbysco.spoiled.SpoiledFabric"
+    ],
+    "client": [
+      "com.mrbysco.spoiled.SpoiledFabricClient"
+    ],
+    "modmenu": [
+      "com.mrbysco.spoiled.config.SpoiledMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "spoiled.mixins.json",
+    "spoiled.fabric.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": "~1.20",
+    "java": ">=17",
+    "cloth-config": ">=11"
+  }
+}
+
