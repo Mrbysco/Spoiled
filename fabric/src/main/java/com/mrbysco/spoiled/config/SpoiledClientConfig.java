@@ -1,12 +1,12 @@
 package com.mrbysco.spoiled.config;
 
-import com.mrbysco.spoiled.Constants;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.CollapsibleObject;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
-@Config(name = Constants.MOD_ID)
+
+@Config(name = "spoiled-client")
 public class SpoiledClientConfig implements ConfigData {
 
 	@CollapsibleObject
