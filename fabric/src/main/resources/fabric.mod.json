@@ -27,6 +27,9 @@
     ],
     "modmenu": [
       "com.mrbysco.spoiled.config.SpoiledMenuIntegration"
+    ],
+    "jei_mod_plugin": [
+      "com.mrbysco.spoiled.compat.jei.JEICompat"
     ]
   },
   "mixins": [
