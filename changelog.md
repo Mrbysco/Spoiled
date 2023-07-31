@@ -1,1 +1,1 @@
-* Fix config being overwritten on change (fabric)
+* Fix JEI support not working on the fabric build

@@ -132,6 +132,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         project {
             id = project.curseforge_id
             releaseType = "beta"
+            addGameVersion "NeoForge"
             addGameVersion "Forge"
             addGameVersion "${minecraft_version}"
             addGameVersion "Java 17"
@@ -159,7 +160,7 @@ if (System.getenv().MODRINTH_KEY) {
         uploadFile = jar
         changelog = fileContents
         gameVersions = ["${minecraft_version}"]
-        loaders = ["forge"]
+        loaders = ["neoforge", "forge"]
 
         dependencies {
             optional.project "jei"
