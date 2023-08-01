@@ -26,7 +26,6 @@ public class SpoiledConfig implements ConfigData {
 				Defines the default total amount of spoiling updates for each food item\s
 							(For example, a defaultSpoilTime of 40 means any default food item will have 40 total updates before it spoils.\s
 							This can be altered when custom food spoiling is set using a datapack) [default: 30]""")
-		@ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
 		public int spoilRate = 30;
 
 		@Comment("When enabled Spoiled initializes spoiling for all vanilla food [default: true]")
@@ -43,7 +42,6 @@ public class SpoiledConfig implements ConfigData {
 
 		@Comment("Defines the total amount of spoiling updates that is used by the default initialized spoiling when 'initializeSpoiling' is enabled \n" +
 				"(If the 'spoilRate' is 10 and the 'defaultSpoilTime' is set to 20 then the food will spoil after 20 * 10 seconds = 200 seconds) [default: 40]")
-		@ConfigEntry.BoundedDiscrete(min = 1, max = Integer.MAX_VALUE)
 		public int defaultSpoilTime = 40;
 
 		@Comment("Defines the item the foods vanilla foods will turn into when spoiled (if empty it will clear the spoiling item) [default: 'minecraft:rotten_flesh']")
