@@ -61,7 +61,7 @@ public class SpoilRecipe implements Recipe<Container> {
 	}
 
 	public ItemStack getResultItem(RegistryAccess registryAccess) {
-		return this.result;
+		return this.result.copy();
 	}
 
 	public String getGroup() {

@@ -53,6 +53,7 @@ public class SpoilHandler {
 											SpoilHelper.updateSpoilingStack(stack, recipe);
 											if (SpoilHelper.isSpoiled(stack)) {
 												spoilItemInContainer(container, slot, stack, recipe, level.registryAccess());
+												be.setChanged();
 											}
 										}
 									}
@@ -84,12 +85,14 @@ public class SpoilHandler {
 		if (!spoiledStack.isEmpty()) {
 			spoiledStack.setCount(oldStackCount);
 			for (int i = 0; i < container.getContainerSize(); ++i) {
-				if (container.canPlaceItem(i, spoiledStack)) {
+				if (container.canPlaceItem(i, spoiledStack) && container.getItem(i).isEmpty()) {
 					container.setItem(i, spoiledStack);
+					break;
 				} else {
 					ItemStack stackInSlot = container.getItem(slot);
 					if (ItemStack.isSameItem(spoiledStack, stackInSlot) && SpoilHelper.totalUnderMax(stackInSlot, spoiledStack)) {
-						spoiledStack.grow(spoiledStack.getCount());
+						spoiledStack.setCount(stackInSlot.getCount() + spoiledStack.getCount());
+						break;
 					}
 				}
 			}
