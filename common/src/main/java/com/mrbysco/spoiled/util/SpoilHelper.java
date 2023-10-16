@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class SpoilHelper {
 
@@ -121,6 +122,35 @@ public class SpoilHelper {
 			} else {
 				ItemEntity itemEntity = new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), spoiledStack);
 				entity.level().addFreshEntity(itemEntity);
+			}
+		}
+	}
+
+	/**
+	 * Spoils a stack with a single item and replaces the instance in the associated location.
+	 *
+	 * @param level        The level the stack is within
+	 * @param stack        The stack to spoil
+	 * @param setCallback  A callback to set the spoiled stack's location
+	 */
+	public static void spoilSingleItemAndReplace(Level level, ItemStack stack, Consumer<ItemStack> setCallback) {
+		// Check gametime rate since it should spoil similarly to in entity inventory
+		// Checking getcount also checks isEmpty
+		if (level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && stack.getCount() == 1) {
+			SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
+			if (recipe != null) {
+				SpoilHelper.updateSpoilingStack(stack, recipe);
+				if (SpoilHelper.isSpoiled(stack)) {
+					ItemStack spoiledStack = recipe.getResultItem(level.registryAccess()).copy();
+					int oldStackCount = stack.getCount();
+					// Decrement stack just in case there's some weird references
+					stack.shrink(Integer.MAX_VALUE);
+					if (!spoiledStack.isEmpty()) {
+						// Replace stack immediately
+						spoiledStack.setCount(oldStackCount);
+						setCallback.accept(spoiledStack);
+					}
+				}
 			}
 		}
 	}
