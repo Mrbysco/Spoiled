@@ -1,16 +1,15 @@
 package com.mrbysco.spoiled.recipe.condition;
 
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import com.mojang.serialization.Codec;
+import com.mrbysco.spoiled.Constants;
+import net.neoforged.neoforge.common.conditions.ICondition;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class SpoiledConditions {
-	@SubscribeEvent
-	public void onRegisterSerializers(RegisterEvent event) {
-		if (event.getRegistryKey().equals(ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
-			CraftingHelper.register(InitializeSpoilingCondition.Serializer.INSTANCE);
-			CraftingHelper.register(MergeRecipeCondition.Serializer.INSTANCE);
-		}
-	}
+	public static final DeferredRegister<Codec<? extends ICondition>> CONDITION_CODECS = DeferredRegister.create(NeoForgeRegistries.Keys.CONDITION_CODECS, Constants.MOD_ID);
+
+	public static final DeferredHolder<Codec<? extends ICondition>, Codec<InitializeSpoilingCondition>> INITIALIZE_SPOILING = CONDITION_CODECS.register("initialize_spoiling", () -> InitializeSpoilingCondition.CODEC);
+	public static final DeferredHolder<Codec<? extends ICondition>, Codec<MergeRecipeCondition>> MERGE_FOOD = CONDITION_CODECS.register("merge_food", () -> MergeRecipeCondition.CODEC);
 }

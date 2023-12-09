@@ -2,7 +2,7 @@ package com.mrbysco.spoiled.platform;
 
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.platform.services.IPlatformHelper;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,13 +1,12 @@
 package com.mrbysco.spoiled.config;
 
 import com.mrbysco.spoiled.Constants;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -18,7 +17,7 @@ public class SpoiledConfig {
 	public static class Client {
 		public final BooleanValue showPercentage;
 
-		Client(ForgeConfigSpec.Builder builder) {
+		Client(ModConfigSpec.Builder builder) {
 			builder.comment("Client settings")
 					.push("client");
 
@@ -31,16 +30,16 @@ public class SpoiledConfig {
 	}
 
 	public static class Common {
-		public final ConfigValue<List<? extends String>> containerModifier;
+		public final ModConfigSpec.ConfigValue<List<? extends String>> containerModifier;
 		public final IntValue spoilRate;
 		public final BooleanValue initializeSpoiling;
 		public final BooleanValue mergeSpoilingFood;
 		public final BooleanValue spoilEverything;
-		public final ConfigValue<List<? extends String>> spoilBlacklist;
+		public final ModConfigSpec.ConfigValue<List<? extends String>> spoilBlacklist;
 		public final IntValue defaultSpoilTime;
-		public final ConfigValue<String> defaultSpoilItem;
+		public final ModConfigSpec.ConfigValue<String> defaultSpoilItem;
 
-		Common(ForgeConfigSpec.Builder builder) {
+		Common(ModConfigSpec.Builder builder) {
 			builder.comment("General settings")
 					.push("General");
 
@@ -92,20 +91,20 @@ public class SpoiledConfig {
 		}
 	}
 
-	public static final ForgeConfigSpec clientSpec;
+	public static final ModConfigSpec clientSpec;
 	public static final Client CLIENT;
 
 	static {
-		final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
+		final Pair<Client, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Client::new);
 		clientSpec = specPair.getRight();
 		CLIENT = specPair.getLeft();
 	}
 
-	public static final ForgeConfigSpec serverSpec;
+	public static final ModConfigSpec serverSpec;
 	public static final Common COMMON;
 
 	static {
-		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+		final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
 		serverSpec = specPair.getRight();
 		COMMON = specPair.getLeft();
 	}

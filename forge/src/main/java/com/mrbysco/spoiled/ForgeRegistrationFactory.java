@@ -6,9 +6,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.registries.DeferredRegister;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.javafmlmod.FMLModContainer;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -57,7 +57,7 @@ public class ForgeRegistrationFactory implements RegistrationProvider.Factory {
 
 				@Override
 				public ResourceKey<I> getResourceKey() {
-					return obj.getKey();
+					return (ResourceKey<I>) obj.getKey();
 				}
 
 				@Override
@@ -72,7 +72,7 @@ public class ForgeRegistrationFactory implements RegistrationProvider.Factory {
 
 				@Override
 				public Holder<I> asHolder() {
-					return obj.getHolder().orElseThrow();
+					return (Holder<I>) obj;
 				}
 			};
 			entries.add((RegistryObject<T>) ro);

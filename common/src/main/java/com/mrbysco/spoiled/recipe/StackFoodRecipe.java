@@ -16,8 +16,8 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class StackFoodRecipe extends CustomRecipe {
-	public StackFoodRecipe(ResourceLocation location, CraftingBookCategory category) {
-		super(location, category);
+	public StackFoodRecipe(CraftingBookCategory category) {
+		super(category);
 	}
 
 	public boolean matches(CraftingContainer container, Level level) {

@@ -7,11 +7,11 @@ import com.mrbysco.spoiled.datagen.server.SpoiledRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.BlockTagsProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -25,7 +25,7 @@ public class SpoiledDataGen {
 		ExistingFileHelper helper = event.getExistingFileHelper();
 
 		if (event.includeServer()) {
-			generator.addProvider(event.includeServer(), new SpoiledRecipeProvider(packOutput));
+			generator.addProvider(event.includeServer(), new SpoiledRecipeProvider(packOutput, lookupProvider));
 			BlockTagsProvider blockTagsProvider;
 			generator.addProvider(event.includeServer(), blockTagsProvider = new BlockTagsProvider(packOutput, lookupProvider, Constants.MOD_ID, helper) {
 				@Override

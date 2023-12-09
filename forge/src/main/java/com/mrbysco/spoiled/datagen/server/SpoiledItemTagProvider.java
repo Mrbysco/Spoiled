@@ -3,15 +3,18 @@ package com.mrbysco.spoiled.datagen.server;
 import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.util.SpoiledTags;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class SpoiledItemTagProvider extends ItemTagsProvider {
@@ -26,8 +29,10 @@ public class SpoiledItemTagProvider extends ItemTagsProvider {
 	}
 
 	private void addModFood(List<Item> blacklist) {
-		for (Item item : ForgeRegistries.ITEMS) {
-			if (!blacklist.contains(item) && item.isEdible() && ForgeRegistries.ITEMS.getKey(item).getNamespace().equals("minecraft")) {
+		for (Map.Entry<ResourceKey<Item>, Item> entry : BuiltInRegistries.ITEM.entrySet()) {
+			Item item = entry.getValue();
+			ResourceLocation id = entry.getKey().location();
+			if (!blacklist.contains(item) && item.isEdible() && id.getNamespace().equals("minecraft")) {
 				this.tag(SpoiledTags.FOODS_VANILLA).add(item);
 			}
 		}

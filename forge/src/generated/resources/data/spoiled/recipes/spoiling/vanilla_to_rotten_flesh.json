@@ -1,18 +1,14 @@
 {
-  "type": "forge:conditional",
-  "recipes": [
+  "neoforge:conditions": [
     {
-      "conditions": [
-        {
-          "type": "spoiled:initialize_spoiling"
-        }
-      ],
-      "recipe": {
-        "type": "spoiled:spoil_recipe",
-        "ingredient": {
-          "tag": "spoiled:foods/vanilla"
-        }
-      }
+      "type": "spoiled:initialize_spoiling"
     }
-  ]
+  ],
+  "type": "spoiled:spoil_recipe",
+  "ingredient": {
+    "tag": "spoiled:foods/vanilla"
+  },
+  "result": {
+    "item": "minecraft:rotten_flesh"
+  }
 }

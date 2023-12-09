@@ -2,7 +2,7 @@ package com.mrbysco.spoiled.datagen.client;
 
 import com.mrbysco.spoiled.Constants;
 import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class SpoiledLanguageProvider extends LanguageProvider {
 	public SpoiledLanguageProvider(PackOutput packOutput) {

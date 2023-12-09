@@ -1,38 +1,24 @@
 package com.mrbysco.spoiled.recipe.condition;
 
-import com.google.gson.JsonObject;
-import com.mrbysco.spoiled.Constants;
+import com.mojang.serialization.Codec;
 import com.mrbysco.spoiled.config.SpoiledConfig;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 public class InitializeSpoilingCondition implements ICondition {
-	private static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "initialize_spoiling");
+	public static final InitializeSpoilingCondition INSTANCE = new InitializeSpoilingCondition();
+
+	public static final Codec<InitializeSpoilingCondition> CODEC = Codec.unit(INSTANCE).stable();
+
+	private InitializeSpoilingCondition() {
+	}
 
 	@Override
-	public ResourceLocation getID() {
-		return ID;
+	public Codec<? extends ICondition> codec() {
+		return CODEC;
 	}
 
 	@Override
 	public boolean test(IContext context) {
 		return SpoiledConfig.COMMON.initializeSpoiling.get();
-	}
-
-	public static class Serializer implements IConditionSerializer<InitializeSpoilingCondition> {
-		public static final Serializer INSTANCE = new Serializer();
-
-		public void write(JsonObject json, InitializeSpoilingCondition value) {
-
-		}
-
-		public InitializeSpoilingCondition read(JsonObject json) {
-			return new InitializeSpoilingCondition();
-		}
-
-		public ResourceLocation getID() {
-			return InitializeSpoilingCondition.ID;
-		}
 	}
 }

@@ -16,6 +16,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -48,8 +49,9 @@ public class SpoilHandler {
 									ItemStack stack = container.getItem(i);
 									if (stack != null && !stack.isEmpty()) {
 										int slot = i;
-										SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-										if (recipe != null) {
+										RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+										if (recipeHolder != null) {
+											SpoilRecipe recipe = recipeHolder.value();
 											SpoilHelper.updateSpoilingStack(stack, recipe);
 											if (SpoilHelper.isSpoiled(stack)) {
 												spoilItemInContainer(container, slot, stack, recipe, level.registryAccess());
@@ -112,8 +114,9 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
 			if (!stack.isEmpty()) {
-				SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-				if (recipe != null) {
+				RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+				if (recipeHolder != null) {
+					SpoilRecipe recipe = recipeHolder.value();
 					SpoilHelper.updateSpoilingStack(stack, recipe);
 					if (SpoilHelper.isSpoiled(stack)) {
 						SpoilHelper.spoilItemForPlayer(player, stack, recipe);
@@ -128,8 +131,9 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = container.getItem(i);
 			if (!stack.isEmpty()) {
-				SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-				if (recipe != null) {
+				RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+				if (recipeHolder != null) {
+					SpoilRecipe recipe = recipeHolder.value();
 					SpoilHelper.updateSpoilingStack(stack, recipe);
 					if (SpoilHelper.isSpoiled(stack)) {
 						SpoilHelper.spoilItemForEntity(container, entity, stack, recipe);

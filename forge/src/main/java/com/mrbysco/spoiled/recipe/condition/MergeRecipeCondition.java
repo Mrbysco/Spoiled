@@ -1,38 +1,24 @@
 package com.mrbysco.spoiled.recipe.condition;
 
-import com.google.gson.JsonObject;
-import com.mrbysco.spoiled.Constants;
+import com.mojang.serialization.Codec;
 import com.mrbysco.spoiled.config.SpoiledConfig;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.crafting.conditions.ICondition;
-import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
+import net.neoforged.neoforge.common.conditions.ICondition;
 
 public class MergeRecipeCondition implements ICondition {
-	private static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merge_food");
+	public static final MergeRecipeCondition INSTANCE = new MergeRecipeCondition();
+
+	public static final Codec<MergeRecipeCondition> CODEC = Codec.unit(INSTANCE).stable();
+
+	private MergeRecipeCondition() {
+	}
 
 	@Override
-	public ResourceLocation getID() {
-		return ID;
+	public Codec<? extends ICondition> codec() {
+		return CODEC;
 	}
 
 	@Override
 	public boolean test(IContext context) {
 		return SpoiledConfig.COMMON.mergeSpoilingFood.get();
-	}
-
-	public static class Serializer implements IConditionSerializer<MergeRecipeCondition> {
-		public static final Serializer INSTANCE = new Serializer();
-
-		public void write(JsonObject json, MergeRecipeCondition value) {
-
-		}
-
-		public MergeRecipeCondition read(JsonObject json) {
-			return new MergeRecipeCondition();
-		}
-
-		public ResourceLocation getID() {
-			return MergeRecipeCondition.ID;
-		}
 	}
 }

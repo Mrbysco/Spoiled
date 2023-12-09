@@ -8,24 +8,25 @@ import com.mrbysco.spoiled.util.ChunkHelper;
 import com.mrbysco.spoiled.util.SpoilHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.event.TickEvent.LevelTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.event.TickEvent.LevelTickEvent;
+import net.neoforged.neoforge.event.TickEvent.Phase;
+import net.neoforged.neoforge.event.TickEvent.PlayerTickEvent;
+import net.neoforged.neoforge.items.IItemHandler;
 
 import java.util.List;
 
@@ -40,25 +41,26 @@ public class SpoilHandler {
 			if (!blockEntityPositions.isEmpty()) {
 				for (BlockPos pos : blockEntityPositions) {
 					BlockEntity be = level.getBlockEntity(pos);
-					if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
+					if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(Capabilities.ITEM_HANDLER).isPresent()) {
 						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
 							continue;
 
-						ResourceLocation location = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(be.getType());
+						ResourceLocation location = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType());
 						double spoilRate = 1.0D;
 						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 							spoilRate = SpoiledConfigCache.containerModifier.get(location);
 						}
 						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
 						if (spoilFlag) {
-							IItemHandler itemHandler = be.getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(null);
+							IItemHandler itemHandler = be.getCapability(Capabilities.ITEM_HANDLER).orElse(null);
 							if (itemHandler != null && itemHandler.getSlots() > 0) {
 								for (int i = 0; i < itemHandler.getSlots(); i++) {
 									ItemStack stack = itemHandler.getStackInSlot(i);
 									if (stack != null && !stack.isEmpty()) {
 										int slot = i;
-										SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-										if (recipe != null) {
+										RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+										if (recipeHolder != null) {
+											SpoilRecipe recipe = recipeHolder.value();
 											SpoilHelper.updateSpoilingStack(stack, recipe);
 											if (SpoilHelper.isSpoiled(stack)) {
 												spoilItemInHandler(itemHandler, slot, stack, recipe, level.registryAccess());
@@ -104,14 +106,15 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
 			if (!stack.isEmpty()) {
-				if (stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
-					stack.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
+				if (stack.getCapability(Capabilities.ITEM_HANDLER).isPresent()) {
+					stack.getCapability(Capabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
 						if (itemHandler.getSlots() > 0) {
 							for (int j = 0; j < itemHandler.getSlots(); j++) {
 								ItemStack nestedStack = itemHandler.getStackInSlot(j);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
-									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
-									if (recipe != null) {
+									RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
+									if (recipeHolder != null) {
+										SpoilRecipe recipe = recipeHolder.value();
 										SpoilHelper.updateSpoilingStack(nestedStack, recipe);
 										if (SpoilHelper.isSpoiled(nestedStack)) {
 											spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
@@ -122,8 +125,9 @@ public class SpoilHandler {
 						}
 					});
 				} else {
-					SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-					if (recipe != null) {
+					RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+					if (recipeHolder != null) {
+						SpoilRecipe recipe = recipeHolder.value();
 						SpoilHelper.updateSpoilingStack(stack, recipe);
 						if (SpoilHelper.isSpoiled(stack)) {
 							SpoilHelper.spoilItemForPlayer(player, stack, recipe);
@@ -139,14 +143,15 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = container.getItem(i);
 			if (!stack.isEmpty()) {
-				if (stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
-					stack.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
+				if (stack.getCapability(Capabilities.ITEM_HANDLER).isPresent()) {
+					stack.getCapability(Capabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
 						if (itemHandler.getSlots() > 0) {
 							for (int j = 0; j < itemHandler.getSlots(); j++) {
 								ItemStack nestedStack = itemHandler.getStackInSlot(j);
 								if (nestedStack != null && !nestedStack.isEmpty()) {
-									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
-									if (recipe != null) {
+									RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
+									if (recipeHolder != null) {
+										SpoilRecipe recipe = recipeHolder.value();
 										SpoilHelper.updateSpoilingStack(nestedStack, recipe);
 										if (SpoilHelper.isSpoiled(nestedStack)) {
 											spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
@@ -157,8 +162,9 @@ public class SpoilHandler {
 						}
 					});
 				} else {
-					SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-					if (recipe != null) {
+					RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+					if (recipeHolder != null) {
+						SpoilRecipe recipe = recipeHolder.value();
 						SpoilHelper.updateSpoilingStack(stack, recipe);
 						if (SpoilHelper.isSpoiled(stack)) {
 							SpoilHelper.spoilItemForEntity(container, entity, stack, recipe);

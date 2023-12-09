@@ -15,6 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -29,7 +30,7 @@ public class SpoilHelper {
 	 * @param stack The stack to check against
 	 * @return The Spoil Recipe matching the stack or null if none found
 	 */
-	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
+	public static RecipeHolder<SpoilRecipe> getSpoilRecipe(Level level, ItemStack stack) {
 		String itemPath = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
 		List<String> spoilBlacklist = Services.PLATFORM.getSpoilBlacklist();
 		if (!spoilBlacklist.isEmpty() && spoilBlacklist.contains(itemPath)) {
@@ -41,7 +42,7 @@ public class SpoilHelper {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + BuiltInRegistries.ITEM.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
-				return new SpoilRecipe(new ResourceLocation(Constants.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime());
+				return new RecipeHolder<>(new ResourceLocation(Constants.MOD_ID, recipePath), new SpoilRecipe("", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime()));
 			}
 		} else {
 			return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
@@ -129,16 +130,17 @@ public class SpoilHelper {
 	/**
 	 * Spoils a stack with a single item and replaces the instance in the associated location.
 	 *
-	 * @param level        The level the stack is within
-	 * @param stack        The stack to spoil
-	 * @param setCallback  A callback to set the spoiled stack's location
+	 * @param level       The level the stack is within
+	 * @param stack       The stack to spoil
+	 * @param setCallback A callback to set the spoiled stack's location
 	 */
 	public static void spoilSingleItemAndReplace(Level level, ItemStack stack, Consumer<ItemStack> setCallback) {
 		// Check gametime rate since it should spoil similarly to in entity inventory
 		// Checking getcount also checks isEmpty
 		if (level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && stack.getCount() == 1) {
-			SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-			if (recipe != null) {
+			RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+			if (recipeHolder != null) {
+				SpoilRecipe recipe = recipeHolder.value();
 				SpoilHelper.updateSpoilingStack(stack, recipe);
 				if (SpoilHelper.isSpoiled(stack)) {
 					ItemStack spoiledStack = recipe.getResultItem(level.registryAccess()).copy();

@@ -8,13 +8,11 @@ import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import com.mrbysco.spoiled.util.SpoiledTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
-
-import java.util.function.Consumer;
 
 public class SpoiledRecipeProvider extends FabricRecipeProvider {
 	public SpoiledRecipeProvider(FabricDataOutput output) {
@@ -22,7 +20,7 @@ public class SpoiledRecipeProvider extends FabricRecipeProvider {
 	}
 
 	@Override
-	public void buildRecipes(Consumer<FinishedRecipe> consumer) {
+	public void buildRecipes(RecipeOutput consumer) {
 		String toRotten = "_to_rotten_flesh";
 		String folder = "spoiling/";
 		SpoilRecipeBuilder.spoilRecipe(Ingredient.of(SpoiledTags.FOODS_VANILLA), Items.ROTTEN_FLESH)

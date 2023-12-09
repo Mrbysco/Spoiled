@@ -1,1 +1,1 @@
-* Add spoiling to Item Frames (Thanks to [ChampionAsh5357](https://github.com/Mrbysco/Spoiled/pull/41))
+* Initial update to 1.20.2

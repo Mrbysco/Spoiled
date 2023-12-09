@@ -1,16 +1,9 @@
 {
-  "type": "forge:conditional",
-  "recipes": [
+  "neoforge:conditions": [
     {
-      "conditions": [
-        {
-          "type": "spoiled:merge_food"
-        }
-      ],
-      "recipe": {
-        "type": "spoiled:stack_food",
-        "category": "misc"
-      }
+      "type": "spoiled:merge_food"
     }
-  ]
+  ],
+  "type": "spoiled:stack_food",
+  "category": "misc"
 }

@@ -6,12 +6,13 @@ import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.util.SpoilHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.common.capabilities.Capabilities;
+import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
+import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 public class CuriosCompat {
 	public static void onCuriosTick(TickEvent.PlayerTickEvent event) {
@@ -19,41 +20,43 @@ public class CuriosCompat {
 				event.player.level().getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
 			final Player player = event.player;
 			final Level level = player.level();
-			LazyOptional<IItemHandlerModifiable> optionalEquipped = CuriosApi.getCuriosHelper().getEquippedCurios(player);
-			optionalEquipped.ifPresent(equipped -> {
-				int slots = equipped.getSlots();
-				for (int i = 0; i < slots; i++) {
-					ItemStack stack = equipped.getStackInSlot(i);
-					if (!stack.isEmpty()) {
-						if (stack.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
-							stack.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
-								if (itemHandler.getSlots() > 0) {
-									for (int j = 0; j < itemHandler.getSlots(); j++) {
-										ItemStack nestedStack = itemHandler.getStackInSlot(j);
-										if (nestedStack != null && !nestedStack.isEmpty()) {
-											SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
-											if (recipe != null) {
-												SpoilHelper.updateSpoilingStack(nestedStack, recipe);
-												if (SpoilHelper.isSpoiled(nestedStack)) {
-													SpoilHandler.spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
-												}
+			ICuriosItemHandler curiosItemHandler = CuriosApi.getCuriosInventory(player).orElse(null);
+			if (curiosItemHandler == null) return;
+			IItemHandlerModifiable equipped = curiosItemHandler.getEquippedCurios();
+			int slots = equipped.getSlots();
+			for (int i = 0; i < slots; i++) {
+				ItemStack stack = equipped.getStackInSlot(i);
+				if (!stack.isEmpty()) {
+					if (stack.getCapability(Capabilities.ITEM_HANDLER).isPresent()) {
+						stack.getCapability(Capabilities.ITEM_HANDLER).ifPresent(itemHandler -> {
+							if (itemHandler.getSlots() > 0) {
+								for (int j = 0; j < itemHandler.getSlots(); j++) {
+									ItemStack nestedStack = itemHandler.getStackInSlot(j);
+									if (nestedStack != null && !nestedStack.isEmpty()) {
+										RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
+										if (recipeHolder != null) {
+											SpoilRecipe recipe = recipeHolder.value();
+											SpoilHelper.updateSpoilingStack(nestedStack, recipe);
+											if (SpoilHelper.isSpoiled(nestedStack)) {
+												SpoilHandler.spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
 											}
 										}
 									}
 								}
-							});
-						} else {
-							SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
-							if (recipe != null) {
-								SpoilHelper.updateSpoilingStack(stack, recipe);
-								if (SpoilHelper.isSpoiled(stack)) {
-									SpoilHelper.spoilItemForPlayer(player, stack, recipe);
-								}
+							}
+						});
+					} else {
+						RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+						if (recipeHolder != null) {
+							SpoilRecipe recipe = recipeHolder.value();
+							SpoilHelper.updateSpoilingStack(stack, recipe);
+							if (SpoilHelper.isSpoiled(stack)) {
+								SpoilHelper.spoilItemForPlayer(player, stack, recipe);
 							}
 						}
 					}
 				}
-			});
+			}
 		}
 	}
 }

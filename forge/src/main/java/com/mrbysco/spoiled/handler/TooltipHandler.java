@@ -2,8 +2,8 @@ package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.util.TooltipUtil;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 
 public class TooltipHandler {
 	@SubscribeEvent

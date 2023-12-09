@@ -5,16 +5,15 @@ import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.handler.TooltipHandler;
 import com.mrbysco.spoiled.recipe.condition.SpoiledConditions;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 @Mod(Constants.MOD_ID)
 public class SpoiledForge {
@@ -25,20 +24,20 @@ public class SpoiledForge {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
 		eventBus.register(SpoiledConfig.class);
 
-		eventBus.register(new SpoiledConditions());
+		SpoiledConditions.CONDITION_CODECS.register(eventBus);
 
-		MinecraftForge.EVENT_BUS.register(new SpoilHandler());
-		MinecraftForge.EVENT_BUS.addListener(this::onCommandRegister);
+		NeoForge.EVENT_BUS.register(new SpoilHandler());
+		NeoForge.EVENT_BUS.addListener(this::onCommandRegister);
 
 		CommonClass.init();
 
 		if (ModList.get().isLoaded("curios")) {
-			MinecraftForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
+			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
 		}
 
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-			MinecraftForge.EVENT_BUS.register(new TooltipHandler());
-		});
+		if (FMLEnvironment.dist.isClient()) {
+			NeoForge.EVENT_BUS.register(new TooltipHandler());
+		}
 	}
 
 

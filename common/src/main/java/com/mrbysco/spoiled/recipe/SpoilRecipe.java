@@ -1,35 +1,32 @@
 package com.mrbysco.spoiled.recipe;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.mrbysco.spoiled.config.SpoiledConfigCache;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipeCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 
 public class SpoilRecipe implements Recipe<Container> {
-	protected final ResourceLocation id;
 	protected final String group;
 	protected final Ingredient ingredient;
 	protected final ItemStack result;
 	protected final int spoilTime;
 
-	public SpoilRecipe(ResourceLocation id, String group, Ingredient ingredient, ItemStack stack, int spoilTime) {
-		this.id = id;
+	public SpoilRecipe(String group, Ingredient ingredient, ItemStack stack, int spoilTime) {
 		this.group = group;
 		this.ingredient = ingredient;
 		this.result = stack;
@@ -68,11 +65,9 @@ public class SpoilRecipe implements Recipe<Container> {
 		return this.group;
 	}
 
-	public ResourceLocation getId() {
-		return this.id;
-	}
-
 	public int getSpoilTime() {
+		if (spoilTime == -1)
+			return Services.PLATFORM.getDefaultSpoilTime();
 		return spoilTime;
 	}
 
@@ -86,42 +81,31 @@ public class SpoilRecipe implements Recipe<Container> {
 		return true;
 	}
 
-	public static class SerializerSpoilRecipe implements RecipeSerializer<SpoilRecipe> {
-		@Override
-		public SpoilRecipe fromJson(ResourceLocation recipeId, JsonObject jsonObject) {
-			String s = GsonHelper.getAsString(jsonObject, "group", "");
-			JsonElement jsonelement = (JsonElement) (GsonHelper.isArrayNode(jsonObject, "ingredient") ?
-					GsonHelper.getAsJsonArray(jsonObject, "ingredient") :
-					GsonHelper.getAsJsonObject(jsonObject, "ingredient"));
-			Ingredient ingredient = Ingredient.fromJson(jsonelement);
-			//Forge: Check if primitive string to keep vanilla or an object which can contain a count field.
-			ItemStack itemstack;
-			if (jsonObject.has("result")) {
-				if (jsonObject.get("result").isJsonObject())
-					itemstack = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(jsonObject, "result"));
-				else {
-					String s1 = GsonHelper.getAsString(jsonObject, "result");
-					ResourceLocation resourcelocation = new ResourceLocation(s1);
-					itemstack = new ItemStack(BuiltInRegistries.ITEM.getOptional(resourcelocation).orElseThrow(() -> {
-						return new IllegalStateException("Item: " + s1 + " does not exist");
-					}));
-				}
-			} else {
-				itemstack = SpoiledConfigCache.getDefaultSpoilItem();
-			}
+	public static class Serializer implements RecipeSerializer<SpoilRecipe> {
+		private static final Codec<SpoilRecipe> CODEC = Serializer.RawSpoilRecipe.CODEC.flatXmap(rawLootRecipe -> {
+			return DataResult.success(new SpoilRecipe(
+					rawLootRecipe.group,
+					rawLootRecipe.ingredient,
+					rawLootRecipe.result,
+					rawLootRecipe.spoilTime
+			));
+		}, recipe -> {
+			throw new NotImplementedException("Serializing SpoilRecipe is not implemented yet.");
+		});
 
-			int spoilTime = GsonHelper.getAsInt(jsonObject, "spoiltime", Services.PLATFORM.getDefaultSpoilTime());
-			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime);
+		@Override
+		public Codec<SpoilRecipe> codec() {
+			return CODEC;
 		}
 
 		@Nullable
 		@Override
-		public SpoilRecipe fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) {
+		public SpoilRecipe fromNetwork(FriendlyByteBuf buffer) {
 			String s = buffer.readUtf(32767);
 			Ingredient ingredient = Ingredient.fromNetwork(buffer);
 			ItemStack itemstack = buffer.readItem();
 			int spoilTime = buffer.readVarInt();
-			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime);
+			return new SpoilRecipe(s, ingredient, itemstack, spoilTime);
 		}
 
 		@Override
@@ -130,6 +114,20 @@ public class SpoilRecipe implements Recipe<Container> {
 			recipe.ingredient.toNetwork(buffer);
 			buffer.writeItem(recipe.result);
 			buffer.writeVarInt(recipe.spoilTime);
+		}
+
+		static record RawSpoilRecipe(
+				String group, Ingredient ingredient, ItemStack result, int spoilTime
+		) {
+			public static final Codec<RawSpoilRecipe> CODEC = RecordCodecBuilder.create(
+					instance -> instance.group(
+									ExtraCodecs.strictOptionalField(Codec.STRING, "group", "").forGetter(recipe -> recipe.group),
+									Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+									CraftingRecipeCodecs.ITEMSTACK_OBJECT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+									ExtraCodecs.strictOptionalField(Codec.INT, "spoiltime", -1).forGetter(recipe -> recipe.spoilTime)
+							)
+							.apply(instance, RawSpoilRecipe::new)
+			);
 		}
 	}
 }

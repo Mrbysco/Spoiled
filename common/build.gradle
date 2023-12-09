@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'java'
     id 'maven-publish'
-    id 'org.spongepowered.gradle.vanilla'
+    id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
 }
 
 base {
@@ -20,6 +20,28 @@ dependencies {
     compileOnly group: 'org.spongepowered', name: 'mixin', version: '0.8.5'
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 
-    compileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
-    compileOnly "com.blamejared.crafttweaker:CraftTweaker-common-${minecraft_version}:${crafttweaker_version}"
+//    compileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
+//    compileOnly "com.blamejared.crafttweaker:CraftTweaker-common-${minecraft_version}:${crafttweaker_version}"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId base.archivesName.get()
+            version project.version
+            from components.java
+        }
+    }
+    repositories {
+        if (System.getenv().SAP_SECRET) {
+            maven {
+                url "https://maven.saps.dev/releases"
+                credentials {
+                    username = "mrbysco"
+                    password = "${System.getenv().SAP_SECRET}"
+                }
+            }
+        }
+    }
 }
