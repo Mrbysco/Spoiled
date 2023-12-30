@@ -25,16 +25,21 @@ import java.util.List;
 public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 
 	@Method
-	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime) {
+	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime, int priority) {
 		final ResourceLocation id = new ResourceLocation("crafttweaker", name);
 		final Ingredient foodIngredient = food.asVanillaIngredient();
 		final ItemStack resultItemStack = spoilStack.getInternal();
-		final SpoilRecipe recipe = new SpoilRecipe(id, "", foodIngredient, resultItemStack, spoilTime);
+		final SpoilRecipe recipe = new SpoilRecipe(id, "", foodIngredient, resultItemStack, spoilTime, priority);
 		CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));
 	}
 
 	@Method
-	public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime) {
+	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime) {
+		addSpoiling(name, food, spoilStack, spoilTime, 1);
+	}
+
+	@Method
+	public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime, int priority) {
 		if (Services.PLATFORM.isModLoaded(modName)) {
 			List<Item> edibleFoodList = BuiltInRegistries.ITEM.stream().filter(Item::isEdible).toList();
 			for (Item foundItem : edibleFoodList) {
@@ -42,11 +47,16 @@ public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 				if (foundItem != spoilStack.getInternal().getItem() && location != null && location.getNamespace().equals(modName)) {
 					String itemLocation = location.toString().replace(":", "_");
 					ResourceLocation id = new ResourceLocation("crafttweaker", itemLocation);
-					SpoilRecipe recipe = new SpoilRecipe(id, "", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime);
+					SpoilRecipe recipe = new SpoilRecipe(id, "", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime, priority);
 					CraftTweakerAPI.apply(new ActionAddRecipe<>(this, recipe));
 				}
 			}
 		}
+	}
+
+	@Method
+	public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime) {
+		addModSpoiling(modName, spoilStack, spoilTime, 1);
 	}
 
 	@Override

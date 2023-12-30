@@ -5,5 +5,7 @@
   },
   "result": {
     "item": "minecraft:stone"
-  }
+  },
+  "spoilTime": 20,
+  "priority": 5
 }
