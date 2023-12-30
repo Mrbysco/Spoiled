@@ -41,11 +41,17 @@ public class SpoilHelper {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + BuiltInRegistries.ITEM.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
-				return new SpoilRecipe(new ResourceLocation(Constants.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime());
+				return new SpoilRecipe(new ResourceLocation(Constants.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime(), 1);
 			}
 		} else {
-			return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
-					new SimpleContainer(stack), level).orElse(null);
+			return level.getRecipeManager()
+					.getRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), new SimpleContainer(stack), level)
+					.stream()
+					.reduce(null,
+							(highest_priority, next) ->
+							highest_priority == null || next.getPriority() > highest_priority.getPriority() 
+								? next
+								: highest_priority);
 		}
 		return null;
 	}
