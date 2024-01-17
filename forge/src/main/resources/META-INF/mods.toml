@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[1,)"
+loaderVersion="[2,)"
 issueTrackerURL="https://github.com/Mrbysco/Spoiled/issues"
 license="MIT"
 
@@ -14,14 +14,14 @@ I'm sorry if I'm spoiling it for you. But you might wanna keep an eye on your fo
 '''
 [[dependencies.spoiled]]
 modId="minecraft"
-mandatory=true
-versionRange="[1.20.2,1.21)"
+type="REQUIRED"
+versionRange="[1.20.4,1.21)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.spoiled]]
 modId="neoforge"
-mandatory=true
-versionRange="[20.2.86,)"
+type="REQUIRED"
+versionRange="[20.4.70-beta,)"
 ordering="NONE"
 side="BOTH"
 [[mixins]]

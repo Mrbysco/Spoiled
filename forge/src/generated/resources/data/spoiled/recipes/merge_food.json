@@ -1,7 +1,8 @@
 {
   "neoforge:conditions": [
     {
-      "type": "spoiled:merge_food"
+      "type": "spoiled:merge_food",
+      "value": {}
     }
   ],
   "type": "spoiled:stack_food",

@@ -10,7 +10,6 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -18,8 +17,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 @Mod(Constants.MOD_ID)
 public class SpoiledForge {
 
-	public SpoiledForge() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+	public SpoiledForge(IEventBus eventBus) {
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
 		eventBus.register(SpoiledConfig.class);
@@ -31,9 +29,9 @@ public class SpoiledForge {
 
 		CommonClass.init();
 
-		if (ModList.get().isLoaded("curios")) {
-			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
-		}
+//		if (ModList.get().isLoaded("curios")) {
+//			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
+//		}
 
 		if (FMLEnvironment.dist.isClient()) {
 			NeoForge.EVENT_BUS.register(new TooltipHandler());

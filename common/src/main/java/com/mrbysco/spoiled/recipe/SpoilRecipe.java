@@ -1,7 +1,6 @@
 package com.mrbysco.spoiled.recipe;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
@@ -11,13 +10,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipeCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 
 public class SpoilRecipe implements Recipe<Container> {
@@ -82,16 +79,15 @@ public class SpoilRecipe implements Recipe<Container> {
 	}
 
 	public static class Serializer implements RecipeSerializer<SpoilRecipe> {
-		private static final Codec<SpoilRecipe> CODEC = Serializer.RawSpoilRecipe.CODEC.flatXmap(rawLootRecipe -> {
-			return DataResult.success(new SpoilRecipe(
-					rawLootRecipe.group,
-					rawLootRecipe.ingredient,
-					rawLootRecipe.result,
-					rawLootRecipe.spoilTime
-			));
-		}, recipe -> {
-			throw new NotImplementedException("Serializing SpoilRecipe is not implemented yet.");
-		});
+		public static final Codec<SpoilRecipe> CODEC = RecordCodecBuilder.create(
+				instance -> instance.group(
+								ExtraCodecs.strictOptionalField(Codec.STRING, "group", "").forGetter(recipe -> recipe.group),
+								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+								ItemStack.SINGLE_ITEM_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+								ExtraCodecs.strictOptionalField(Codec.INT, "spoiltime", -1).forGetter(recipe -> recipe.spoilTime)
+						)
+						.apply(instance, SpoilRecipe::new)
+		);
 
 		@Override
 		public Codec<SpoilRecipe> codec() {
@@ -114,20 +110,6 @@ public class SpoilRecipe implements Recipe<Container> {
 			recipe.ingredient.toNetwork(buffer);
 			buffer.writeItem(recipe.result);
 			buffer.writeVarInt(recipe.spoilTime);
-		}
-
-		static record RawSpoilRecipe(
-				String group, Ingredient ingredient, ItemStack result, int spoilTime
-		) {
-			public static final Codec<RawSpoilRecipe> CODEC = RecordCodecBuilder.create(
-					instance -> instance.group(
-									ExtraCodecs.strictOptionalField(Codec.STRING, "group", "").forGetter(recipe -> recipe.group),
-									Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-									CraftingRecipeCodecs.ITEMSTACK_OBJECT_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
-									ExtraCodecs.strictOptionalField(Codec.INT, "spoiltime", -1).forGetter(recipe -> recipe.spoilTime)
-							)
-							.apply(instance, RawSpoilRecipe::new)
-			);
 		}
 	}
 }

@@ -2,9 +2,9 @@ package com.mrbysco.spoiled.datagen.server;
 
 import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.datagen.SpoilRecipeBuilder;
+import com.mrbysco.spoiled.recipe.StackFoodRecipe;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
-import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import com.mrbysco.spoiled.util.SpoiledTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -26,7 +26,7 @@ public class SpoiledRecipeProvider extends FabricRecipeProvider {
 		SpoilRecipeBuilder.spoilRecipe(Ingredient.of(SpoiledTags.FOODS_VANILLA), Items.ROTTEN_FLESH)
 				.build(withConditions(consumer, InitializeSpoilingCondition.PROVIDER), new ResourceLocation(Constants.MOD_ID, folder + "vanilla" + toRotten));
 
-		SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get())
+		SpecialRecipeBuilder.special(StackFoodRecipe::new)
 				.save(withConditions(consumer, MergeRecipeCondition.PROVIDER), new ResourceLocation(Constants.MOD_ID, "merge_food").toString());
 	}
 }

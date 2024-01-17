@@ -68,7 +68,7 @@ dependencies {
 
 //    implementation "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
 //    implementation "com.blamejared.crafttweaker:CraftTweaker-forge-${minecraft_version}:${crafttweaker_version}"
-    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+//    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
 
 // NeoGradle compiles the game, but we don't want to add our common code to the game's code
@@ -127,7 +127,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-        mainFile.addOptional("curios")
+//        mainFile.addOptional("curios")
         mainFile.addOptional("roughly-enough-items")
 //        mainFile.addOptional("jei", "curios", "crafttweaker")
     }
@@ -148,7 +148,7 @@ if (System.getenv().MODRINTH_KEY) {
 
         dependencies {
             optional.project "jei"
-            optional.project "curios"
+//            optional.project "curios"
             optional.project "rei"
         }
     }

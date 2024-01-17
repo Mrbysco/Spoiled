@@ -8,7 +8,5 @@
   "ingredient": {
     "tag": "spoiled:foods/vanilla"
   },
-  "result": {
-    "item": "minecraft:rotten_flesh"
-  }
+  "result": "minecraft:rotten_flesh"
 }
