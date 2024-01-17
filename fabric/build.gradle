@@ -141,6 +141,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelogType = 'markdown'
 
         mainFile.addRequirement("fabric-api", "cloth-config")
+        mainFile.addOptional("roughly-enough-items")
 //        mainFile.addOptional("jei", "crafttweaker")
     }
 }
@@ -161,6 +162,7 @@ if (System.getenv().MODRINTH_KEY) {
         dependencies {
             required.project "fabric-api"
             required.project "cloth-config"
+            optional.project "rei"
 
 //            optional.project "jei"
 //            optional.project "crafttweaker"

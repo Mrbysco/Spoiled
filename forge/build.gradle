@@ -128,6 +128,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelogType = 'markdown'
 
         mainFile.addOptional("curios")
+        mainFile.addOptional("roughly-enough-items")
 //        mainFile.addOptional("jei", "curios", "crafttweaker")
     }
 }
@@ -148,7 +149,7 @@ if (System.getenv().MODRINTH_KEY) {
         dependencies {
             optional.project "jei"
             optional.project "curios"
-            optional.project "crafttweaker"
+            optional.project "rei"
         }
     }
 }
