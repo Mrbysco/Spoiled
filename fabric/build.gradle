@@ -132,7 +132,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         apiToken = System.getenv().CURSEFORGE_KEY
 
         def mainFile = upload(project.curseforge_id, remapJar)
-        mainFile.releaseType = 'beta'
+        mainFile.releaseType = 'alpha'
         mainFile.addGameVersion "Fabric"
         mainFile.addGameVersion "${minecraft_version}"
         mainFile.addGameVersion "Java 17"
