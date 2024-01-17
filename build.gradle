@@ -50,6 +50,10 @@ subprojects {
             url = "https://maven.blamejared.com/"
         }
         maven {
+            name = 'Roughly Enough Items'
+            url = "https://maven.shedaniel.me"
+        }
+        maven {
             url = "https://maven.theillusivec4.top/"
             content {
                 includeGroup "top.theillusivec4.curios"

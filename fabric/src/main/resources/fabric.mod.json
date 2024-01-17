@@ -28,8 +28,8 @@
     "modmenu": [
       "com.mrbysco.spoiled.config.SpoiledMenuIntegration"
     ],
-    "jei_mod_plugin": [
-      "com.mrbysco.spoiled.compat.jei.JEICompat"
+    "rei_client": [
+      "com.mrbysco.spoiled.compat.rei.REIPluginFabric"
     ]
   },
   "mixins": [
