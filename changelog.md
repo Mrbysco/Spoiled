@@ -1,1 +1,1 @@
-* Add REI support
+* Initial update to 1.20.4

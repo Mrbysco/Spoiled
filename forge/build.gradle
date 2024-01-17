@@ -127,9 +127,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-//        mainFile.addOptional("curios")
         mainFile.addOptional("roughly-enough-items")
-//        mainFile.addOptional("jei", "curios", "crafttweaker")
     }
 }
 
@@ -147,8 +145,6 @@ if (System.getenv().MODRINTH_KEY) {
         loaders = ["neoforge", "forge"]
 
         dependencies {
-            optional.project "jei"
-//            optional.project "curios"
             optional.project "rei"
         }
     }
