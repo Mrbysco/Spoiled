@@ -23,7 +23,7 @@ dependencies {
     compileOnly "me.shedaniel:RoughlyEnoughItems-api:${rei_version}"
     compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rei_version}"
 //    compileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
-//    compileOnly "com.blamejared.crafttweaker:CraftTweaker-common-${minecraft_version}:${crafttweaker_version}"
+    compileOnly "com.blamejared.crafttweaker:CraftTweaker-common-${minecraft_version}:${crafttweaker_version}"
 }
 
 publishing {

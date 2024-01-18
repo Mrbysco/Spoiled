@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.4-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'net.darkhax.curseforgegradle'
     id 'com.modrinth.minotaur'
 }
@@ -45,7 +45,7 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
 
 //    modImplementation("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
-//    modImplementation ("com.blamejared.crafttweaker:CraftTweaker-fabric-${minecraft_version}:${crafttweaker_version}")
+    modImplementation ("com.blamejared.crafttweaker:CraftTweaker-fabric-${minecraft_version}:${crafttweaker_version}")
 }
 
 loom {
@@ -141,7 +141,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelogType = 'markdown'
 
         mainFile.addRequirement("fabric-api", "cloth-config")
-        mainFile.addOptional("roughly-enough-items")
+        mainFile.addOptional("roughly-enough-items", "crafttweaker")
     }
 }
 
@@ -162,6 +162,7 @@ if (System.getenv().MODRINTH_KEY) {
             required.project "fabric-api"
             required.project "cloth-config"
             optional.project "rei"
+            optional.project "crafttweaker"
         }
     }
 }

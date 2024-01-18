@@ -67,7 +67,7 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
 //    implementation "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
-//    implementation "com.blamejared.crafttweaker:CraftTweaker-forge-${minecraft_version}:${crafttweaker_version}"
+    implementation "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
 //    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
 
@@ -127,7 +127,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-        mainFile.addOptional("roughly-enough-items")
+        mainFile.addOptional("roughly-enough-items", "crafttweaker")
     }
 }
 
@@ -146,6 +146,7 @@ if (System.getenv().MODRINTH_KEY) {
 
         dependencies {
             optional.project "rei"
+            optional.project "crafttweaker"
         }
     }
 }
