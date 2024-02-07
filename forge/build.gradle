@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.61'
+    id 'net.neoforged.gradle.userdev' version '7.0.88'
     id 'net.darkhax.curseforgegradle'
     id 'com.modrinth.minotaur'
 }
@@ -66,9 +66,9 @@ dependencies {
     implementation "dev.architectury:architectury-neoforge:${architectury_version}"
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
-//    implementation "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
     implementation "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
-//    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
 
 // NeoGradle compiles the game, but we don't want to add our common code to the game's code
@@ -125,7 +125,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-        mainFile.addOptional("roughly-enough-items", "crafttweaker")
+        mainFile.addOptional("jei", "roughly-enough-items", "crafttweaker")
     }
 }
 
@@ -143,6 +143,7 @@ if (System.getenv().MODRINTH_KEY) {
         loaders = ["neoforge", "forge"]
 
         dependencies {
+            optional.project "jei"
             optional.project "rei"
             optional.project "crafttweaker"
         }

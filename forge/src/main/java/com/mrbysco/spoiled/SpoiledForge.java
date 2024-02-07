@@ -29,9 +29,9 @@ public class SpoiledForge {
 
 		CommonClass.init();
 
-//		if (ModList.get().isLoaded("curios")) {
-//			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
-//		}
+		if (ModList.get().isLoaded("curios")) {
+			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
+		}
 
 		if (FMLEnvironment.dist.isClient()) {
 			NeoForge.EVENT_BUS.register(new TooltipHandler());
