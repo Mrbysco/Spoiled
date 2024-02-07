@@ -67,6 +67,7 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
     compileOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+    testCompileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
     implementation "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
     implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
