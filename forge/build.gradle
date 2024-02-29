@@ -13,7 +13,7 @@ base {
 }
 
 if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-    minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
+    minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
 }
 
 runs {
