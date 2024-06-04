@@ -1,26 +1,27 @@
 package com.mrbysco.spoiled.recipe.condition;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.MapCodec;
 import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.SpoiledFabric;
-import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 
-public class MergeRecipeCondition {
+public class MergeRecipeCondition implements ResourceCondition {
+	public static final MapCodec<MergeRecipeCondition> CODEC = MapCodec.unit(MergeRecipeCondition::new);
 	public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merge_food");
 
-	public static final ConditionJsonProvider PROVIDER = new ConditionJsonProvider() {
-		@Override
-		public void writeParameters(JsonObject object) {
-		}
+	public static final ResourceConditionType<MergeRecipeCondition> PROVIDER = ResourceConditionType.create(ID, CODEC);
 
-		@Override
-		public ResourceLocation getConditionId() {
-			return ID;
-		}
-	};
+	@Override
+	public ResourceConditionType<?> getType() {
+		return PROVIDER;
+	}
 
-	public static boolean test() {
+	@Override
+	public boolean test(@Nullable HolderLookup.Provider registryLookup) {
 		return SpoiledFabric.config.get().general.mergeSpoilingFood;
 	}
 }

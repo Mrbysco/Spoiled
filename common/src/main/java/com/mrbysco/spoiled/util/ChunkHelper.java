@@ -17,6 +17,7 @@ public class ChunkHelper {
 
 	/**
 	 * Get a list of BlockEntity positions in the world
+	 *
 	 * @param level The world to get the positions from
 	 * @return A list of positions
 	 */

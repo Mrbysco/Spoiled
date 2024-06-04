@@ -1,7 +1,9 @@
 package com.mrbysco.spoiled.util;
 
 import com.mrbysco.spoiled.Constants;
+import com.mrbysco.spoiled.component.SpoilTimer;
 import com.mrbysco.spoiled.platform.Services;
+import com.mrbysco.spoiled.registration.SpoiledComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -12,15 +14,16 @@ import org.jetbrains.annotations.Nullable;
 public class TooltipUtil {
 	/**
 	 * Get spoiling tooltip for itemstack if it has the spoil tag
+	 *
 	 * @param stack The itemstack to check
 	 * @return The tooltip to display or null if it doesn't have the spoil tag
 	 */
 	@Nullable
 	public static Component getTooltip(ItemStack stack) {
-		if (stack.hasTag() && !stack.getTag().isEmpty() && stack.getTag().contains(Constants.SPOIL_TAG)) {
-			CompoundTag tag = stack.getTag();
-			int timer = tag.getInt(Constants.SPOIL_TAG);
-			int timeMax = tag.getInt(Constants.SPOIL_TIME_TAG);
+		if (stack.has(SpoiledComponents.SPOIL_TIMER.get())) {
+			SpoilTimer spoilTimer = stack.get(SpoiledComponents.SPOIL_TIMER.get());
+			int timer = spoilTimer.timer();
+			int timeMax = spoilTimer.maxTime();
 			int percentage = (int) (((double) timer / timeMax) * 100);
 
 			MutableComponent component;

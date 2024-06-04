@@ -1,8 +1,8 @@
 package com.mrbysco.spoiled.compat.rei;
 
 import com.mrbysco.spoiled.Constants;
-import com.mrbysco.spoiled.compat.rei.category.SpoilCategoryFabric;
-import com.mrbysco.spoiled.compat.rei.display.SpoilDisplayFabric;
+import com.mrbysco.spoiled.compat.rei.category.SpoilCategoryNeoForge;
+import com.mrbysco.spoiled.compat.rei.display.SpoilDisplayNeoForge;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
@@ -10,6 +10,7 @@ import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.util.EntryStacks;
+import me.shedaniel.rei.forge.REIPluginClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
@@ -18,12 +19,13 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
 
-public class REIPluginFabric implements REIClientPlugin {
-	public static final CategoryIdentifier<SpoilDisplayFabric> SPOILING = CategoryIdentifier.of(Constants.MOD_ID, "plugins/spoiling");
+@REIPluginClient
+public class REIPluginNeoForge implements REIClientPlugin {
+	public static final CategoryIdentifier<SpoilDisplayNeoForge> SPOILING = CategoryIdentifier.of(Constants.MOD_ID, "plugins/spoiling");
 
 	@Override
 	public void registerCategories(CategoryRegistry registry) {
-		registry.add(new SpoilCategoryFabric());
+		registry.add(new SpoilCategoryNeoForge());
 
 		registry.addWorkstations(SPOILING, EntryStacks.of(Items.ROTTEN_FLESH));
 	}
@@ -40,7 +42,7 @@ public class REIPluginFabric implements REIClientPlugin {
 		List<RecipeHolder<SpoilRecipe>> spoilHolders = registry.getRecipeManager().getAllRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get());
 		spoilHolders.forEach((holder) -> {
 			SpoilRecipe recipe = holder.value();
-			registry.add(new SpoilDisplayFabric(
+			registry.add(new SpoilDisplayNeoForge(
 							recipe.getIngredients().get(0),
 							recipe.getResultItem(registryAccess)
 					)

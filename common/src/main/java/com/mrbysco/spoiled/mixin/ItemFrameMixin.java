@@ -15,28 +15,28 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ItemFrame.class)
 public abstract class ItemFrameMixin extends HangingEntity {
 
-    protected ItemFrameMixin(EntityType<? extends HangingEntity> type, Level level) {
-        super(type, level);
-    }
+	protected ItemFrameMixin(EntityType<? extends HangingEntity> type, Level level) {
+		super(type, level);
+	}
 
-    /**
-     * @see ItemFrame#setItem(ItemStack)
-     */
-    @Shadow
-    public abstract void setItem(ItemStack stack);
+	/**
+	 * @see ItemFrame#setItem(ItemStack)
+	 */
+	@Shadow
+	public abstract void setItem(ItemStack stack);
 
-    /**
-     * @see ItemFrame#getItem()
-     */
-    @Shadow
-    public abstract ItemStack getItem();
+	/**
+	 * @see ItemFrame#getItem()
+	 */
+	@Shadow
+	public abstract ItemStack getItem();
 
-    @Override
-    public void tick() {
-        super.tick();
-        // Execute at the end of the tick
-        if (!this.level().isClientSide()) {
-            SpoilHelper.spoilSingleItemAndReplace(this.level(), this.getItem(), this::setItem);
-        }
-    }
+	@Override
+	public void tick() {
+		super.tick();
+		// Execute at the end of the tick
+		if (!this.level().isClientSide()) {
+			SpoilHelper.spoilSingleItemAndReplace(this.level(), this.getItem(), this::setItem);
+		}
+	}
 }

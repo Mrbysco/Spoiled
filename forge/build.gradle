@@ -66,9 +66,9 @@ dependencies {
     implementation "dev.architectury:architectury-neoforge:${architectury_version}"
     implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
-    compileOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
-    testCompileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
-    implementation "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
+//    compileOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+//    testCompileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
+//    implementation "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
     implementation "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
 
@@ -121,12 +121,13 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.releaseType = 'beta'
         mainFile.addGameVersion "NeoForge"
         mainFile.addGameVersion "${minecraft_version}"
-        mainFile.addGameVersion "Java 17"
+        mainFile.addGameVersion "Java 21"
+        mainFile.addGameVersion('Server', 'Client')
 
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-        mainFile.addOptional("jei", "roughly-enough-items", "crafttweaker")
+        mainFile.addOptional(/*"jei", */"roughly-enough-items"/*, "crafttweaker"*/)
     }
 }
 
@@ -141,12 +142,12 @@ if (System.getenv().MODRINTH_KEY) {
         uploadFile = jar
         changelog = fileContents
         gameVersions = ["${minecraft_version}"]
-        loaders = ["neoforge", "forge"]
+        loaders = ["neoforge"]
 
         dependencies {
-            optional.project "jei"
+//            optional.project "jei"
             optional.project "rei"
-            optional.project "crafttweaker"
+//            optional.project "crafttweaker"
         }
     }
 }

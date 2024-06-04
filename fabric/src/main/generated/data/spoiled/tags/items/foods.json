@@ -1,6 +1,8 @@
 {
-  "replace": false,
   "values": [
-    "#spoiled:foods/vanilla"
+    {
+      "id": "#c:foods",
+      "required": false
+    }
   ]
 }

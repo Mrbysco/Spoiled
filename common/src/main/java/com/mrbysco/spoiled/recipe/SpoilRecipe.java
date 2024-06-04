@@ -1,13 +1,15 @@
 package com.mrbysco.spoiled.recipe;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,7 +17,6 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 public class SpoilRecipe implements Recipe<Container> {
 	protected final String group;
@@ -40,24 +41,29 @@ public class SpoilRecipe implements Recipe<Container> {
 		return this.getIngredients().get(0).test(inv.getItem(0));
 	}
 
-	public ItemStack assemble(Container inventory, RegistryAccess registryAccess) {
+	@Override
+	public ItemStack assemble(Container inventory, HolderLookup.Provider registryAccess) {
 		return getResultItem(registryAccess).copy();
 	}
 
+	@Override
 	public boolean canCraftInDimensions(int x, int y) {
 		return false;
 	}
 
+	@Override
 	public NonNullList<Ingredient> getIngredients() {
 		NonNullList<Ingredient> nonnulllist = NonNullList.create();
 		nonnulllist.add(this.ingredient);
 		return nonnulllist;
 	}
 
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	@Override
+	public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
 		return this.result.copy();
 	}
 
+	@Override
 	public String getGroup() {
 		return this.group;
 	}
@@ -79,36 +85,41 @@ public class SpoilRecipe implements Recipe<Container> {
 	}
 
 	public static class Serializer implements RecipeSerializer<SpoilRecipe> {
-		public static final Codec<SpoilRecipe> CODEC = RecordCodecBuilder.create(
+		public static final MapCodec<SpoilRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
-								ExtraCodecs.strictOptionalField(Codec.STRING, "group", "").forGetter(recipe -> recipe.group),
+								Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
 								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
 								ItemStack.SINGLE_ITEM_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
-								ExtraCodecs.strictOptionalField(Codec.INT, "spoiltime", -1).forGetter(recipe -> recipe.spoilTime)
+								Codec.INT.optionalFieldOf("spoiltime", -1).forGetter(recipe -> recipe.spoilTime)
 						)
 						.apply(instance, SpoilRecipe::new)
 		);
+		public static final StreamCodec<RegistryFriendlyByteBuf, SpoilRecipe> STREAM_CODEC = StreamCodec.of(
+				SpoilRecipe.Serializer::toNetwork, SpoilRecipe.Serializer::fromNetwork
+		);
 
 		@Override
-		public Codec<SpoilRecipe> codec() {
+		public MapCodec<SpoilRecipe> codec() {
 			return CODEC;
 		}
 
-		@Nullable
 		@Override
-		public SpoilRecipe fromNetwork(FriendlyByteBuf buffer) {
+		public StreamCodec<RegistryFriendlyByteBuf, SpoilRecipe> streamCodec() {
+			return STREAM_CODEC;
+		}
+
+		public static SpoilRecipe fromNetwork(RegistryFriendlyByteBuf buffer) {
 			String s = buffer.readUtf(32767);
-			Ingredient ingredient = Ingredient.fromNetwork(buffer);
-			ItemStack itemstack = buffer.readItem();
+			Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
+			ItemStack itemstack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
 			int spoilTime = buffer.readVarInt();
 			return new SpoilRecipe(s, ingredient, itemstack, spoilTime);
 		}
 
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, SpoilRecipe recipe) {
+		public static void toNetwork(RegistryFriendlyByteBuf buffer, SpoilRecipe recipe) {
 			buffer.writeUtf(recipe.group);
-			recipe.ingredient.toNetwork(buffer);
-			buffer.writeItem(recipe.result);
+			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
+			ItemStack.STREAM_CODEC.encode(buffer, recipe.result);
 			buffer.writeVarInt(recipe.spoilTime);
 		}
 	}

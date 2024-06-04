@@ -61,7 +61,7 @@ public class SpoiledFabricClient implements ClientModInitializer {
 			Constants.LOGGER.error("Failed to create filesystem watcher for configs", e);
 		}
 
-		ItemTooltipCallback.EVENT.register((stack, context, lines) -> {
+		ItemTooltipCallback.EVENT.register((stack, context, type, lines) -> {
 			Component component = TooltipUtil.getTooltip(stack);
 			if (component != null) {
 				lines.add(component);

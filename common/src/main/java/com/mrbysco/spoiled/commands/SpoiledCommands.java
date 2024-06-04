@@ -7,6 +7,7 @@ import com.mrbysco.spoiled.Constants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -43,7 +44,7 @@ public class SpoiledCommands {
 
 		source.sendSuccess(() -> Component.translatable("spoiled.command.food_list.message").withStyle(ChatFormatting.YELLOW), true);
 
-		List<Item> foodItems = BuiltInRegistries.ITEM.stream().filter(Item::isEdible).collect(Collectors.toList());
+		List<Item> foodItems = BuiltInRegistries.ITEM.stream().filter(item -> item.getDefaultInstance().has(DataComponents.FOOD)).toList();
 		List<ResourceLocation> keys = foodItems.stream().map(BuiltInRegistries.ITEM::getKey).toList();
 		Constants.LOGGER.info("List of Foods requested by " + source.getTextName() + ":");
 		keys.forEach(t -> Constants.LOGGER.info(t.toString()));

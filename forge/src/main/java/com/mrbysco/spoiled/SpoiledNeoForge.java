@@ -5,21 +5,20 @@ import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.handler.TooltipHandler;
 import com.mrbysco.spoiled.recipe.condition.SpoiledConditions;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 @Mod(Constants.MOD_ID)
-public class SpoiledForge {
+public class SpoiledNeoForge {
 
-	public SpoiledForge(IEventBus eventBus) {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
+	public SpoiledNeoForge(IEventBus eventBus, ModContainer container, Dist dist) {
+		container.registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
 		eventBus.register(SpoiledConfig.class);
 
 		SpoiledConditions.CONDITION_CODECS.register(eventBus);
@@ -33,7 +32,8 @@ public class SpoiledForge {
 			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
 		}
 
-		if (FMLEnvironment.dist.isClient()) {
+		if (dist.isClient()) {
+			container.registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
 			NeoForge.EVENT_BUS.register(new TooltipHandler());
 		}
 	}

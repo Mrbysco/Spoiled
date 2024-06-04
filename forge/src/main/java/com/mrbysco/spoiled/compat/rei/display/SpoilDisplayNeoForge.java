@@ -1,6 +1,6 @@
 package com.mrbysco.spoiled.compat.rei.display;
 
-import com.mrbysco.spoiled.compat.rei.REIPluginFabric;
+import com.mrbysco.spoiled.compat.rei.REIPluginNeoForge;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -10,11 +10,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 
 import java.util.List;
 
-public class SpoilDisplayFabric implements Display {
+public class SpoilDisplayNeoForge implements Display {
 	private final List<EntryIngredient> inputEntries;
 	private final List<EntryIngredient> outputEntries;
 
-	public SpoilDisplayFabric(Ingredient ingredient, ItemStack stack) {
+	public SpoilDisplayNeoForge(Ingredient ingredient, ItemStack stack) {
 		this.inputEntries = List.of(EntryIngredients.ofIngredient(ingredient));
 		this.outputEntries = List.of(EntryIngredients.of(stack));
 	}
@@ -31,6 +31,6 @@ public class SpoilDisplayFabric implements Display {
 
 	@Override
 	public CategoryIdentifier<?> getCategoryIdentifier() {
-		return REIPluginFabric.SPOILING;
+		return REIPluginNeoForge.SPOILING;
 	}
 }

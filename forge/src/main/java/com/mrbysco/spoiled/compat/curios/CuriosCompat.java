@@ -4,23 +4,21 @@ import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.util.SpoilHelper;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 
 public class CuriosCompat {
-	public static void onCuriosTick(TickEvent.PlayerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide &&
-				event.player.level().getGameTime() % SpoiledConfigCache.spoilRate == 0 && !event.player.getAbilities().instabuild) {
-			final Player player = event.player;
+	public static void onCuriosTick(PlayerTickEvent.Post event) {
+		if (event.getEntity() instanceof ServerPlayer player &&
+				player.level().getGameTime() % SpoiledConfigCache.spoilRate == 0 && !player.getAbilities().instabuild) {
 			final Level level = player.level();
 			ICuriosItemHandler curiosItemHandler = CuriosApi.getCuriosInventory(player).orElse(null);
 			if (curiosItemHandler == null) return;
@@ -30,7 +28,7 @@ public class CuriosCompat {
 				ItemStack stack = equipped.getStackInSlot(i);
 				if (!stack.isEmpty()) {
 					IItemHandler itemHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-					if(itemHandler != null) {
+					if (itemHandler != null) {
 						if (itemHandler.getSlots() > 0) {
 							for (int j = 0; j < itemHandler.getSlots(); j++) {
 								ItemStack nestedStack = itemHandler.getStackInSlot(j);

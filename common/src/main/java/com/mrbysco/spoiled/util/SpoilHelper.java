@@ -1,12 +1,14 @@
 package com.mrbysco.spoiled.util;
 
 import com.mrbysco.spoiled.Constants;
+import com.mrbysco.spoiled.component.SpoilTimer;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
+import com.mrbysco.spoiled.registration.SpoiledComponents;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -38,13 +40,14 @@ public class SpoilHelper {
 		}
 		if (Services.PLATFORM.spoilEverything()) {
 			final ResourceLocation stackLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
-			if (stack.isEdible()) {
+			if (stack.has(DataComponents.FOOD)) {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + BuiltInRegistries.ITEM.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
 				return new RecipeHolder<>(new ResourceLocation(Constants.MOD_ID, recipePath), new SpoilRecipe("", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime()));
 			}
 		} else {
+			if (stack.is(SpoiledTags.FOODS_BLACKLIST)) return null;
 			return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
 					new SimpleContainer(stack), level).orElse(null);
 		}
@@ -58,7 +61,7 @@ public class SpoilHelper {
 	 * @return true if the stack is spoiling
 	 */
 	public static boolean isSpoiling(ItemStack stack) {
-		return stack.hasTag() && stack.getTag().contains(Constants.SPOIL_TAG);
+		return stack.has(SpoiledComponents.SPOIL_TIMER.get());
 	}
 
 	/**
@@ -68,7 +71,7 @@ public class SpoilHelper {
 	 * @return The spoil time for the stack
 	 */
 	public static int getSpoilTime(ItemStack stack) {
-		return stack.hasTag() ? stack.getTag().getInt(Constants.SPOIL_TAG) : 0;
+		return stack.has(SpoiledComponents.SPOIL_TIMER.get()) ? stack.get(SpoiledComponents.SPOIL_TIMER.get()).timer() : 0;
 	}
 
 	/**
@@ -78,9 +81,12 @@ public class SpoilHelper {
 	 * @param time  The time to set
 	 */
 	public static void setSpoilTime(ItemStack stack, int time) {
-		CompoundTag tag = stack.getOrCreateTag();
-		tag.putInt(Constants.SPOIL_TAG, time);
-		stack.setTag(tag);
+		if (stack.has(SpoiledComponents.SPOIL_TIMER.get())) {
+			SpoilTimer spoilTimer = stack.get(SpoiledComponents.SPOIL_TIMER.get());
+			stack.set(SpoiledComponents.SPOIL_TIMER.get(), new SpoilTimer(time, spoilTimer.maxTime()));
+		} else {
+			Constants.LOGGER.info("Tried to set spoil time for a stack without spoil timer component");
+		}
 	}
 
 	/**
@@ -180,28 +186,22 @@ public class SpoilHelper {
 	 * @param recipe The spoil recipe to use
 	 */
 	public static void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
-		CompoundTag tag = stack.getOrCreateTag();
-		if (tag.isEmpty()) {
-			if (!tag.contains(Constants.SPOIL_TAG)) {
-				tag.putInt(Constants.SPOIL_TAG, 0);
-			}
-			if (!tag.contains(Constants.SPOIL_TIME_TAG)) {
-				tag.putInt(Constants.SPOIL_TIME_TAG, recipe.getSpoilTime());
-			}
-			stack.setTag(tag);
-		} else {
-			if (tag.contains(Constants.SPOIL_TAG) && tag.contains(Constants.SPOIL_TIME_TAG)) {
-				int getOldTime = tag.getInt(Constants.SPOIL_TAG);
-				int getMaxTime = tag.getInt(Constants.SPOIL_TIME_TAG);
+		if (stack.has(SpoiledComponents.SPOIL_TIMER.get())) {
+			SpoilTimer spoilTimer = stack.get(SpoiledComponents.SPOIL_TIMER.get());
+			if (spoilTimer != null) {
+				int getOldTime = spoilTimer.timer();
+				int getMaxTime = spoilTimer.maxTime();
 				if (getMaxTime != recipe.getSpoilTime()) {
-					tag.putInt(Constants.SPOIL_TIME_TAG, recipe.getSpoilTime());
+					getMaxTime = recipe.getSpoilTime();
 				}
 				if (getOldTime < getMaxTime) {
 					getOldTime++;
-					tag.putInt(Constants.SPOIL_TAG, getOldTime);
-					stack.setTag(tag);
+					spoilTimer = new SpoilTimer(getOldTime, getMaxTime);
+					stack.set(SpoiledComponents.SPOIL_TIMER.get(), spoilTimer);
 				}
 			}
+		} else {
+			stack.set(SpoiledComponents.SPOIL_TIMER.get(), new SpoilTimer(recipe.getSpoilTime()));
 		}
 	}
 
@@ -212,11 +212,13 @@ public class SpoilHelper {
 	 * @return true if the stack is spoiled
 	 */
 	public static boolean isSpoiled(ItemStack stack) {
-		CompoundTag tag = stack.getOrCreateTag();
-		if (tag.contains(Constants.SPOIL_TAG) && tag.contains(Constants.SPOIL_TIME_TAG)) {
-			int getOldTime = tag.getInt(Constants.SPOIL_TAG);
-			int getMaxTime = tag.getInt(Constants.SPOIL_TIME_TAG);
-			return getOldTime >= getMaxTime;
+		if (stack.has(SpoiledComponents.SPOIL_TIMER.get())) {
+			SpoilTimer spoilTimer = stack.get(SpoiledComponents.SPOIL_TIMER.get());
+			if (spoilTimer != null) {
+				int getOldTime = spoilTimer.timer();
+				int getMaxTime = spoilTimer.maxTime();
+				return getOldTime >= getMaxTime;
+			}
 		}
 		return false;
 	}

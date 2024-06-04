@@ -1,7 +1,7 @@
 package com.mrbysco.spoiled.compat.rei.category;
 
-import com.mrbysco.spoiled.compat.rei.REIPluginFabric;
-import com.mrbysco.spoiled.compat.rei.display.SpoilDisplayFabric;
+import com.mrbysco.spoiled.compat.rei.REIPluginNeoForge;
+import com.mrbysco.spoiled.compat.rei.display.SpoilDisplayNeoForge;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
@@ -16,10 +16,10 @@ import net.minecraft.world.item.Items;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SpoilCategoryFabric implements DisplayCategory<SpoilDisplayFabric> {
+public class SpoilCategoryNeoForge implements DisplayCategory<SpoilDisplayNeoForge> {
 	@Override
-	public CategoryIdentifier<? extends SpoilDisplayFabric> getCategoryIdentifier() {
-		return REIPluginFabric.SPOILING;
+	public CategoryIdentifier<? extends SpoilDisplayNeoForge> getCategoryIdentifier() {
+		return REIPluginNeoForge.SPOILING;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class SpoilCategoryFabric implements DisplayCategory<SpoilDisplayFabric> 
 	}
 
 	@Override
-	public List<Widget> setupDisplay(SpoilDisplayFabric display, Rectangle bounds) {
+	public List<Widget> setupDisplay(SpoilDisplayNeoForge display, Rectangle bounds) {
 		Point centerPoint = new Point(bounds.getCenterX(), bounds.getCenterY());
 		List<Widget> widgets = new ArrayList<>();
 		widgets.add(Widgets.createRecipeBase(bounds));
@@ -46,7 +46,7 @@ public class SpoilCategoryFabric implements DisplayCategory<SpoilDisplayFabric> 
 	}
 
 	@Override
-	public int getDisplayWidth(SpoilDisplayFabric display) {
+	public int getDisplayWidth(SpoilDisplayNeoForge display) {
 		return 100;
 	}
 

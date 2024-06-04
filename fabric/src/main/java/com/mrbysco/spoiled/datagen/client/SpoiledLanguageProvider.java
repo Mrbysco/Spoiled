@@ -2,14 +2,17 @@ package com.mrbysco.spoiled.datagen.client;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.core.HolderLookup;
+
+import java.util.concurrent.CompletableFuture;
 
 public class SpoiledLanguageProvider extends FabricLanguageProvider {
-	public SpoiledLanguageProvider(FabricDataOutput dataOutput) {
-		super(dataOutput);
+	public SpoiledLanguageProvider(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
+		super(dataOutput, registryLookup);
 	}
 
 	@Override
-	public void generateTranslations(TranslationBuilder translationBuilder) {
+	public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
 		translationBuilder.add("spoiled.spoiling", "Spoiling progress: ");
 		translationBuilder.add("spoiled.spoiling.0", "Fresh");
 		translationBuilder.add("spoiled.spoiling.25", "");

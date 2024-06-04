@@ -9,11 +9,14 @@ import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
+import me.shedaniel.autoconfig.serializer.YamlConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 
 public class SpoiledFabric implements ModInitializer {
@@ -21,7 +24,7 @@ public class SpoiledFabric implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		config = AutoConfig.register(SpoiledConfig.class, Toml4jConfigSerializer::new);
+		config = AutoConfig.register(SpoiledConfig.class, YamlConfigSerializer::new);
 		config.registerLoadListener((holder, config) -> {
 			SpoiledConfigCache.setSpoilRate(config.general.spoilRate);
 			SpoiledConfigCache.generateContainerModifier(config.general.containerModifier);
@@ -44,7 +47,7 @@ public class SpoiledFabric implements ModInitializer {
 			SpoiledConfigCache.generateContainerModifier(config.get().general.containerModifier);
 		});
 
-		ResourceConditions.register(InitializeSpoilingCondition.ID, obj -> InitializeSpoilingCondition.test());
-		ResourceConditions.register(MergeRecipeCondition.ID, obj -> MergeRecipeCondition.test());
+		ResourceConditions.register(ResourceConditionType.create(InitializeSpoilingCondition.ID, InitializeSpoilingCondition.CODEC));
+		ResourceConditions.register(ResourceConditionType.create(MergeRecipeCondition.ID, MergeRecipeCondition.CODEC));
 	}
 }

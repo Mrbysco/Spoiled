@@ -13,7 +13,7 @@ public class SpoiledDataGen implements DataGeneratorEntrypoint {
 		var pack = generator.createPack();
 
 		pack.addProvider(SpoiledRecipeProvider::new);
-		pack.addProvider((output, lookup) -> new SpoiledLanguageProvider(output));
+		pack.addProvider(SpoiledLanguageProvider::new);
 
 		var blockTagProvider = pack.addProvider(SpoiledBlockTagProvider::new);
 		pack.addProvider((output, lookup) -> new SpoiledItemTagProvider(output, lookup, blockTagProvider));

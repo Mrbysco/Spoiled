@@ -1,0 +1,14 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "spoiled:initialize_spoiling"
+    }
+  ],
+  "type": "spoiled:spoil_recipe",
+  "ingredient": {
+    "tag": "spoiled:foods"
+  },
+  "result": {
+    "id": "minecraft:rotten_flesh"
+  }
+}

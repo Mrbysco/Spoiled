@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class ForgeRegistrationFactory implements RegistrationProvider.Factory {
+public class NeoForgeRegistrationFactory implements RegistrationProvider.Factory {
 
 	@Override
 	public <T> RegistrationProvider<T> create(ResourceKey<? extends Registry<T>> resourceKey, String modId) {

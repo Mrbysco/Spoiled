@@ -28,8 +28,8 @@ public class SpoiledRecipeProvider extends RecipeProvider {
 		String folder = "spoiling/";
 
 		RecipeOutput initializeOutput = recipeOutput.withConditions(InitializeSpoilingCondition.INSTANCE);
-		SpoilRecipeBuilder.spoilRecipe(Ingredient.of(SpoiledTags.FOODS_VANILLA), Items.ROTTEN_FLESH)
-				.build(initializeOutput, new ResourceLocation(Constants.MOD_ID, folder + "vanilla" + toRotten));
+		SpoilRecipeBuilder.spoilRecipe(Ingredient.of(SpoiledTags.FOODS), Items.ROTTEN_FLESH)
+				.build(initializeOutput, new ResourceLocation(Constants.MOD_ID, folder + "initial" + toRotten));
 
 
 		RecipeOutput mergeOutput = recipeOutput.withConditions(MergeRecipeCondition.INSTANCE);

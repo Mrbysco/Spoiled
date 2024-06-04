@@ -3,9 +3,9 @@ package com.mrbysco.spoiled.recipe;
 import com.google.common.collect.Lists;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import com.mrbysco.spoiled.util.SpoilHelper;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -19,6 +19,8 @@ public class StackFoodRecipe extends CustomRecipe {
 	public StackFoodRecipe(CraftingBookCategory category) {
 		super(category);
 	}
+
+	@Override
 
 	public boolean matches(CraftingContainer container, Level level) {
 		List<ItemStack> list = Lists.newArrayList();
@@ -39,7 +41,8 @@ public class StackFoodRecipe extends CustomRecipe {
 		return list.size() == 2;
 	}
 
-	public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+	@Override
+	public ItemStack assemble(CraftingContainer container, HolderLookup.Provider registryAccess) {
 		List<ItemStack> list = Lists.newArrayList();
 
 		for (int i = 0; i < container.getContainerSize(); ++i) {
@@ -83,6 +86,7 @@ public class StackFoodRecipe extends CustomRecipe {
 		return super.getRemainingItems(container);
 	}
 
+	@Override
 	public boolean canCraftInDimensions(int width, int height) {
 		return width * height >= 2;
 	}

@@ -7,7 +7,7 @@ import net.neoforged.fml.ModList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ForgePlatformHelper implements IPlatformHelper {
+public class NeoForgePlatformHelper implements IPlatformHelper {
 
 	@Override
 	public boolean isModLoaded(String modID) {
