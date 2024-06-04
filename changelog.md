@@ -1,2 +1,1 @@
-* Re-enable JEI support
-* Re-enable Curios support (NeoForge side)
+* Initial update to 1.20.6
