@@ -16,9 +16,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 
-public class SpoilRecipe implements Recipe<Container> {
+public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 	protected final String group;
 	protected final Ingredient ingredient;
 	protected final ItemStack result;
@@ -37,12 +38,12 @@ public class SpoilRecipe implements Recipe<Container> {
 	}
 
 	@Override
-	public boolean matches(Container inv, Level level) {
-		return this.getIngredients().get(0).test(inv.getItem(0));
+	public boolean matches(SingleRecipeInput recipeInput, Level level) {
+		return this.getIngredients().get(0).test(recipeInput.getItem(0));
 	}
 
 	@Override
-	public ItemStack assemble(Container inventory, HolderLookup.Provider registryAccess) {
+	public ItemStack assemble(SingleRecipeInput recipeInput, HolderLookup.Provider registryAccess) {
 		return getResultItem(registryAccess).copy();
 	}
 

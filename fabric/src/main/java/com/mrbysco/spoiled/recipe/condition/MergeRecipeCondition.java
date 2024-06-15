@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class MergeRecipeCondition implements ResourceCondition {
 	public static final MapCodec<MergeRecipeCondition> CODEC = MapCodec.unit(MergeRecipeCondition::new);
-	public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merge_food");
+	public static final ResourceLocation ID = Constants.modLoc("merge_food");
 
 	public static final ResourceConditionType<MergeRecipeCondition> PROVIDER = ResourceConditionType.create(ID, CODEC);
 

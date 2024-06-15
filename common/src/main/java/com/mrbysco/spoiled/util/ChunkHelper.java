@@ -32,7 +32,7 @@ public class ChunkHelper {
 				LevelChunk levelChunk = chunk.getTickingChunk();
 
 				if (levelChunk != null) {
-					ChunkAccess access = chunk.getLastAvailable();
+					ChunkAccess access = chunk.getLatestChunk();
 
 					if (access != null) {
 						positions.addAll(access.getBlockEntitiesPos());

@@ -32,8 +32,8 @@
 //@JeiPlugin
 //public class JEICompat implements IModPlugin {
 //
-//	public static final ResourceLocation PLUGIN_UID = new ResourceLocation(Constants.MOD_ID, "main");
-//	public static final ResourceLocation SPOILING = new ResourceLocation(Constants.MOD_ID, "spoiling");
+//	public static final ResourceLocation PLUGIN_UID = Constants.modLoc("main");
+//	public static final ResourceLocation SPOILING = Constants.modLoc("spoiling");
 //
 //	@Nullable
 //	private IRecipeCategory<SpoilRecipe> spoilCategory;

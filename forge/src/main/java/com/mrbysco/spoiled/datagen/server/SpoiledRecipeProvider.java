@@ -29,11 +29,11 @@ public class SpoiledRecipeProvider extends RecipeProvider {
 
 		RecipeOutput initializeOutput = recipeOutput.withConditions(InitializeSpoilingCondition.INSTANCE);
 		SpoilRecipeBuilder.spoilRecipe(Ingredient.of(SpoiledTags.FOODS), Items.ROTTEN_FLESH)
-				.build(initializeOutput, new ResourceLocation(Constants.MOD_ID, folder + "initial" + toRotten));
+				.build(initializeOutput, Constants.modLoc(folder + "initial" + toRotten));
 
 
 		RecipeOutput mergeOutput = recipeOutput.withConditions(MergeRecipeCondition.INSTANCE);
 		SpecialRecipeBuilder.special(StackFoodRecipe::new)
-				.save(mergeOutput, new ResourceLocation(Constants.MOD_ID, "merge_food"));
+				.save(mergeOutput, Constants.modLoc("merge_food"));
 	}
 }

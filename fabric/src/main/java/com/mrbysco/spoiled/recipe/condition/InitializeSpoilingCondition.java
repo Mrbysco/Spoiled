@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class InitializeSpoilingCondition implements ResourceCondition {
 	public static final MapCodec<InitializeSpoilingCondition> CODEC = MapCodec.unit(InitializeSpoilingCondition::new);
-	public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "initialize_spoiling");
+	public static final ResourceLocation ID = Constants.modLoc("initialize_spoiling");
 
 	public static final ResourceConditionType<InitializeSpoilingCondition> PROVIDER = ResourceConditionType.create(ID, CODEC);
 

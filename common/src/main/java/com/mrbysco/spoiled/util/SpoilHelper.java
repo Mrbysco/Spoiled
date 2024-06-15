@@ -11,13 +11,13 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
@@ -44,12 +44,12 @@ public class SpoilHelper {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + BuiltInRegistries.ITEM.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
-				return new RecipeHolder<>(new ResourceLocation(Constants.MOD_ID, recipePath), new SpoilRecipe("", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime()));
+				return new RecipeHolder<>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, recipePath), new SpoilRecipe("", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime()));
 			}
 		} else {
 			if (stack.is(SpoiledTags.FOODS_BLACKLIST)) return null;
 			return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
-					new SimpleContainer(stack), level).orElse(null);
+					new SingleRecipeInput(stack), level).orElse(null);
 		}
 		return null;
 	}

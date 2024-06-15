@@ -9,6 +9,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -21,12 +22,11 @@ public class StackFoodRecipe extends CustomRecipe {
 	}
 
 	@Override
-
-	public boolean matches(CraftingContainer container, Level level) {
+	public boolean matches(CraftingInput craftingInput, Level level) {
 		List<ItemStack> list = Lists.newArrayList();
 
-		for (int i = 0; i < container.getContainerSize(); ++i) {
-			ItemStack itemstack = container.getItem(i);
+		for (int i = 0; i < craftingInput.size(); ++i) {
+			ItemStack itemstack = craftingInput.getItem(i);
 			if (!itemstack.isEmpty()) {
 				list.add(itemstack);
 				if (list.size() > 1) {
@@ -42,11 +42,11 @@ public class StackFoodRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer container, HolderLookup.Provider registryAccess) {
+	public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider registryAccess) {
 		List<ItemStack> list = Lists.newArrayList();
 
-		for (int i = 0; i < container.getContainerSize(); ++i) {
-			ItemStack itemstack = container.getItem(i);
+		for (int i = 0; i < craftingInput.size(); ++i) {
+			ItemStack itemstack = craftingInput.getItem(i);
 			if (!itemstack.isEmpty()) {
 				list.add(itemstack);
 				if (list.size() > 1) {
@@ -79,11 +79,12 @@ public class StackFoodRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
-		for (int i = 0; i < container.getContainerSize(); i++) {
-			container.setItem(i, ItemStack.EMPTY);
+	public NonNullList<ItemStack> getRemainingItems(CraftingInput craftingInput) {
+		NonNullList<ItemStack> nonnulllist = super.getRemainingItems(craftingInput);
+		for (int i = 0; i < craftingInput.size(); i++) {
+			nonnulllist.set(i, ItemStack.EMPTY);
 		}
-		return super.getRemainingItems(container);
+		return nonnulllist;
 	}
 
 	@Override

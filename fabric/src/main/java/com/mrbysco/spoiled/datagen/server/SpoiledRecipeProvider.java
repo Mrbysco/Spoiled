@@ -27,9 +27,9 @@ public class SpoiledRecipeProvider extends FabricRecipeProvider {
 		String toRotten = "_to_rotten_flesh";
 		String folder = "spoiling/";
 		SpoilRecipeBuilder.spoilRecipe(Ingredient.of(SpoiledTags.FOODS), Items.ROTTEN_FLESH)
-				.build(withConditions(consumer, new InitializeSpoilingCondition()), new ResourceLocation(Constants.MOD_ID, folder + "initial" + toRotten));
+				.build(withConditions(consumer, new InitializeSpoilingCondition()), Constants.modLoc(folder + "initial" + toRotten));
 
 		SpecialRecipeBuilder.special(StackFoodRecipe::new)
-				.save(withConditions(consumer, new MergeRecipeCondition()), new ResourceLocation(Constants.MOD_ID, "merge_food").toString());
+				.save(withConditions(consumer, new MergeRecipeCondition()),Constants.modLoc("merge_food").toString());
 	}
 }

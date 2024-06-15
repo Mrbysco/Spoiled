@@ -41,7 +41,7 @@ dependencies {
     }
 
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}"
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
+//    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
 
 //    modCompileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_version}")

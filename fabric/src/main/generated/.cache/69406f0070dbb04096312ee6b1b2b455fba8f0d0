@@ -1,3 +1,3 @@
-// 1.20.6	2024-06-04T21:56:19.4169822	Spoiled/Recipes
-a72266766f0f8b7d7ef0b4eeff90abb8dfabac53 data\spoiled\recipes\spoiling\initial_to_rotten_flesh.json
-ce5d13a068611940258c4a6ec89ee81a9369299d data\spoiled\recipes\merge_food.json
+// 1.21	2024-06-15T21:30:02.0321263	Spoiled/Recipes
+ce5d13a068611940258c4a6ec89ee81a9369299d data\spoiled\recipe\merge_food.json
+a72266766f0f8b7d7ef0b4eeff90abb8dfabac53 data\spoiled\recipe\spoiling\initial_to_rotten_flesh.json

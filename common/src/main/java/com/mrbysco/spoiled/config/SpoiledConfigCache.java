@@ -27,12 +27,12 @@ public class SpoiledConfigCache {
 		if (value.isEmpty()) {
 			return ItemStack.EMPTY;
 		} else {
-			Item item = BuiltInRegistries.ITEM.get(new ResourceLocation(value));
+			Item item = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(value));
 			if (item != null) {
 				return new ItemStack(item);
 			} else {
 				Constants.LOGGER.error("'defaultSpoilItem' couldn't be parsed, using default");
-				return new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation("rotten_flesh")));
+				return new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("rotten_flesh")));
 			}
 		}
 	}
@@ -44,7 +44,7 @@ public class SpoiledConfigCache {
 				if (!configValue.contains(",")) {
 					if (configValue.contains(":")) {
 						Constants.LOGGER.error(String.format("Invalid syntax '%s' found in 'containerModifier' config values, supplying default modifier of 0", configValue));
-						modifierMap.put(new ResourceLocation(configValue), 0D);
+						modifierMap.put(ResourceLocation.tryParse(configValue), 0D);
 					} else {
 						Constants.LOGGER.error(String.format("Invalid syntax '%s' found in 'containerModifier' config values", configValue));
 					}
@@ -55,7 +55,7 @@ public class SpoiledConfigCache {
 							Constants.LOGGER.error(String.format("Invalid resourcelocation syntax in 'containerModifier'. could not find \":\" in %s", configValue));
 							return;
 						}
-						ResourceLocation registry = new ResourceLocation(values[0]);
+						ResourceLocation registry = ResourceLocation.tryParse(values[0]);
 						double modifier = NumberUtils.isParsable(values[1]) ? Double.parseDouble(values[1]) : -1;
 						modifierMap.put(registry, modifier);
 					} else {

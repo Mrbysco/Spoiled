@@ -27,7 +27,7 @@
 //
 //	@Method
 //	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime) {
-//		final ResourceLocation id = new ResourceLocation("crafttweaker", name);
+//		final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("crafttweaker", name);
 //		final Ingredient foodIngredient = food.asVanillaIngredient();
 //		final ItemStack resultItemStack = spoilStack.getInternal();
 //		final SpoilRecipe recipe = new SpoilRecipe("", foodIngredient, resultItemStack, spoilTime);
@@ -42,7 +42,7 @@
 //				ResourceLocation location = BuiltInRegistries.ITEM.getKey(foundItem);
 //				if (foundItem != spoilStack.getInternal().getItem() && location != null && location.getNamespace().equals(modName)) {
 //					String itemLocation = location.toString().replace(":", "_");
-//					ResourceLocation id = new ResourceLocation("crafttweaker", itemLocation);
+//					ResourceLocation id = ResourceLocation.fromNamespaceAndPath("crafttweaker", itemLocation);
 //					SpoilRecipe recipe = new SpoilRecipe("", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime);
 //					CraftTweakerAPI.apply(new ActionAddRecipe(this, new RecipeHolder<>(id, recipe)));
 //				}
