@@ -21,7 +21,7 @@ side="BOTH"
 [[dependencies.spoiled]]
 modId="neoforge"
 type="required"
-versionRange="[21.0.6-beta,)"
+versionRange="[21.0.31-beta,)"
 ordering="NONE"
 side="BOTH"
 [[mixins]]

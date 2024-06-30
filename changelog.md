@@ -1,1 +1,3 @@
-* Initial update to 1.21
+* Re-enable CraftTweaker and JEI support
+* Add support for Curios API Continuation
+* Update NeoForge support
