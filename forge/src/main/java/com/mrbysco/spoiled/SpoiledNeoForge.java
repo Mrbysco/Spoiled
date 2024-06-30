@@ -28,9 +28,9 @@ public class SpoiledNeoForge {
 
 		CommonClass.init();
 
-//		if (ModList.get().isLoaded("curios")) {
-//			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
-//		}
+		if (ModList.get().isLoaded("curios")) {
+			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
+		}
 
 		if (dist.isClient()) {
 			container.registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
