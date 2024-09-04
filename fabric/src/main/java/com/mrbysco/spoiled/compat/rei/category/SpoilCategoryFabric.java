@@ -38,9 +38,9 @@ public class SpoilCategoryFabric implements DisplayCategory<SpoilDisplayFabric> 
 		List<Widget> widgets = new ArrayList<>();
 		widgets.add(Widgets.createRecipeBase(bounds));
 
-		widgets.add(Widgets.createSlot(new Point(bounds.getMinX() + 10, bounds.getMinY() + 12)).entries(display.getInputEntries().get(0)).markInput());
+		widgets.add(Widgets.createSlot(new Point(bounds.getMinX() + 10, bounds.getMinY() + 12)).entries(display.getInputEntries().getFirst()).markInput());
 		widgets.add(Widgets.createArrow(new Point(centerPoint.getX() - 12, centerPoint.getY() - 8)));
-		widgets.add(Widgets.createSlot(new Point(bounds.getMaxX() - 26, bounds.getMinY() + 12)).entries(display.getOutputEntries().get(0)).markOutput());
+		widgets.add(Widgets.createSlot(new Point(bounds.getMaxX() - 26, bounds.getMinY() + 12)).entries(display.getOutputEntries().getFirst()).markOutput());
 
 		return widgets;
 	}

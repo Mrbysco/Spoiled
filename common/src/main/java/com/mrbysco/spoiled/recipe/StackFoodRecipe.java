@@ -5,8 +5,6 @@ import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import com.mrbysco.spoiled.util.SpoilHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -30,7 +28,7 @@ public class StackFoodRecipe extends CustomRecipe {
 			if (!itemstack.isEmpty()) {
 				list.add(itemstack);
 				if (list.size() > 1) {
-					ItemStack stack1 = list.get(0);
+					ItemStack stack1 = list.getFirst();
 					if (itemstack.getItem() != stack1.getItem() || !SpoilHelper.totalUnderMax(itemstack, stack1) || !SpoilHelper.isSpoiling(stack1)) {
 						return false;
 					}
@@ -50,7 +48,7 @@ public class StackFoodRecipe extends CustomRecipe {
 			if (!itemstack.isEmpty()) {
 				list.add(itemstack);
 				if (list.size() > 1) {
-					ItemStack stack1 = list.get(0);
+					ItemStack stack1 = list.getFirst();
 					if (itemstack.getItem() != stack1.getItem() || !SpoilHelper.isSpoiling(stack1)) {
 						return ItemStack.EMPTY;
 					}

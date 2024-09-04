@@ -39,7 +39,7 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 
 	@Override
 	public boolean matches(SingleRecipeInput recipeInput, Level level) {
-		return this.getIngredients().get(0).test(recipeInput.getItem(0));
+		return this.getIngredients().getFirst().test(recipeInput.getItem(0));
 	}
 
 	@Override

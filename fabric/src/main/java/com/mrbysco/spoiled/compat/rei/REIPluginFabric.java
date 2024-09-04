@@ -41,7 +41,7 @@ public class REIPluginFabric implements REIClientPlugin {
 		spoilHolders.forEach((holder) -> {
 			SpoilRecipe recipe = holder.value();
 			registry.add(new SpoilDisplayFabric(
-							recipe.getIngredients().get(0),
+							recipe.getIngredients().getFirst(),
 							recipe.getResultItem(registryAccess)
 					)
 			);

@@ -1,11 +1,9 @@
 package com.mrbysco.spoiled.util;
 
-import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.component.SpoilTimer;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.registration.SpoiledComponents;
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;

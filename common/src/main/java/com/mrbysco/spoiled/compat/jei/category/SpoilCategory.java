@@ -67,7 +67,7 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 		}
 		RegistryAccess registryAccess = level.registryAccess();
 
-		builder.addSlot(RecipeIngredientRole.INPUT, 10, 14).addIngredients(recipe.getIngredients().get(0));
+		builder.addSlot(RecipeIngredientRole.INPUT, 10, 14).addIngredients(recipe.getIngredients().getFirst());
 		builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 14).addItemStack(recipe.getResultItem(registryAccess));
 	}
 

@@ -8,7 +8,6 @@ import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
-import me.shedaniel.autoconfig.serializer.Toml4jConfigSerializer;
 import me.shedaniel.autoconfig.serializer.YamlConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -16,7 +15,6 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 
 public class SpoiledFabric implements ModInitializer {

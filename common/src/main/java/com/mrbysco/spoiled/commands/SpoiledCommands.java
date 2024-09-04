@@ -15,7 +15,6 @@ import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SpoiledCommands {
 	public static void initializeCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -33,7 +32,7 @@ public class SpoiledCommands {
 		source.sendSuccess(() -> Component.translatable("spoiled.command.blockentity_list.message").withStyle(ChatFormatting.YELLOW), true);
 
 		List<ResourceLocation> keys = new ArrayList<>(BuiltInRegistries.BLOCK_ENTITY_TYPE.keySet());
-		Constants.LOGGER.info("List of Block Entities requested by " + source.getTextName() + ":");
+		Constants.LOGGER.info("List of Block Entities requested by {}", source.getTextName());
 		keys.forEach(t -> Constants.LOGGER.info(t.toString()));
 
 		return 0;
@@ -46,7 +45,7 @@ public class SpoiledCommands {
 
 		List<Item> foodItems = BuiltInRegistries.ITEM.stream().filter(item -> item.getDefaultInstance().has(DataComponents.FOOD)).toList();
 		List<ResourceLocation> keys = foodItems.stream().map(BuiltInRegistries.ITEM::getKey).toList();
-		Constants.LOGGER.info("List of Foods requested by " + source.getTextName() + ":");
+		Constants.LOGGER.info("List of Foods requested by {}:", source.getTextName());
 		keys.forEach(t -> Constants.LOGGER.info(t.toString()));
 
 		return 0;

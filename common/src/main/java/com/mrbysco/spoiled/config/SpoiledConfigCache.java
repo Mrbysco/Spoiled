@@ -43,23 +43,23 @@ public class SpoiledConfigCache {
 			for (String configValue : configValues) {
 				if (!configValue.contains(",")) {
 					if (configValue.contains(":")) {
-						Constants.LOGGER.error(String.format("Invalid syntax '%s' found in 'containerModifier' config values, supplying default modifier of 0", configValue));
+						Constants.LOGGER.error("Invalid syntax '{}' found in 'containerModifier' config values, supplying default modifier of 0", configValue);
 						modifierMap.put(ResourceLocation.tryParse(configValue), 0D);
 					} else {
-						Constants.LOGGER.error(String.format("Invalid syntax '%s' found in 'containerModifier' config values", configValue));
+						Constants.LOGGER.error("Invalid syntax '{}' found in 'containerModifier' config values", configValue);
 					}
 				} else {
 					String[] values = configValue.split(",");
 					if (values.length == 2) {
 						if (!values[0].contains(":")) {
-							Constants.LOGGER.error(String.format("Invalid resourcelocation syntax in 'containerModifier'. could not find \":\" in %s", configValue));
+							Constants.LOGGER.error("Invalid resourcelocation syntax in 'containerModifier'. could not find \":\" in {}", configValue);
 							return;
 						}
 						ResourceLocation registry = ResourceLocation.tryParse(values[0]);
 						double modifier = NumberUtils.isParsable(values[1]) ? Double.parseDouble(values[1]) : -1;
 						modifierMap.put(registry, modifier);
 					} else {
-						Constants.LOGGER.error(String.format("Tried looking for 2 values in 'containerModifier' but found more making the config value %s invalid", configValue));
+						Constants.LOGGER.error("Tried looking for 2 values in 'containerModifier' but found more making the config value {} invalid", configValue);
 					}
 				}
 			}

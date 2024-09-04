@@ -43,7 +43,7 @@ public class REIPluginNeoForge implements REIClientPlugin {
 		spoilHolders.forEach((holder) -> {
 			SpoilRecipe recipe = holder.value();
 			registry.add(new SpoilDisplayNeoForge(
-							recipe.getIngredients().get(0),
+							recipe.getIngredients().getFirst(),
 							recipe.getResultItem(registryAccess)
 					)
 			);
