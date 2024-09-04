@@ -51,7 +51,6 @@ public class SpoilHelper {
 				return null;
 			}
 
-			Constants.LOGGER.error("Recipes {}", recipes);
 			return recipes.stream()
 					.reduce((highest_priority, next) ->
 							highest_priority == null || next.getPriority() > highest_priority.getPriority()
