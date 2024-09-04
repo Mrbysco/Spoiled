@@ -27,13 +27,15 @@ public class SpoilRecipe implements Recipe<Container> {
 	protected final Ingredient ingredient;
 	protected final ItemStack result;
 	protected final int spoilTime;
+	protected final int priority; // higher numbers are higher priority
 
-	public SpoilRecipe(ResourceLocation id, String group, Ingredient ingredient, ItemStack stack, int spoilTime) {
+	public SpoilRecipe(ResourceLocation id, String group, Ingredient ingredient, ItemStack stack, int spoilTime, int priority) {
 		this.id = id;
 		this.group = group;
 		this.ingredient = ingredient;
 		this.result = stack;
 		this.spoilTime = spoilTime;
+		this.priority = priority;
 	}
 
 	@Override
@@ -44,6 +46,10 @@ public class SpoilRecipe implements Recipe<Container> {
 	@Override
 	public boolean matches(Container inv, Level level) {
 		return this.getIngredients().get(0).test(inv.getItem(0));
+	}
+
+	public int getPriority() {
+		return this.priority;
 	}
 
 	public ItemStack assemble(Container inventory, RegistryAccess registryAccess) {
@@ -111,7 +117,8 @@ public class SpoilRecipe implements Recipe<Container> {
 			}
 
 			int spoilTime = GsonHelper.getAsInt(jsonObject, "spoiltime", Services.PLATFORM.getDefaultSpoilTime());
-			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime);
+			int priority = GsonHelper.getAsInt(jsonObject, "priority", 1);
+			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime, priority);
 		}
 
 		@Nullable
@@ -121,7 +128,8 @@ public class SpoilRecipe implements Recipe<Container> {
 			Ingredient ingredient = Ingredient.fromNetwork(buffer);
 			ItemStack itemstack = buffer.readItem();
 			int spoilTime = buffer.readVarInt();
-			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime);
+			int priority = buffer.readVarInt();
+			return new SpoilRecipe(recipeId, s, ingredient, itemstack, spoilTime, priority);
 		}
 
 		@Override
@@ -130,6 +138,7 @@ public class SpoilRecipe implements Recipe<Container> {
 			recipe.ingredient.toNetwork(buffer);
 			buffer.writeItem(recipe.result);
 			buffer.writeVarInt(recipe.spoilTime);
+			buffer.writeVarInt(recipe.priority);
 		}
 	}
 }
