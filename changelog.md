@@ -1,2 +1,1 @@
-* Add Priority feature in case there are multiple spoil recipes for the same item. (PR) Courtesy of [blueridger](https://github.com/Mrbysco/Spoiled/pull/42)
-* Add support for `The Salt` by adding a config option to disable the spoiling of items that are salted by The Salt mod (default: false)
+* Remove left over log message
