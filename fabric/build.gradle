@@ -3,7 +3,7 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'fabric-loom'
-    id 'com.matthewprenger.cursegradle'
+    id 'net.darkhax.curseforgegradle'
     id 'com.modrinth.minotaur'
 }
 
@@ -119,30 +119,21 @@ publishing {
 }
 
 if (System.getenv().CURSEFORGE_KEY) {
-    curseforge {
-        apiKey = System.getenv().CURSEFORGE_KEY
-        project {
-            id = project.curseforge_id
-            releaseType = "alpha"
-            addGameVersion "Fabric"
-            addGameVersion "${minecraft_version}"
-            addGameVersion "Java 17"
-            mainArtifact(remapJar)
-            changelog = file("$project.rootDir/changelog.md")
-            changelogType = 'markdown'
+    task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        apiToken = System.getenv().CURSEFORGE_KEY
 
-            relations {
-                requiredDependency "fabric-api"
-                requiredDependency "cloth-config"
+        def mainFile = upload(project.curseforge_id, remapJar)
+        mainFile.releaseType = 'beta'
+        mainFile.addGameVersion "Fabric"
+        mainFile.addGameVersion "${minecraft_version}"
+        mainFile.addGameVersion "Java 17"
+        mainFile.addGameVersion('Server', 'Client')
 
-                optionalDependency "jei"
-                optionalDependency "crafttweaker"
-            }
-        }
+        mainFile.changelog = file("$project.rootDir/changelog.md")
+        mainFile.changelogType = 'markdown'
 
-        options {
-            forgeGradleIntegration = false
-        }
+        mainFile.addOptional("fabric-api", "cloth-config")
+        mainFile.addRequirement("jei", "crafttweaker")
     }
 }
 
