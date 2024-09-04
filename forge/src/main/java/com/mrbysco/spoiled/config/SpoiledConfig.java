@@ -39,6 +39,7 @@ public class SpoiledConfig {
 		public final ConfigValue<List<? extends String>> spoilBlacklist;
 		public final IntValue defaultSpoilTime;
 		public final ConfigValue<String> defaultSpoilItem;
+		public final BooleanValue saltCompat;
 
 		Common(ForgeConfigSpec.Builder builder) {
 			builder.comment("General settings")
@@ -87,6 +88,15 @@ public class SpoiledConfig {
 			defaultSpoilItem = builder
 					.comment("Defines the item the foods vanilla foods will turn into when spoiled (if empty it will clear the spoiling item) [default: 'minecraft:rotten_flesh']")
 					.define("defaultSpoilItem", "minecraft:rotten_flesh");
+
+			builder.pop();
+			builder.comment("Compatibility settings")
+					.push("Compatibility");
+
+
+			saltCompat = builder
+					.comment("When enabled foods that are salted by The Salted mod will not spoil [default: false]")
+					.define("saltCompat", false);
 
 			builder.pop();
 		}

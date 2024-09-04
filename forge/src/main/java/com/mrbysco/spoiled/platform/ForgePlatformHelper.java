@@ -2,6 +2,8 @@ package com.mrbysco.spoiled.platform;
 
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.platform.services.IPlatformHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 
 import java.util.ArrayList;
@@ -57,5 +59,14 @@ public class ForgePlatformHelper implements IPlatformHelper {
 	@Override
 	public String getDefaultSpoilItem() {
 		return SpoiledConfig.COMMON.defaultSpoilItem.get();
+	}
+
+	@Override
+	public boolean canSpoil(ItemStack stack) {
+		if (SpoiledConfig.COMMON.saltCompat.get() && ModList.get().isLoaded("salt")) {
+			CompoundTag tag = stack.getTag();
+			return tag == null || !tag.contains("Salted");
+		}
+		return true;
 	}
 }

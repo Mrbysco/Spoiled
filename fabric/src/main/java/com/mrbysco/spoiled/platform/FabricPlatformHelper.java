@@ -4,6 +4,7 @@ import com.mrbysco.spoiled.SpoiledFabric;
 import com.mrbysco.spoiled.SpoiledFabricClient;
 import com.mrbysco.spoiled.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
 
@@ -56,5 +57,10 @@ public class FabricPlatformHelper implements IPlatformHelper {
 	@Override
 	public String getDefaultSpoilItem() {
 		return SpoiledFabric.config.get().general.defaultSpoilItem;
+	}
+
+	@Override
+	public boolean canSpoil(ItemStack stack) {
+		return true;
 	}
 }

@@ -1,5 +1,7 @@
 package com.mrbysco.spoiled.platform.services;
 
+import net.minecraft.world.item.ItemStack;
+
 import java.util.List;
 
 public interface IPlatformHelper {
@@ -74,4 +76,12 @@ public interface IPlatformHelper {
 	 * @return The configured defaultSpoilItem value
 	 */
 	String getDefaultSpoilItem();
+
+
+	/**
+	 * Check if a stack is capable of spoiling
+	 *
+	 * @return true if the stack can spoil
+	 */
+	boolean canSpoil(ItemStack stack);
 }

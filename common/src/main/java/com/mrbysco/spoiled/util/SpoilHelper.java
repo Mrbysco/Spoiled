@@ -5,6 +5,7 @@ import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
+import io.netty.util.Constant;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -30,6 +31,7 @@ public class SpoilHelper {
 	 * @return The Spoil Recipe matching the stack or null if none found
 	 */
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
+		if (!Services.PLATFORM.canSpoil(stack)) return null;
 		String itemPath = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
 		List<String> spoilBlacklist = Services.PLATFORM.getSpoilBlacklist();
 		if (!spoilBlacklist.isEmpty() && spoilBlacklist.contains(itemPath)) {
@@ -49,9 +51,9 @@ public class SpoilHelper {
 					.stream()
 					.reduce(null,
 							(highest_priority, next) ->
-							highest_priority == null || next.getPriority() > highest_priority.getPriority() 
-								? next
-								: highest_priority);
+									highest_priority == null || next.getPriority() > highest_priority.getPriority()
+											? next
+											: highest_priority);
 		}
 		return null;
 	}
@@ -135,9 +137,9 @@ public class SpoilHelper {
 	/**
 	 * Spoils a stack with a single item and replaces the instance in the associated location.
 	 *
-	 * @param level        The level the stack is within
-	 * @param stack        The stack to spoil
-	 * @param setCallback  A callback to set the spoiled stack's location
+	 * @param level       The level the stack is within
+	 * @param stack       The stack to spoil
+	 * @param setCallback A callback to set the spoiled stack's location
 	 */
 	public static void spoilSingleItemAndReplace(Level level, ItemStack stack, Consumer<ItemStack> setCallback) {
 		// Check gametime rate since it should spoil similarly to in entity inventory
