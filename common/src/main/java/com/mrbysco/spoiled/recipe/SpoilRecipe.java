@@ -7,10 +7,8 @@ import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -24,12 +22,14 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 	protected final Ingredient ingredient;
 	protected final ItemStack result;
 	protected final int spoilTime;
+	protected final int priority; // higher numbers are higher priority
 
-	public SpoilRecipe(String group, Ingredient ingredient, ItemStack stack, int spoilTime) {
+	public SpoilRecipe(String group, Ingredient ingredient, ItemStack stack, int spoilTime, int priority) {
 		this.group = group;
 		this.ingredient = ingredient;
 		this.result = stack;
 		this.spoilTime = spoilTime;
+		this.priority = priority;
 	}
 
 	@Override
@@ -69,6 +69,10 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 		return this.group;
 	}
 
+	public int getPriority() {
+		return this.priority;
+	}
+
 	public int getSpoilTime() {
 		if (spoilTime == -1)
 			return Services.PLATFORM.getDefaultSpoilTime();
@@ -91,7 +95,8 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 								Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
 								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
 								ItemStack.SINGLE_ITEM_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
-								Codec.INT.optionalFieldOf("spoiltime", -1).forGetter(recipe -> recipe.spoilTime)
+								Codec.INT.optionalFieldOf("spoiltime", -1).forGetter(recipe -> recipe.spoilTime),
+								Codec.INT.optionalFieldOf("priority", 1).forGetter(recipe -> recipe.spoilTime)
 						)
 						.apply(instance, SpoilRecipe::new)
 		);
@@ -114,7 +119,8 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 			Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buffer);
 			ItemStack itemstack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
 			int spoilTime = buffer.readVarInt();
-			return new SpoilRecipe(s, ingredient, itemstack, spoilTime);
+			int priority = buffer.readVarInt();
+			return new SpoilRecipe(s, ingredient, itemstack, spoilTime, priority);
 		}
 
 		public static void toNetwork(RegistryFriendlyByteBuf buffer, SpoilRecipe recipe) {
@@ -122,6 +128,7 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
 			ItemStack.STREAM_CODEC.encode(buffer, recipe.result);
 			buffer.writeVarInt(recipe.spoilTime);
+			buffer.writeVarInt(recipe.priority);
 		}
 	}
 }

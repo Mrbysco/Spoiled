@@ -27,16 +27,21 @@ import java.util.List;
 public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 
 	@Method
-	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime) {
+	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime, int priority) {
 		final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("crafttweaker", name);
 		final Ingredient foodIngredient = food.asVanillaIngredient();
 		final ItemStack resultItemStack = spoilStack.getInternal();
-		final SpoilRecipe recipe = new SpoilRecipe("", foodIngredient, resultItemStack, spoilTime);
-		CraftTweakerAPI.apply(new ActionAddRecipe(this, new RecipeHolder<>(id, recipe)));
+		final SpoilRecipe recipe = new SpoilRecipe("", foodIngredient, resultItemStack, spoilTime, priority);
+		CraftTweakerAPI.apply(new ActionAddRecipe<>(this, new RecipeHolder<>(id, recipe)));
 	}
 
 	@Method
-	public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime) {
+	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime) {
+		addSpoiling(name, food, spoilStack, spoilTime, 1);
+	}
+
+	@Method
+	public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime, int priority) {
 		if (Services.PLATFORM.isModLoaded(modName)) {
 			List<Item> edibleFoodList = BuiltInRegistries.ITEM.stream().filter(item -> item.getDefaultInstance().has(DataComponents.FOOD)).toList();
 			for (Item foundItem : edibleFoodList) {
@@ -44,11 +49,16 @@ public class SpoilManager implements IRecipeManager<SpoilRecipe> {
 				if (foundItem != spoilStack.getInternal().getItem() && location != null && location.getNamespace().equals(modName)) {
 					String itemLocation = location.toString().replace(":", "_");
 					ResourceLocation id = ResourceLocation.fromNamespaceAndPath("crafttweaker", itemLocation);
-					SpoilRecipe recipe = new SpoilRecipe("", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime);
-					CraftTweakerAPI.apply(new ActionAddRecipe(this, new RecipeHolder<>(id, recipe)));
+					SpoilRecipe recipe = new SpoilRecipe("", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime, priority);
+					CraftTweakerAPI.apply(new ActionAddRecipe<>(this, new RecipeHolder<>(id, recipe)));
 				}
 			}
 		}
+	}
+
+	@Method
+	public void addModSpoiling(String modName, IItemStack spoilStack, int spoilTime) {
+		addModSpoiling(modName, spoilStack, spoilTime, 1);
 	}
 
 	@Override
