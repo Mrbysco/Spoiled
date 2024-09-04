@@ -100,7 +100,6 @@ processResources {
     from project(":common").sourceSets.main.resources
 }
 
-
 jar.finalizedBy('reobfJar')
 
 publishing {
