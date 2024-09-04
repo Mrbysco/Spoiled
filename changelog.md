@@ -1,3 +1,1 @@
-* Re-enable CraftTweaker and JEI support
-* Add support for Curios API Continuation
-* Update NeoForge support
+* Add Priority feature in case there are multiple spoil recipes for the same item. (PR) Courtesy of [blueridger](https://github.com/Mrbysco/Spoiled/pull/42)
