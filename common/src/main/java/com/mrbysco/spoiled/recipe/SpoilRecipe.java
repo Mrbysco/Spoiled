@@ -96,7 +96,7 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
 								ItemStack.SINGLE_ITEM_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 								Codec.INT.optionalFieldOf("spoiltime", -1).forGetter(recipe -> recipe.spoilTime),
-								Codec.INT.optionalFieldOf("priority", 1).forGetter(recipe -> recipe.spoilTime)
+								Codec.INT.optionalFieldOf("priority", 1).forGetter(recipe -> recipe.priority)
 						)
 						.apply(instance, SpoilRecipe::new)
 		);
