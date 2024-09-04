@@ -45,14 +45,18 @@ public class SpoilHelper {
 				return new SpoilRecipe(new ResourceLocation(Constants.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime(), 1);
 			}
 		} else {
-			return level.getRecipeManager()
-					.getRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), new SimpleContainer(stack), level)
-					.stream()
-					.reduce(null,
-							(highest_priority, next) ->
-									highest_priority == null || next.getPriority() > highest_priority.getPriority()
-											? next
-											: highest_priority);
+			var recipes = level.getRecipeManager()
+					.getRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), new SimpleContainer(stack), level);
+			if (recipes.isEmpty()) {
+				return null;
+			}
+
+			Constants.LOGGER.error("Recipes {}", recipes);
+			return recipes.stream()
+					.reduce((highest_priority, next) ->
+							highest_priority == null || next.getPriority() > highest_priority.getPriority()
+									? next
+									: highest_priority).orElse(recipes.get(0));
 		}
 		return null;
 	}
