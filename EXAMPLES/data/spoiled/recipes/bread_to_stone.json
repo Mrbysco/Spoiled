@@ -4,7 +4,7 @@
 	"item": "minecraft:bread"
   },
   "result": {
-    "item": "minecraft:stone"
+    "id": "minecraft:stone"
   },
   "spoilTime": 20,
   "priority": 5
