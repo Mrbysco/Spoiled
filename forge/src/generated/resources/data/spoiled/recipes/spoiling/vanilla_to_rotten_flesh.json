@@ -11,6 +11,9 @@
         "type": "spoiled:spoil_recipe",
         "ingredient": {
           "tag": "spoiled:foods/vanilla"
+        },
+        "result": {
+          "item": "minecraft:rotten_flesh"
         }
       }
     }

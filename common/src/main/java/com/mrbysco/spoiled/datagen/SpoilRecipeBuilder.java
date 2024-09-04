@@ -18,6 +18,7 @@ public class SpoilRecipeBuilder {
 	private final Item result;
 	private final Ingredient ingredient;
 	private String group;
+	private int priority = 1;
 	private final RecipeSerializer<SpoilRecipe> recipeSerializer;
 
 	private SpoilRecipeBuilder(ItemLike resultIn, Ingredient ingredientIn, RecipeSerializer<SpoilRecipe> serializer) {
@@ -30,23 +31,37 @@ public class SpoilRecipeBuilder {
 		return new SpoilRecipeBuilder(resultIn, ingredientIn, SpoiledRecipes.SPOILING_SERIALIZER.get());
 	}
 
+	public SpoilRecipeBuilder group(String groupIn) {
+		this.group = groupIn;
+		return this;
+	}
+
+	public SpoilRecipeBuilder priority(int priorityIn) {
+		this.priority = priorityIn;
+		return this;
+	}
+
 	public void build(Consumer<FinishedRecipe> consumerIn) {
 		this.build(consumerIn, BuiltInRegistries.ITEM.getKey(this.result));
 	}
 
 	public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
-		consumerIn.accept(new Result(id, this.group == null ? "" : this.group, this.ingredient, this.recipeSerializer));
+		consumerIn.accept(new Result(id, this.group == null ? "" : this.group, this.ingredient, this.priority, this.result, this.recipeSerializer));
 	}
 
 	public static class Result implements FinishedRecipe {
 		private final ResourceLocation id;
 		private final String group;
 		private final Ingredient ingredient;
+		private final int priority;
+		private final Item result;
 		private final RecipeSerializer<SpoilRecipe> serializer;
 
-		public Result(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, RecipeSerializer<SpoilRecipe> serializerIn) {
+		public Result(ResourceLocation idIn, String groupIn, Ingredient ingredientIn, int priority, Item result, RecipeSerializer<SpoilRecipe> serializerIn) {
 			this.id = idIn;
 			this.group = groupIn;
+			this.priority = priority;
+			this.result = result;
 			this.ingredient = ingredientIn;
 			this.serializer = serializerIn;
 		}
@@ -55,8 +70,15 @@ public class SpoilRecipeBuilder {
 			if (!this.group.isEmpty()) {
 				json.addProperty("group", this.group);
 			}
-
 			json.add("ingredient", this.ingredient.toJson());
+
+			if (this.priority != 1) {
+				json.addProperty("priority", this.priority);
+			}
+
+			JsonObject resultObject = new JsonObject();
+			resultObject.addProperty("item", BuiltInRegistries.ITEM.getKey(this.result).toString());
+			json.add("result", resultObject);
 		}
 
 		public RecipeSerializer<?> getType() {
