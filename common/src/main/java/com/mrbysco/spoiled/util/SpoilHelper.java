@@ -5,7 +5,6 @@ import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
-import io.netty.util.Constant;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
