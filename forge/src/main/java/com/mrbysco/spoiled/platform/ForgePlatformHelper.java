@@ -63,9 +63,18 @@ public class ForgePlatformHelper implements IPlatformHelper {
 
 	@Override
 	public boolean canSpoil(ItemStack stack) {
-		if (SpoiledConfig.COMMON.saltCompat.get() && ModList.get().isLoaded("salt")) {
-			CompoundTag tag = stack.getTag();
-			return tag == null || !tag.contains("Salted");
+		CompoundTag tag = stack.getTag();
+		if (tag == null) {
+			return true;
+		}
+		if (!tag.isEmpty()) {
+			if (SpoiledConfig.COMMON.saltCompat.get() && ModList.get().isLoaded("salt") && tag.contains("Salted")) {
+				return false;
+			}
+			if (!SpoiledConfig.COMMON.spoilTagBlacklist.get().isEmpty() &&
+					SpoiledConfig.COMMON.spoilTagBlacklist.get().stream().anyMatch(tag::contains)) {
+				return false;
+			}
 		}
 		return true;
 	}

@@ -7,6 +7,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.CollapsibleObject;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Config(name = Constants.MOD_ID)
@@ -14,6 +15,9 @@ public class SpoiledConfig implements ConfigData {
 
 	@CollapsibleObject
 	public General general = new General();
+
+	@CollapsibleObject
+	public Compat compat = new Compat();
 
 	public static class General {
 		@Comment("""
@@ -47,5 +51,11 @@ public class SpoiledConfig implements ConfigData {
 		@Comment("Defines the item the foods vanilla foods will turn into when spoiled (if empty it will clear the spoiling item) [default: 'minecraft:rotten_flesh']")
 		public String defaultSpoilItem = "minecraft:rotten_flesh";
 
+	}
+
+	public static class Compat {
+
+		@Comment("Defines a list of nbt tags that stop the item from spoiling")
+		public List<String> spoilTagBlacklist = new ArrayList<>();
 	}
 }

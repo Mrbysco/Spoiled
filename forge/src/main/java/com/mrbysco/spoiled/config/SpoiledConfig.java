@@ -10,6 +10,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SpoiledConfig {
@@ -40,6 +41,7 @@ public class SpoiledConfig {
 		public final IntValue defaultSpoilTime;
 		public final ConfigValue<String> defaultSpoilItem;
 		public final BooleanValue saltCompat;
+		public final ConfigValue<List<? extends String>> spoilTagBlacklist;
 
 		Common(ForgeConfigSpec.Builder builder) {
 			builder.comment("General settings")
@@ -93,10 +95,13 @@ public class SpoiledConfig {
 			builder.comment("Compatibility settings")
 					.push("Compatibility");
 
-
 			saltCompat = builder
 					.comment("When enabled foods that are salted by The Salted mod will not spoil [default: false]")
 					.define("saltCompat", false);
+
+			spoilTagBlacklist = builder
+					.comment("Defines a list of nbt tags that stop the item from spoiling")
+					.defineListAllowEmpty(List.of("spoilTagBlacklist"), ArrayList::new, o -> (o instanceof String));
 
 			builder.pop();
 		}

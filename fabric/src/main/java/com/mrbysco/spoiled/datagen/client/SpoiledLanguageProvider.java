@@ -32,5 +32,7 @@ public class SpoiledLanguageProvider extends FabricLanguageProvider {
 		translationBuilder.add("text.autoconfig.spoiled.option.general.spoilBlacklist", "Spoil Blacklist");
 		translationBuilder.add("text.autoconfig.spoiled.option.general.defaultSpoilTime", "Default Spoil Time");
 		translationBuilder.add("text.autoconfig.spoiled.option.general.defaultSpoilItem", "Default Spoil Item");
+		translationBuilder.add("text.autoconfig.spoiled.option.compat", "Compat");
+		translationBuilder.add("text.autoconfig.spoiled.option.compat.spoilTagBlacklist", "Spoil Tag Blacklist");
 	}
 }

@@ -9,6 +9,8 @@
   "spoiled.spoiling.25": "",
   "spoiled.spoiling.50": "Stale",
   "spoiled.spoiling.75": "Stale",
+  "text.autoconfig.spoiled.option.compat": "Compat",
+  "text.autoconfig.spoiled.option.compat.spoilTagBlacklist": "Spoil Tag Blacklist",
   "text.autoconfig.spoiled.option.general": "General",
   "text.autoconfig.spoiled.option.general.containerModifier": "Container Modifiers",
   "text.autoconfig.spoiled.option.general.defaultSpoilItem": "Default Spoil Item",

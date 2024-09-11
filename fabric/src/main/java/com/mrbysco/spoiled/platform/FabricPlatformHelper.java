@@ -4,6 +4,7 @@ import com.mrbysco.spoiled.SpoiledFabric;
 import com.mrbysco.spoiled.SpoiledFabricClient;
 import com.mrbysco.spoiled.platform.services.IPlatformHelper;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.List;
@@ -61,6 +62,16 @@ public class FabricPlatformHelper implements IPlatformHelper {
 
 	@Override
 	public boolean canSpoil(ItemStack stack) {
+		CompoundTag tag = stack.getTag();
+		if (tag == null) {
+			return true;
+		}
+		if (!tag.isEmpty()) {
+			if (!SpoiledFabric.config.get().compat.spoilTagBlacklist.isEmpty() &&
+					SpoiledFabric.config.get().compat.spoilTagBlacklist.stream().anyMatch(tag::contains)) {
+				return false;
+			}
+		}
 		return true;
 	}
 }
