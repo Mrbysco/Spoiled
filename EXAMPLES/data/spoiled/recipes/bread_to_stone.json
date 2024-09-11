@@ -3,9 +3,9 @@
   "ingredient": {
 	"item": "minecraft:bread"
   },
+  "spoiltime": 20,
+  "priority": 5,
   "result": {
     "id": "minecraft:stone"
-  },
-  "spoilTime": 20,
-  "priority": 5
+  }
 }
