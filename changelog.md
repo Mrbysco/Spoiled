@@ -1,1 +1,1 @@
-* Remove left over log message
+* Add a config option `spoilTagBlacklist` that allows you to specify a list of tags that should stop an item from spoiling
