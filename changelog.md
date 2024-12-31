@@ -1,1 +1,1 @@
-* Add Priority feature in case there are multiple spoil recipes for the same item. (PR) Courtesy of [blueridger](https://github.com/Mrbysco/Spoiled/pull/42)
+* Fix an issue where it could crash if the mod decides to grab a config value before the config is properly loaded.
