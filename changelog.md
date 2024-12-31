@@ -1,1 +1,1 @@
-* Add a config option `spoilTagBlacklist` that allows you to specify a list of tags that should stop an item from spoiling
+* Fix an issue where it could crash if the mod decides to grab a config value before the config is properly loaded.
