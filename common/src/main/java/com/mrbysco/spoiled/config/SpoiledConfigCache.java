@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class SpoiledConfigCache {
 
-	public static Map<ResourceLocation, Double> containerModifier;
+	public static Map<ResourceLocation, Double> containerModifier = new HashMap<>();
 	public static long spoilRate;
 
 
