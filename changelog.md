@@ -1,1 +1,1 @@
-* Fix an issue where it could crash if the mod decides to grab a config value before the config is properly loaded.
+* Enable in-game config (NeoForge)
