@@ -53,7 +53,7 @@ public class SpoiledConfig {
 							Determines the spoilrate in specific containers [Syntax: tileentity:spoil_rate]
 							Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food
 							"cookingforblockheads:fridge,0.2" would make a cooking for blockheads fridge spoil at 20% of the usual spoilrate""")
-					.defineListAllowEmpty(List.of("containerModifier"), () -> List.of(containers), o -> (o instanceof String));
+					.defineListAllowEmpty(List.of("containerModifier"), () -> List.of(containers), String::new, o -> (o instanceof String));
 
 			spoilRate = builder
 					.comment("""
@@ -76,7 +76,7 @@ public class SpoiledConfig {
 
 			spoilBlacklist = builder
 					.comment("Defines a list of items that are never allowed to spoil")
-					.defineListAllowEmpty(List.of("spoilBlacklist"), () -> DEFAULT_SPOIL_BLACKLIST, o -> (o instanceof String));
+					.defineListAllowEmpty(List.of("spoilBlacklist"), () -> DEFAULT_SPOIL_BLACKLIST, String::new, o -> (o instanceof String));
 
 			defaultSpoilTime = builder
 					.comment("Defines the total amount of spoiling updates that is used by the default initialized spoiling when 'initializeSpoiling' is enabled \n" +
