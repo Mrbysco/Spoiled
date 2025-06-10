@@ -12,7 +12,7 @@ import net.minecraft.world.level.ItemLike;
 public class SpoilRecipeBuilder {
 	private final Item result;
 	private final Ingredient ingredient;
-	private int spoilTime;
+	private int spoilTime = -1;
 	private int priority = 1;
 	private String group;
 
