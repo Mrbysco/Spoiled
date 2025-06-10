@@ -21,6 +21,6 @@ public record SpoilTimer(int timer, int maxTime) {
 	);
 
 	public SpoilTimer(int maxTime) {
-		this(0, maxTime);
+		this(1, maxTime);
 	}
 }
