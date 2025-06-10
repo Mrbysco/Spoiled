@@ -1,1 +1,1 @@
-* Enable in-game config (NeoForge)
+* Fix default spoiling recipes instantly spoiling items
