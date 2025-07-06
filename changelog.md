@@ -1,1 +1,1 @@
-* Fix default spoiling recipes instantly spoiling items
+* Initial update to 1.21.4
