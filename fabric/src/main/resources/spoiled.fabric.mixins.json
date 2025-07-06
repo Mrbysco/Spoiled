@@ -4,7 +4,8 @@
   "package": "com.mrbysco.spoiled.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "PlayerMixin"
+    "PlayerMixin",
+    "PlayerListMixin"
   ],
   "client": [
   ],
