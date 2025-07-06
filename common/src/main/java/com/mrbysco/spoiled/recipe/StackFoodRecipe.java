@@ -86,12 +86,7 @@ public class StackFoodRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean canCraftInDimensions(int width, int height) {
-		return width * height >= 2;
-	}
-
-	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<StackFoodRecipe> getSerializer() {
 		return SpoiledRecipes.STACK_FOOD_SERIALIZER.get();
 	}
 }

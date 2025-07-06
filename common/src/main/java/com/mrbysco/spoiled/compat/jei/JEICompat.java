@@ -6,7 +6,6 @@ import com.mrbysco.spoiled.compat.jei.category.SpoilCategory;
 import com.mrbysco.spoiled.compat.jei.validator.SpoiledValidator;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
-import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import com.mrbysco.spoiled.util.SpoilHelper;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -24,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -40,7 +38,7 @@ public class JEICompat implements IModPlugin {
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-		registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, new ItemStack(Items.ROTTEN_FLESH), SpoilCategory.TYPE);
+		registration.addCraftingStation(SpoilCategory.TYPE, VanillaTypes.ITEM_STACK, new ItemStack(Items.ROTTEN_FLESH));
 	}
 
 	@Override
@@ -75,12 +73,12 @@ public class JEICompat implements IModPlugin {
 			});
 			return recipes;
 		} else {
-			return getValidHandledRecipes(level.getRecipeManager(), new SpoiledValidator(spoilCategory));
+			return getValidHandledRecipes(new SpoiledValidator(spoilCategory));
 		}
 	}
 
-	private static List<RecipeHolder<SpoilRecipe>> getValidHandledRecipes(RecipeManager recipeManager, SpoiledValidator validator) {
-		return recipeManager.getAllRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get()).stream()
+	private static List<RecipeHolder<SpoilRecipe>> getValidHandledRecipes(SpoiledValidator validator) {
+		return Constants.SPOIL_RECIPES.stream()
 				.filter(r -> validator.isRecipeValid(r) && validator.isRecipeHandled(r)).toList();
 	}
 }

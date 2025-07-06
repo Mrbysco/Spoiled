@@ -6,16 +6,19 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategories;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 	protected final String group;
@@ -32,40 +35,46 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 		this.priority = priority;
 	}
 
+	@NotNull
 	@Override
-	public RecipeType<?> getType() {
+	public RecipeType<SpoilRecipe> getType() {
 		return SpoiledRecipes.SPOIL_RECIPE_TYPE.get();
 	}
 
+	@NotNull
 	@Override
-	public boolean matches(SingleRecipeInput recipeInput, Level level) {
-		return this.getIngredients().getFirst().test(recipeInput.getItem(0));
+	public PlacementInfo placementInfo() {
+		return PlacementInfo.NOT_PLACEABLE;
+	}
+
+	@NotNull
+	@Override
+	public RecipeBookCategory recipeBookCategory() {
+		return RecipeBookCategories.CRAFTING_MISC;
 	}
 
 	@Override
-	public ItemStack assemble(SingleRecipeInput recipeInput, HolderLookup.Provider registryAccess) {
-		return getResultItem(registryAccess).copy();
+	public boolean matches(SingleRecipeInput recipeInput, @NotNull Level level) {
+		return this.getIngredient().test(recipeInput.getItem(0));
 	}
 
+	@NotNull
 	@Override
-	public boolean canCraftInDimensions(int x, int y) {
-		return false;
+	public ItemStack assemble(@NotNull SingleRecipeInput recipeInput, @NotNull HolderLookup.Provider registryAccess) {
+		return getResult();
 	}
 
-	@Override
-	public NonNullList<Ingredient> getIngredients() {
-		NonNullList<Ingredient> nonnulllist = NonNullList.create();
-		nonnulllist.add(this.ingredient);
-		return nonnulllist;
+	public Ingredient getIngredient() {
+		return ingredient;
 	}
 
-	@Override
-	public ItemStack getResultItem(HolderLookup.Provider registryAccess) {
-		return this.result.copy();
+	public ItemStack getResult() {
+		return result.copy();
 	}
 
+	@NotNull
 	@Override
-	public String getGroup() {
+	public String group() {
 		return this.group;
 	}
 
@@ -79,8 +88,9 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 		return spoilTime;
 	}
 
+	@NotNull
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<SpoilRecipe> getSerializer() {
 		return SpoiledRecipes.SPOILING_SERIALIZER.get();
 	}
 
@@ -93,7 +103,7 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 		public static final MapCodec<SpoilRecipe> CODEC = RecordCodecBuilder.mapCodec(
 				instance -> instance.group(
 								Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
-								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
+								Ingredient.CODEC.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
 								ItemStack.SINGLE_ITEM_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 								Codec.INT.optionalFieldOf("spoiltime", -1).forGetter(recipe -> recipe.spoilTime),
 								Codec.INT.optionalFieldOf("priority", 1).forGetter(recipe -> recipe.priority)
@@ -104,11 +114,13 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 				SpoilRecipe.Serializer::toNetwork, SpoilRecipe.Serializer::fromNetwork
 		);
 
+		@NotNull
 		@Override
 		public MapCodec<SpoilRecipe> codec() {
 			return CODEC;
 		}
 
+		@NotNull
 		@Override
 		public StreamCodec<RegistryFriendlyByteBuf, SpoilRecipe> streamCodec() {
 			return STREAM_CODEC;

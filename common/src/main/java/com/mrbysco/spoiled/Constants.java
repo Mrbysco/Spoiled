@@ -1,8 +1,16 @@
 package com.mrbysco.spoiled;
 
+import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
+import net.minecraft.world.level.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Constants {
 	public static final String MOD_NAME = "Spoiled";
@@ -15,5 +23,13 @@ public class Constants {
 
 	public static ResourceLocation modLoc(String path) {
 		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	}
+
+	public final static List<RecipeHolder<SpoilRecipe>> SPOIL_RECIPES = new ArrayList<>();
+
+	public static List<RecipeHolder<SpoilRecipe>> getRecipesFor(SingleRecipeInput input, Level serverLevel) {
+		return SPOIL_RECIPES.stream()
+				.filter(holder -> holder.value().matches(input, serverLevel))
+				.collect(Collectors.toList());
 	}
 }

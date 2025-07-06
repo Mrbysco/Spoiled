@@ -5,9 +5,7 @@
     }
   ],
   "type": "spoiled:spoil_recipe",
-  "ingredient": {
-    "tag": "spoiled:foods"
-  },
+  "ingredient": "#spoiled:foods",
   "result": {
     "id": "minecraft:rotten_flesh"
   }

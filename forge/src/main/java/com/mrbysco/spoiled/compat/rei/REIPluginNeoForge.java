@@ -4,20 +4,13 @@ import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.compat.rei.category.SpoilCategoryNeoForge;
 import com.mrbysco.spoiled.compat.rei.display.SpoilDisplayNeoForge;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
-import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.forge.REIPluginClient;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeHolder;
-
-import java.util.List;
 
 @REIPluginClient
 public class REIPluginNeoForge implements REIClientPlugin {
@@ -32,19 +25,11 @@ public class REIPluginNeoForge implements REIClientPlugin {
 
 	@Override
 	public void registerDisplays(DisplayRegistry registry) {
-		Minecraft minecraft = Minecraft.getInstance();
-		ClientLevel level = minecraft.level;
-		if (level == null) {
-			throw new NullPointerException("level must not be null.");
-		}
-		RegistryAccess registryAccess = level.registryAccess();
-
-		List<RecipeHolder<SpoilRecipe>> spoilHolders = registry.getRecipeManager().getAllRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get());
-		spoilHolders.forEach((holder) -> {
+		Constants.SPOIL_RECIPES.forEach((holder) -> {
 			SpoilRecipe recipe = holder.value();
 			registry.add(new SpoilDisplayNeoForge(
-							recipe.getIngredients().getFirst(),
-							recipe.getResultItem(registryAccess)
+							recipe.getIngredient(),
+							recipe.getResult()
 					)
 			);
 		});

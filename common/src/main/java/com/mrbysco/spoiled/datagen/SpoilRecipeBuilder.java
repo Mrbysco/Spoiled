@@ -2,7 +2,9 @@ package com.mrbysco.spoiled.datagen;
 
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,6 +48,6 @@ public class SpoilRecipeBuilder {
 
 	public void build(RecipeOutput recipeOutput, ResourceLocation id) {
 		SpoilRecipe recipe = new SpoilRecipe(this.group == null ? "" : this.group, this.ingredient, new ItemStack(this.result), this.spoilTime, this.priority);
-		recipeOutput.accept(id, recipe, null);
+		recipeOutput.accept(ResourceKey.create(Registries.RECIPE, id), recipe, null);
 	}
 }

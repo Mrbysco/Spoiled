@@ -3,6 +3,8 @@ package com.mrbysco.spoiled.compat.jei.validator;
 import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.core.Holder;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -35,17 +37,17 @@ public class SpoiledValidator {
 		if (recipe.isSpecial()) {
 			return true;
 		}
-		ItemStack recipeOutput = recipe.getResultItem(null);
+		ItemStack recipeOutput = recipe.getResult();
 		if (recipeOutput == null || recipeOutput.isEmpty()) {
 			Constants.LOGGER.error("Recipe has no output. {}", recipeHolder.id());
 			return false;
 		}
-		List<Ingredient> ingredients = recipe.getIngredients();
-		if (ingredients == null) {
+		Ingredient ingredient = recipe.getIngredient();
+		if (ingredient == null) {
 			Constants.LOGGER.error("Recipe has no input Ingredients. {}", recipeHolder.id());
 			return false;
 		}
-		int inputCount = getInputCount(ingredients);
+		int inputCount = getInputCount(ingredient);
 		if (inputCount == INVALID_COUNT) {
 			return false;
 		} else if (inputCount > 1) {
@@ -59,15 +61,14 @@ public class SpoiledValidator {
 	}
 
 	@SuppressWarnings("ConstantConditions")
-	private static int getInputCount(List<Ingredient> ingredientList) {
+	private static int getInputCount(Ingredient ingredient) {
 		int inputCount = 0;
-		for (Ingredient ingredient : ingredientList) {
-			ItemStack[] input = ingredient.getItems();
-			if (input == null) {
-				return INVALID_COUNT;
-			} else {
-				inputCount++;
-			}
+
+		List<Holder<Item>> input = ingredient.items().toList();
+		if (input == null) {
+			return INVALID_COUNT;
+		} else {
+			inputCount++;
 		}
 		return inputCount;
 	}

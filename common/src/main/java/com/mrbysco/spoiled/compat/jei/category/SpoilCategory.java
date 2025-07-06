@@ -11,20 +11,18 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
-	public static final RecipeType<SpoilRecipe> TYPE = RecipeType.create(Constants.MOD_ID, "spoil_recipe", SpoilRecipe.class);
+	public static final IRecipeType<SpoilRecipe> TYPE = IRecipeType.create(Constants.MOD_ID, "spoil_recipe", SpoilRecipe.class);
 	private final IDrawable background;
 	private final IDrawable icon;
 	private final Component title;
@@ -39,7 +37,7 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 	}
 
 	@Override
-	public RecipeType<SpoilRecipe> getRecipeType() {
+	public IRecipeType<SpoilRecipe> getRecipeType() {
 		return TYPE;
 	}
 
@@ -49,30 +47,19 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 	}
 
 	@Override
-	public IDrawable getBackground() {
-		return background;
-	}
-
-	@Override
 	public IDrawable getIcon() {
 		return icon;
 	}
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, SpoilRecipe recipe, IFocusGroup focuses) {
-		Minecraft minecraft = Minecraft.getInstance();
-		ClientLevel level = minecraft.level;
-		if (level == null) {
-			throw new NullPointerException("level must not be null.");
-		}
-		RegistryAccess registryAccess = level.registryAccess();
-
-		builder.addSlot(RecipeIngredientRole.INPUT, 10, 14).addIngredients(recipe.getIngredients().getFirst());
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 14).addItemStack(recipe.getResultItem(registryAccess));
+		builder.addSlot(RecipeIngredientRole.INPUT, 10, 14).add(recipe.getIngredient());
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 14).add(recipe.getResult());
 	}
 
 	@Override
 	public void draw(SpoilRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+		this.background.draw(guiGraphics);
 		this.slotDrawable.draw(guiGraphics, 9, 13);
 
 		PoseStack poseStack = guiGraphics.pose();

@@ -81,7 +81,7 @@ public class SpoilHandler {
 	}
 
 	public static void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess) {
-		ItemStack spoiledStack = recipe.getResultItem(registryAccess).copy();
+		ItemStack spoiledStack = recipe.getResult().copy();
 		int oldStackCount = stack.getCount();
 		stack.setCount(0);
 		if (!spoiledStack.isEmpty()) {

@@ -1,6 +1,7 @@
 package com.mrbysco.spoiled.mixin;
 
 import com.mrbysco.spoiled.util.SpoilHelper;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -36,7 +37,7 @@ public abstract class ItemFrameMixin extends HangingEntity {
 		super.tick();
 		// Execute at the end of the tick
 		if (!this.level().isClientSide()) {
-			SpoilHelper.spoilSingleItemAndReplace(this.level(), this.getItem(), this::setItem);
+			SpoilHelper.spoilSingleItemAndReplace((ServerLevel) this.level(), this.getItem(), this::setItem);
 		}
 	}
 }

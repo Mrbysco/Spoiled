@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.world.item.Items;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,7 +17,7 @@ public class SpoiledItemTagProvider extends ItemTagsProvider {
 	}
 
 	@Override
-	public void addTags(HolderLookup.Provider lookupProvider) {
+	public void addTags(@NotNull HolderLookup.Provider lookupProvider) {
 		this.tag(SpoiledTags.FOODS_BLACKLIST).add(Items.ROTTEN_FLESH, Items.ENCHANTED_GOLDEN_APPLE, Items.GOLDEN_APPLE);
 		this.tag(SpoiledTags.FOODS).addOptionalTag(ConventionalItemTags.FOODS.location());
 	}

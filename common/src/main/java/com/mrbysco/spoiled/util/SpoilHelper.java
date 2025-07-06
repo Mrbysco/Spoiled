@@ -6,10 +6,12 @@ import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.registration.SpoiledComponents;
-import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -44,12 +46,12 @@ public class SpoilHelper {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + BuiltInRegistries.ITEM.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
-				return new RecipeHolder<>(ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, recipePath), new SpoilRecipe("", Ingredient.of(stack), spoilStack, Services.PLATFORM.getDefaultSpoilTime(), 1));
+				return new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, recipePath)),
+						new SpoilRecipe("", Ingredient.of(stack.getItem()), spoilStack, Services.PLATFORM.getDefaultSpoilTime(), 1));
 			}
 		} else {
 			if (stack.is(SpoiledTags.FOODS_BLACKLIST)) return null;
-			var recipes = level.getRecipeManager()
-					.getRecipesFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), new SingleRecipeInput(stack), level);
+			var recipes = Constants.getRecipesFor(new SingleRecipeInput(stack), level);
 			if (recipes.isEmpty()) {
 				return null;
 			}
@@ -106,7 +108,7 @@ public class SpoilHelper {
 	 * @param recipe The spoil recipe to use
 	 */
 	public static void spoilItemForPlayer(Player player, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem(player.level().registryAccess()).copy();
+		ItemStack spoiledStack = recipe.getResult();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {
@@ -127,7 +129,7 @@ public class SpoilHelper {
 	 * @param recipe    The spoil recipe to use
 	 */
 	public static void spoilItemForEntity(Container container, Entity entity, ItemStack stack, SpoilRecipe recipe) {
-		ItemStack spoiledStack = recipe.getResultItem(entity.level().registryAccess()).copy();
+		ItemStack spoiledStack = recipe.getResult();
 		int oldStackCount = stack.getCount();
 		stack.shrink(Integer.MAX_VALUE);
 		if (!spoiledStack.isEmpty()) {
@@ -149,7 +151,7 @@ public class SpoilHelper {
 	 * @param stack       The stack to spoil
 	 * @param setCallback A callback to set the spoiled stack's location
 	 */
-	public static void spoilSingleItemAndReplace(Level level, ItemStack stack, Consumer<ItemStack> setCallback) {
+	public static void spoilSingleItemAndReplace(ServerLevel level, ItemStack stack, Consumer<ItemStack> setCallback) {
 		// Check gametime rate since it should spoil similarly to in entity inventory
 		// Checking getcount also checks isEmpty
 		if (level.getGameTime() % SpoiledConfigCache.spoilRate == 0 && stack.getCount() == 1) {
@@ -158,7 +160,7 @@ public class SpoilHelper {
 				SpoilRecipe recipe = recipeHolder.value();
 				SpoilHelper.updateSpoilingStack(stack, recipe);
 				if (SpoilHelper.isSpoiled(stack)) {
-					ItemStack spoiledStack = recipe.getResultItem(level.registryAccess()).copy();
+					ItemStack spoiledStack = recipe.getResult();
 					int oldStackCount = stack.getCount();
 					// Decrement stack just in case there's some weird references
 					stack.shrink(Integer.MAX_VALUE);

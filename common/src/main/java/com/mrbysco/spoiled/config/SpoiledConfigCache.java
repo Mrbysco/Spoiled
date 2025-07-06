@@ -27,12 +27,12 @@ public class SpoiledConfigCache {
 		if (value.isEmpty()) {
 			return ItemStack.EMPTY;
 		} else {
-			Item item = BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(value));
+			Item item = BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(value));
 			if (item != null) {
 				return new ItemStack(item);
 			} else {
 				Constants.LOGGER.error("'defaultSpoilItem' couldn't be parsed, using default");
-				return new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse("rotten_flesh")));
+				return new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse("rotten_flesh")));
 			}
 		}
 	}
