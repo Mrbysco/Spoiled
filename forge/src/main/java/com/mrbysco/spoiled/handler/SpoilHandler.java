@@ -43,7 +43,17 @@ public class SpoilHandler {
 						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
 							continue;
 
-						ResourceLocation location = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType());
+						BlockState state = level.getBlockState(pos);
+						if (state.hasProperty(BlockStateProperties.CHEST_TYPE)) {
+							ChestType type = state.getValue(BlockStateProperties.CHEST_TYPE);
+							// If double chest only process left side chests
+							if (type == ChestType.RIGHT) {
+								// Skip right side chests
+								continue;
+							}
+						}
+
+						ResourceLocation location = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(be.getType());
 						double spoilRate = 1.0D;
 						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 							spoilRate = SpoiledConfigCache.containerModifier.get(location);
