@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -76,10 +77,7 @@ public class SpoilHandler {
 										int slot = i;
 										SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, stack);
 										if (recipe != null) {
-											SpoilHelper.updateSpoilingStack(stack, recipe);
-											if (SpoilHelper.isSpoiled(stack)) {
-												spoilItemInHandler(itemHandler, slot, stack, recipe, level.registryAccess());
-											}
+											spoilItemInHandler(stack, itemHandler, slot, stack, recipe, level.registryAccess(), level.getRandom());
 										}
 									}
 								}
@@ -97,13 +95,38 @@ public class SpoilHandler {
 		}
 	}
 
-	public static void spoilItemInHandler(IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess) {
-		ItemStack spoiledStack = recipe.getResultItem(registryAccess).copy();
-		int oldStackCount = stack.getCount();
-		stack.setCount(0);
-		if (!spoiledStack.isEmpty()) {
-			spoiledStack.setCount(oldStackCount);
-			itemHandler.insertItem(slot, spoiledStack, false);
+	/**
+	 * Spoils an item in an item handler based on the spoil recipe and the container's spoil rate.
+	 * @param containerStack the stack of the container item
+	 * @param itemHandler the item handler to spoil items in
+	 * @param slot the slot in the item handler to spoil the item
+	 * @param stack the item stack to spoil
+	 * @param recipe the spoil recipe to use for spoiling
+	 * @param registryAccess the registry access for getting the result item of the recipe
+	 * @param random the random source to use for determining if the item should spoil
+	 */
+	public static void spoilItemInHandler(ItemStack containerStack, IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess, RandomSource random) {
+		ResourceLocation location = ForgeRegistries.ITEMS.getKey(containerStack.getItem());
+		double spoilRate = 1.0D;
+		if (location != null && (SpoiledConfigCache.itemContainerModifier.containsKey(location))) {
+			spoilRate = SpoiledConfigCache.itemContainerModifier.get(location);
+		}
+		Constants.LOGGER.info("{} {}", location, spoilRate);
+		if (spoilRate <= 0) {
+			return; // Skip if spoil rate is 0 or less
+		}
+		boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && random.nextDouble() <= spoilRate);
+		if (spoilFlag) {
+			SpoilHelper.updateSpoilingStack(stack, recipe);
+			if (SpoilHelper.isSpoiled(stack)) {
+				ItemStack spoiledStack = recipe.getResultItem(registryAccess).copy();
+				int oldStackCount = stack.getCount();
+				stack.setCount(0);
+				if (!spoiledStack.isEmpty()) {
+					spoiledStack.setCount(oldStackCount);
+					itemHandler.insertItem(slot, spoiledStack, false);
+				}
+			}
 		}
 	}
 
@@ -129,10 +152,7 @@ public class SpoilHandler {
 								if (nestedStack != null && !nestedStack.isEmpty()) {
 									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
 									if (recipe != null) {
-										SpoilHelper.updateSpoilingStack(nestedStack, recipe);
-										if (SpoilHelper.isSpoiled(nestedStack)) {
-											spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
-										}
+										spoilItemInHandler(stack, itemHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
 									}
 								}
 							}
@@ -164,10 +184,7 @@ public class SpoilHandler {
 								if (nestedStack != null && !nestedStack.isEmpty()) {
 									SpoilRecipe recipe = SpoilHelper.getSpoilRecipe(level, nestedStack);
 									if (recipe != null) {
-										SpoilHelper.updateSpoilingStack(nestedStack, recipe);
-										if (SpoilHelper.isSpoiled(nestedStack)) {
-											spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
-										}
+										spoilItemInHandler(stack, itemHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
 									}
 								}
 							}

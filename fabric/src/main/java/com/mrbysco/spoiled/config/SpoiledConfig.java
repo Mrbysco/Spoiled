@@ -3,7 +3,6 @@ package com.mrbysco.spoiled.config;
 import com.mrbysco.spoiled.Constants;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
-import me.shedaniel.autoconfig.annotation.ConfigEntry;
 import me.shedaniel.autoconfig.annotation.ConfigEntry.Gui.CollapsibleObject;
 import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 
@@ -25,6 +24,13 @@ public class SpoiledConfig implements ConfigData {
 				Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food
 				"cookingforblockheads:fridge,0.2" would make a cooking for blockheads fridge spoil at 20% of the usual spoilrate""")
 		public List<String> containerModifier = List.of("minecraft:shulker_box,0");
+
+//		@Comment("""
+//				Determines the spoilrate in specific item containers [Syntax: modid:item_id]
+//				Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food
+//				""")
+//		public List<String> itemContainerModifier = List.of("minecraft:shulker_box,0");
+		// Currently unused, but kept for future compatibility
 
 		@Comment("""
 				Defines the default total amount of spoiling updates for each food item\s

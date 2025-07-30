@@ -16,6 +16,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
 import net.minecraft.world.InteractionResult;
 
+import java.util.ArrayList;
+
 public class SpoiledFabric implements ModInitializer {
 	public static ConfigHolder<SpoiledConfig> config;
 
@@ -24,12 +26,16 @@ public class SpoiledFabric implements ModInitializer {
 		config = AutoConfig.register(SpoiledConfig.class, Toml4jConfigSerializer::new);
 		config.registerLoadListener((holder, config) -> {
 			SpoiledConfigCache.setSpoilRate(config.general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(config.general.containerModifier);
+			SpoiledConfigCache.generateContainerModifier(
+					config.general.containerModifier, new ArrayList<>()
+			);
 			return InteractionResult.PASS;
 		});
 		config.registerSaveListener((holder, config) -> {
 			SpoiledConfigCache.setSpoilRate(config.general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(config.general.containerModifier);
+			SpoiledConfigCache.generateContainerModifier(
+					config.general.containerModifier, new ArrayList<>()
+			);
 			return InteractionResult.PASS;
 		});
 
@@ -41,7 +47,9 @@ public class SpoiledFabric implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
 			SpoiledConfigCache.setSpoilRate(config.get().general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(config.get().general.containerModifier);
+			SpoiledConfigCache.generateContainerModifier(
+					config.get().general.containerModifier, new ArrayList<>()
+			);
 		});
 
 		ResourceConditions.register(InitializeSpoilingCondition.ID, obj -> InitializeSpoilingCondition.test());

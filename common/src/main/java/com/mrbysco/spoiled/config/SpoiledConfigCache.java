@@ -15,6 +15,7 @@ import java.util.Map;
 public class SpoiledConfigCache {
 
 	public static Map<ResourceLocation, Double> containerModifier = new HashMap<>();
+	public static Map<ResourceLocation, Double> itemContainerModifier = new HashMap<>();
 	public static long spoilRate;
 
 
@@ -37,8 +38,13 @@ public class SpoiledConfigCache {
 		}
 	}
 
-	public static void generateContainerModifier(List<? extends String> configValues) {
-		HashMap<ResourceLocation, Double> modifierMap = new HashMap<>();
+	public static void generateContainerModifier(List<? extends String> containerValues, List<? extends String> itemContainerValues) {
+		containerModifier = generateMap(containerValues);
+		itemContainerModifier = generateMap(itemContainerValues);
+	}
+
+	private static Map<ResourceLocation, Double> generateMap(List<? extends String> configValues) {
+		Map<ResourceLocation, Double> modifierMap = new HashMap<>();
 		if (!configValues.isEmpty()) {
 			for (String configValue : configValues) {
 				if (!configValue.contains(",")) {
@@ -53,7 +59,7 @@ public class SpoiledConfigCache {
 					if (values.length == 2) {
 						if (!values[0].contains(":")) {
 							Constants.LOGGER.error("Invalid resourcelocation syntax in 'containerModifier'. could not find \":\" in {}", configValue);
-							return;
+							return modifierMap;
 						}
 						ResourceLocation registry = new ResourceLocation(values[0]);
 						double modifier = NumberUtils.isParsable(values[1]) ? Double.parseDouble(values[1]) : -1;
@@ -64,6 +70,6 @@ public class SpoiledConfigCache {
 				}
 			}
 		}
-		containerModifier = modifierMap;
+		return modifierMap;
 	}
 }
