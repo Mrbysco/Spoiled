@@ -21,6 +21,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.ChestType;
 
 import java.util.List;
 
@@ -36,6 +39,16 @@ public class SpoilHandler {
 					if (be != null && !be.isRemoved() && be.hasLevel() && be instanceof Container container) {
 						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
 							continue;
+
+						BlockState state = level.getBlockState(pos);
+						if (state.hasProperty(BlockStateProperties.CHEST_TYPE)) {
+							ChestType type = state.getValue(BlockStateProperties.CHEST_TYPE);
+							// If double chest only process left side chests
+							if (type == ChestType.RIGHT) {
+								// Skip right side chests
+								continue;
+							}
+						}
 
 						ResourceLocation location = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType());
 						double spoilRate = 1.0D;
