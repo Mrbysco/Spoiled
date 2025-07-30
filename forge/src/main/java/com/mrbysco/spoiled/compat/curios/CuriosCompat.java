@@ -36,9 +36,7 @@ public class CuriosCompat {
 									RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
 									if (recipeHolder != null) {
 										SpoilRecipe recipe = recipeHolder.value();
-										SpoilHelper.updateSpoilingStack(nestedStack, recipe);
-										if (SpoilHelper.isSpoiled(nestedStack)) {
-											SpoilHandler.spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
+										SpoilHandler.spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
 										}
 									}
 								}
