@@ -55,6 +55,9 @@ public class SpoilHandler {
 						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 							spoilRate = SpoiledConfigCache.containerModifier.get(location);
 						}
+						if (spoilRate <= 0) {
+							continue; // Skip if spoil rate is 0 or less
+						}
 						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
 						if (spoilFlag) {
 							if (container != null && container.getContainerSize() > 0) {
