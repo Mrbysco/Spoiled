@@ -31,6 +31,7 @@ public class SpoiledConfig {
 
 	public static class Common {
 		public final ModConfigSpec.ConfigValue<List<? extends String>> containerModifier;
+		public final ModConfigSpec.ConfigValue<List<? extends String>> itemContainerModifier;
 		public final IntValue spoilRate;
 		public final BooleanValue initializeSpoiling;
 		public final BooleanValue mergeSpoilingFood;
@@ -54,6 +55,13 @@ public class SpoiledConfig {
 							Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food
 							"cookingforblockheads:fridge,0.2" would make a cooking for blockheads fridge spoil at 20% of the usual spoilrate""")
 					.defineListAllowEmpty(List.of("containerModifier"), () -> List.of(containers), String::new, o -> (o instanceof String));
+
+			itemContainerModifier = builder
+					.comment("""
+							Determines the spoilrate in specific item containers [Syntax: modid:item_id]
+							Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food
+							""")
+					.defineListAllowEmpty(List.of("itemContainerModifier"), () -> List.of(containers), String::new, o -> (o instanceof String));
 
 			spoilRate = builder
 					.comment("""
@@ -119,7 +127,10 @@ public class SpoiledConfig {
 	private static void refreshCache(ModConfig.Type type) {
 		if (type == ModConfig.Type.COMMON) {
 			SpoiledConfigCache.setSpoilRate(SpoiledConfig.COMMON.spoilRate.get());
-			SpoiledConfigCache.generateContainerModifier(SpoiledConfig.COMMON.containerModifier.get());
+			SpoiledConfigCache.generateContainerModifier(
+					SpoiledConfig.COMMON.containerModifier.get(),
+					SpoiledConfig.COMMON.itemContainerModifier.get()
+			);
 		}
 	}
 }

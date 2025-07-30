@@ -26,6 +26,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import java.util.Collection;
 import java.util.Set;
 
+import java.util.ArrayList;
+
 public class SpoiledFabric implements ModInitializer {
 	public static ConfigHolder<SpoiledConfig> config;
 
@@ -34,12 +36,16 @@ public class SpoiledFabric implements ModInitializer {
 		config = AutoConfig.register(SpoiledConfig.class, YamlConfigSerializer::new);
 		config.registerLoadListener((holder, config) -> {
 			SpoiledConfigCache.setSpoilRate(config.general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(config.general.containerModifier);
+			SpoiledConfigCache.generateContainerModifier(
+					config.general.containerModifier, new ArrayList<>()
+			);
 			return InteractionResult.PASS;
 		});
 		config.registerSaveListener((holder, config) -> {
 			SpoiledConfigCache.setSpoilRate(config.general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(config.general.containerModifier);
+			SpoiledConfigCache.generateContainerModifier(
+					config.general.containerModifier, new ArrayList<>()
+			);
 			return InteractionResult.PASS;
 		});
 
@@ -53,7 +59,9 @@ public class SpoiledFabric implements ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
 			SpoiledConfigCache.setSpoilRate(config.get().general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(config.get().general.containerModifier);
+			SpoiledConfigCache.generateContainerModifier(
+					config.get().general.containerModifier, new ArrayList<>()
+			);
 		});
 
 		ResourceConditions.register(ResourceConditionType.create(InitializeSpoilingCondition.ID, InitializeSpoilingCondition.CODEC));
