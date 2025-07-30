@@ -1,6 +1,7 @@
 package com.mrbysco.spoiled.handler;
 
 import com.google.common.collect.Lists;
+import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
@@ -57,6 +58,9 @@ public class SpoilHandler {
 						double spoilRate = 1.0D;
 						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 							spoilRate = SpoiledConfigCache.containerModifier.get(location);
+						}
+						if (spoilRate <= 0) {
+							continue; // Skip if spoil rate is 0 or less
 						}
 						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
 						if (spoilFlag) {
