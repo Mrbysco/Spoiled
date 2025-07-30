@@ -1,7 +1,6 @@
 package com.mrbysco.spoiled.handler;
 
 import com.google.common.collect.Lists;
-import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
@@ -18,6 +17,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.event.TickEvent.LevelTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -44,6 +46,16 @@ public class SpoilHandler {
 					if (be != null && !be.isRemoved() && be.hasLevel() && be.getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
 						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
 							continue;
+
+						BlockState state = level.getBlockState(pos);
+						if (state.hasProperty(BlockStateProperties.CHEST_TYPE)) {
+							ChestType type = state.getValue(BlockStateProperties.CHEST_TYPE);
+							// If double chest only process left side chests
+							if (type == ChestType.RIGHT) {
+								// Skip right side chests
+								continue;
+							}
+						}
 
 						ResourceLocation location = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(be.getType());
 						double spoilRate = 1.0D;
