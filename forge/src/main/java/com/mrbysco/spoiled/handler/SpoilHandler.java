@@ -22,6 +22,9 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -55,7 +58,7 @@ public class SpoilHandler {
 							}
 						}
 
-						ResourceLocation location = ForgeRegistries.BLOCK_ENTITY_TYPES.getKey(be.getType());
+						ResourceLocation location = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType());
 						double spoilRate = 1.0D;
 						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 							spoilRate = SpoiledConfigCache.containerModifier.get(location);
@@ -74,7 +77,8 @@ public class SpoilHandler {
 										RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
 										if (recipeHolder != null) {
 											SpoilRecipe recipe = recipeHolder.value();
-											spoilItemInHandler(itemHandler, slot, stack, recipe, level.registryAccess());
+											spoilItemInHandler(stack, itemHandler, slot, stack, recipe, level.registryAccess(), level.getRandom());
+										}
 									}
 								}
 							}
@@ -102,7 +106,7 @@ public class SpoilHandler {
 	 * @param random the random source to use for determining if the item should spoil
 	 */
 	public static void spoilItemInHandler(ItemStack containerStack, IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess, RandomSource random) {
-		ResourceLocation location = ForgeRegistries.ITEMS.getKey(containerStack.getItem());
+		ResourceLocation location = BuiltInRegistries.ITEM.getKey(containerStack.getItem());
 		double spoilRate = 1.0D;
 		if (location != null && (SpoiledConfigCache.itemContainerModifier.containsKey(location))) {
 			spoilRate = SpoiledConfigCache.itemContainerModifier.get(location);
@@ -148,8 +152,7 @@ public class SpoilHandler {
 							RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
 							if (recipeHolder != null) {
 								SpoilRecipe recipe = recipeHolder.value();
-								spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
-								}
+								spoilItemInHandler(stack, itemHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
 							}
 						}
 					}
@@ -180,8 +183,7 @@ public class SpoilHandler {
 							RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
 							if (recipeHolder != null) {
 								SpoilRecipe recipe = recipeHolder.value();
-								spoilItemInHandler(itemHandler, j, nestedStack, recipe, level.registryAccess());
-								}
+								spoilItemInHandler(stack, itemHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
 							}
 						}
 					}
