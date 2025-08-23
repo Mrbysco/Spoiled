@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import org.joml.Matrix3x2fStack;
 
 public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 	public static final IRecipeType<SpoilRecipe> TYPE = IRecipeType.create(Constants.MOD_ID, "spoil_recipe", SpoilRecipe.class);
@@ -73,13 +74,13 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 	public void draw(SpoilRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
 		this.slotDrawable.draw(guiGraphics, 9, 13);
 
-		PoseStack poseStack = guiGraphics.pose();
-		poseStack.pushPose();
-		poseStack.translate(1, 0, 0);
+		Matrix3x2fStack poseStack = guiGraphics.pose();
+		poseStack.pushMatrix();
+		poseStack.translate(1, 0);
 		Font font = Minecraft.getInstance().font;
 		MutableComponent component = Component.translatable("spoiled.gui.jei.spoil_time", recipe.getSpoilTime());
 		guiGraphics.drawString(font, component, 0, 0, 8, false);
-		poseStack.popPose();
+		poseStack.popMatrix();
 
 		this.slotDrawable.draw(guiGraphics, 112, 13);
 	}
