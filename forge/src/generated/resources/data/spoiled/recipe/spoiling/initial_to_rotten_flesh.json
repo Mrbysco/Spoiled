@@ -9,6 +9,7 @@
     "tag": "spoiled:foods"
   },
   "result": {
+    "count": 1,
     "id": "minecraft:rotten_flesh"
   }
 }
