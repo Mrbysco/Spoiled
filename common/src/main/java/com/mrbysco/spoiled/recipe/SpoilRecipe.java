@@ -94,7 +94,7 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 				instance -> instance.group(
 								Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group),
 								Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(recipe -> recipe.ingredient),
-								ItemStack.SINGLE_ITEM_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
+								ItemStack.OPTIONAL_CODEC.fieldOf("result").forGetter(recipe -> recipe.result),
 								Codec.INT.optionalFieldOf("spoiltime", -1).forGetter(recipe -> recipe.spoilTime),
 								Codec.INT.optionalFieldOf("priority", 1).forGetter(recipe -> recipe.priority)
 						)
@@ -126,7 +126,7 @@ public class SpoilRecipe implements Recipe<SingleRecipeInput> {
 		public static void toNetwork(RegistryFriendlyByteBuf buffer, SpoilRecipe recipe) {
 			buffer.writeUtf(recipe.group);
 			Ingredient.CONTENTS_STREAM_CODEC.encode(buffer, recipe.ingredient);
-			ItemStack.STREAM_CODEC.encode(buffer, recipe.result);
+			ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, recipe.result);
 			buffer.writeVarInt(recipe.spoilTime);
 			buffer.writeVarInt(recipe.priority);
 		}
