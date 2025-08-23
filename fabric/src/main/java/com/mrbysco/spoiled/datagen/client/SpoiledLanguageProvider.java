@@ -28,6 +28,7 @@ public class SpoiledLanguageProvider extends FabricLanguageProvider {
 		translationBuilder.add("text.autoconfig.spoiled.title", "Spoiled");
 		translationBuilder.add("text.autoconfig.spoiled.option.general", "General");
 		translationBuilder.add("text.autoconfig.spoiled.option.general.containerModifier", "Container Modifiers");
+		translationBuilder.add("text.autoconfig.spoiled.option.general.itemContainerModifier", "Item Container Modifiers");
 		translationBuilder.add("text.autoconfig.spoiled.option.general.spoilRate", "Spoil Rate");
 		translationBuilder.add("text.autoconfig.spoiled.option.general.initializeSpoiling", "Initialize Spoiling");
 		translationBuilder.add("text.autoconfig.spoiled.option.general.mergeSpoilingFood", "Merge Spoiling Food");
