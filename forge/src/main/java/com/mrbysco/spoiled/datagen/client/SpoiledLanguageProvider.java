@@ -30,6 +30,9 @@ public class SpoiledLanguageProvider extends LanguageProvider {
 							Determines the spoilrate in specific containers [Syntax: tileentity:spoil_rate]
 							Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food
 							"cookingforblockheads:fridge,0.2" would make a cooking for blockheads fridge spoil at 20% of the usual spoilrate""");
+		addConfig("itemContainerModifier", "Item Container Modifiers", """
+							Determines the spoilrate in specific item containers [Syntax: modid:item_id]
+							Examples: "minecraft:shulker_box,0" would make shulker boxes not spoil food""");
 		addConfig("spoilRate", "Spoil Rate", """
 							Defines the default total amount of spoiling updates for each food item\s
 							(For example, a defaultSpoilTime of 40 means any default food item will have 40 total updates before it spoils.\s
