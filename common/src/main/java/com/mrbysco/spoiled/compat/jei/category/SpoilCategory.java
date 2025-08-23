@@ -25,14 +25,12 @@ import net.minecraft.world.item.Items;
 
 public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 	public static final RecipeType<SpoilRecipe> TYPE = RecipeType.create(Constants.MOD_ID, "spoil_recipe", SpoilRecipe.class);
-	private final IDrawable background;
 	private final IDrawable icon;
 	private final Component title;
 
 	private final IDrawableStatic slotDrawable;
 
 	public SpoilCategory(IGuiHelper guiHelper) {
-		this.background = guiHelper.createBlankDrawable(140, 40);
 		this.icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(Items.ROTTEN_FLESH));
 		this.title = Component.translatable("spoiled.gui.jei.category.spoiling");
 		this.slotDrawable = guiHelper.getSlotDrawable();
@@ -49,8 +47,13 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 	}
 
 	@Override
-	public IDrawable getBackground() {
-		return background;
+	public int getWidth() {
+		return 140;
+	}
+
+	@Override
+	public int getHeight() {
+		return 40;
 	}
 
 	@Override
@@ -67,8 +70,12 @@ public class SpoilCategory implements IRecipeCategory<SpoilRecipe> {
 		}
 		RegistryAccess registryAccess = level.registryAccess();
 
-		builder.addSlot(RecipeIngredientRole.INPUT, 10, 14).addIngredients(recipe.getIngredients().getFirst());
-		builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 14).addItemStack(recipe.getResultItem(registryAccess));
+		builder.addSlot(RecipeIngredientRole.INPUT, 10, 14)
+				.addIngredients(recipe.getIngredients().getFirst())
+				.setStandardSlotBackground();
+		builder.addSlot(RecipeIngredientRole.OUTPUT, 113, 14)
+				.addItemStack(recipe.getResultItem(registryAccess))
+				.setOutputSlotBackground();
 	}
 
 	@Override
