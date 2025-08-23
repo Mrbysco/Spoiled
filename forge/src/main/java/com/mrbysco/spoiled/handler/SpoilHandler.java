@@ -118,7 +118,7 @@ public class SpoilHandler {
 		if (spoilFlag) {
 			SpoilHelper.updateSpoilingStack(stack, recipe);
 			if (SpoilHelper.isSpoiled(stack)) {
-				ItemStack spoiledStack = recipe.getResultItem(registryAccess).copy();
+				ItemStack spoiledStack = recipe.getResult();
 				int oldStackCount = stack.getCount();
 				stack.setCount(0);
 				if (!spoiledStack.isEmpty()) {
