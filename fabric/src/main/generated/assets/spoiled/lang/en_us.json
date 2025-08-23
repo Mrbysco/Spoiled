@@ -14,6 +14,7 @@
   "text.autoconfig.spoiled.option.general.defaultSpoilItem": "Default Spoil Item",
   "text.autoconfig.spoiled.option.general.defaultSpoilTime": "Default Spoil Time",
   "text.autoconfig.spoiled.option.general.initializeSpoiling": "Initialize Spoiling",
+  "text.autoconfig.spoiled.option.general.itemContainerModifier": "Item Container Modifiers",
   "text.autoconfig.spoiled.option.general.mergeSpoilingFood": "Merge Spoiling Food",
   "text.autoconfig.spoiled.option.general.spoilBlacklist": "Spoil Blacklist",
   "text.autoconfig.spoiled.option.general.spoilEverything": "Spoil Everything",

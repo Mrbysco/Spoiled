@@ -13,6 +13,8 @@
   "spoiled.configuration.defaultSpoilTime.tooltip": "Defines the total amount of spoiling updates that is used by the default initialized spoiling when 'initializeSpoiling' is enabled \n(If the 'spoilRate' is 10 and the 'defaultSpoilTime' is set to 20 then the food will spoil after 20 * 10 seconds = 200 seconds) [default: 40]",
   "spoiled.configuration.initializeSpoiling": "Initialize Spoiling",
   "spoiled.configuration.initializeSpoiling.tooltip": "When enabled Spoiled initializes spoiling for all vanilla food [default: true]",
+  "spoiled.configuration.itemContainerModifier": "Item Container Modifiers",
+  "spoiled.configuration.itemContainerModifier.tooltip": "Determines the spoilrate in specific item containers [Syntax: modid:item_id]\nExamples: \"minecraft:shulker_box,0\" would make shulker boxes not spoil food",
   "spoiled.configuration.mergeSpoilingFood": "Merge Spoiling Food",
   "spoiled.configuration.mergeSpoilingFood.tooltip": "When enabled enables a special recipe to merge spoiling food together [default: false]",
   "spoiled.configuration.showPercentage": "Show Percentage",
