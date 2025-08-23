@@ -78,11 +78,12 @@ public class StackFoodRecipe extends CustomRecipe {
 
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(CraftingInput craftingInput) {
-		NonNullList<ItemStack> nonnulllist = super.getRemainingItems(craftingInput);
+		NonNullList<ItemStack> $$1 = NonNullList.withSize(craftingInput.size(), ItemStack.EMPTY);
 		for (int i = 0; i < craftingInput.size(); i++) {
-			nonnulllist.set(i, ItemStack.EMPTY);
+			ItemStack stack = craftingInput.getItem(i);
+			stack.shrink(stack.getCount()); // Properly consume the items upon crafting
 		}
-		return nonnulllist;
+		return $$1;
 	}
 
 	@Override
