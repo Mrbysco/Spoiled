@@ -87,7 +87,7 @@ public class SpoilHelper {
 	 * @param time  The time to set
 	 */
 	public static void setSpoilTime(ItemStack stack, int time) {
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
 		tag.putInt(Constants.SPOIL_TAG, time);
 		stack.setTag(tag);
 	}
@@ -188,7 +188,7 @@ public class SpoilHelper {
 	 * @param recipe The spoil recipe to use
 	 */
 	public static void updateSpoilingStack(ItemStack stack, SpoilRecipe recipe) {
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
 		if (tag.isEmpty()) {
 			if (!tag.contains(Constants.SPOIL_TAG)) {
 				tag.putInt(Constants.SPOIL_TAG, 0);
@@ -220,7 +220,7 @@ public class SpoilHelper {
 	 * @return true if the stack is spoiled
 	 */
 	public static boolean isSpoiled(ItemStack stack) {
-		CompoundTag tag = stack.getOrCreateTag();
+		CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
 		if (tag.contains(Constants.SPOIL_TAG) && tag.contains(Constants.SPOIL_TIME_TAG)) {
 			int getOldTime = tag.getInt(Constants.SPOIL_TAG);
 			int getMaxTime = tag.getInt(Constants.SPOIL_TIME_TAG);
