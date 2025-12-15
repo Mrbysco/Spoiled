@@ -1,5 +1,6 @@
 package com.mrbysco.spoiled.util;
 
+import com.google.common.collect.Iterables;
 import com.mrbysco.spoiled.mixin.ChunkMapAccessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ChunkHolder;
@@ -27,7 +28,7 @@ public class ChunkHelper {
 
 		if (source instanceof ServerChunkCache cache) {
 			ChunkMap chunkMap = cache.chunkMap;
-			Iterable<ChunkHolder> chunks = ((ChunkMapAccessor) chunkMap).spoiledCallGetChunks();
+			Iterable<ChunkHolder> chunks = Iterables.unmodifiableIterable(((ChunkMapAccessor) chunkMap).spoiledCallVisibleChunkMap().values());
 			for (ChunkHolder chunk : chunks) {
 				LevelChunk levelChunk = chunk.getTickingChunk();
 

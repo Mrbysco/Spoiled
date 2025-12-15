@@ -118,7 +118,7 @@ public class SpoilHandler {
 	}
 
 	public static void onPlayerTick(Player player) {
-		if (!player.level().isClientSide &&
+		if (!player.level().isClientSide() &&
 				player.level().getGameTime() % SpoiledConfigCache.spoilRate == 0 && !player.getAbilities().instabuild) {
 			updateInventory(player);
 		}

@@ -15,13 +15,13 @@ I'm sorry if I'm spoiling it for you. But you might wanna keep an eye on your fo
 [[dependencies.spoiled]]
 modId="minecraft"
 type="required"
-versionRange="[1.21.7,1.22)"
+versionRange="[1.21.10,1.22)"
 ordering="NONE"
 side="BOTH"
 [[dependencies.spoiled]]
 modId="neoforge"
 type="required"
-versionRange="[21.7.0-beta,)"
+versionRange="[21.10.0-beta,)"
 ordering="NONE"
 side="BOTH"
 [[mixins]]

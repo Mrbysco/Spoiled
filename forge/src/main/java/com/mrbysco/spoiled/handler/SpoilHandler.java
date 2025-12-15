@@ -1,7 +1,6 @@
 package com.mrbysco.spoiled.handler;
 
 import com.google.common.collect.Lists;
-import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
@@ -30,7 +29,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 import java.util.List;
 
@@ -68,16 +69,18 @@ public class SpoilHandler {
 						}
 						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
 						if (spoilFlag) {
-							IItemHandler itemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
-							if (itemHandler != null && itemHandler.getSlots() > 0) {
-								for (int i = 0; i < itemHandler.getSlots(); i++) {
-									ItemStack stack = itemHandler.getStackInSlot(i);
-									if (stack != null && !stack.isEmpty()) {
-										int slot = i;
+							ResourceHandler<ItemResource> resourceHandler = level.getCapability(Capabilities.Item.BLOCK, pos, null);
+							if (resourceHandler != null && resourceHandler.size() > 0) {
+								ItemStack containerStack = state.getCloneItemStack(level, pos, false);
+								for (int slot = 0; slot < resourceHandler.size(); slot++) {
+									ItemResource resource = resourceHandler.getResource(slot);
+									if (!resource.isEmpty()) {
+										int count = resourceHandler.getAmountAsInt(slot);
+										ItemStack stack = resource.toStack(count);
 										RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
 										if (recipeHolder != null) {
 											SpoilRecipe recipe = recipeHolder.value();
-											spoilItemInHandler(stack, itemHandler, slot, stack, recipe, level.registryAccess(), level.getRandom());
+											spoilItemInHandler(containerStack, resourceHandler, slot, stack, recipe, level.registryAccess(), level.getRandom());
 										}
 									}
 								}
@@ -97,15 +100,18 @@ public class SpoilHandler {
 
 	/**
 	 * Spoils an item in an item handler based on the spoil recipe and the container's spoil rate.
-	 * @param containerStack the stack of the container item
-	 * @param itemHandler the item handler to spoil items in
-	 * @param slot the slot in the item handler to spoil the item
-	 * @param stack the item stack to spoil
-	 * @param recipe the spoil recipe to use for spoiling
-	 * @param registryAccess the registry access for getting the result item of the recipe
-	 * @param random the random source to use for determining if the item should spoil
+	 *
+	 * @param containerStack  the stack of the container item
+	 * @param resourceHandler the item handler to spoil items in
+	 * @param slot            the slot in the item handler to spoil the item
+	 * @param stack           the item stack to spoil
+	 * @param recipe          the spoil recipe to use for spoiling
+	 * @param registryAccess  the registry access for getting the result item of the recipe
+	 * @param random          the random source to use for determining if the item should spoil
 	 */
-	public static void spoilItemInHandler(ItemStack containerStack, IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess, RandomSource random) {
+	public static void spoilItemInHandler(ItemStack containerStack, ResourceHandler<ItemResource> resourceHandler,
+	                                      int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess,
+	                                      RandomSource random) {
 		ResourceLocation location = BuiltInRegistries.ITEM.getKey(containerStack.getItem());
 		double spoilRate = 1.0D;
 		if (location != null && (SpoiledConfigCache.itemContainerModifier.containsKey(location))) {
@@ -116,14 +122,26 @@ public class SpoilHandler {
 		}
 		boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && random.nextDouble() <= spoilRate);
 		if (spoilFlag) {
-			SpoilHelper.updateSpoilingStack(stack, recipe);
+			try (var tx = Transaction.openRoot()) {
+				int count = stack.getCount();
+				resourceHandler.extract(slot, ItemResource.of(stack), count, tx);
+				SpoilHelper.updateSpoilingStack(stack, recipe);
+				resourceHandler.insert(slot, ItemResource.of(stack), count, tx);
+				tx.commit();
+			}
+
 			if (SpoilHelper.isSpoiled(stack)) {
 				ItemStack spoiledStack = recipe.getResult();
 				int oldStackCount = stack.getCount();
-				stack.setCount(0);
-				if (!spoiledStack.isEmpty()) {
-					spoiledStack.setCount(oldStackCount);
-					itemHandler.insertItem(slot, spoiledStack, false);
+				try (var tx = Transaction.openRoot()) {
+					if (resourceHandler.extract(slot, ItemResource.of(stack), stack.getCount(), tx) != stack.getCount())
+						return;
+					stack.setCount(0);
+					if (!spoiledStack.isEmpty()) {
+						spoiledStack.setCount(oldStackCount);
+						resourceHandler.insert(slot, ItemResource.of(spoiledStack), spoiledStack.getCount(), tx);
+						tx.commit();
+					}
 				}
 			}
 		}
@@ -143,15 +161,17 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
 			if (!stack.isEmpty()) {
-				IItemHandler itemHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-				if (itemHandler != null && itemHandler.getSlots() > 0) {
-					for (int j = 0; j < itemHandler.getSlots(); j++) {
-						ItemStack nestedStack = itemHandler.getStackInSlot(j);
-						if (nestedStack != null && !nestedStack.isEmpty()) {
+				ResourceHandler<ItemResource> resourceHandler = stack.getCapability(Capabilities.Item.ITEM, null);
+				if (resourceHandler != null && resourceHandler.size() > 0) {
+					for (int j = 0; j < resourceHandler.size(); j++) {
+						ItemResource nestedResource = resourceHandler.getResource(j);
+						if (!nestedResource.isEmpty()) {
+							int count = resourceHandler.getAmountAsInt(i);
+							ItemStack nestedStack = nestedResource.toStack(count);
 							RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
 							if (recipeHolder != null) {
 								SpoilRecipe recipe = recipeHolder.value();
-								spoilItemInHandler(stack, itemHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
+								spoilItemInHandler(stack, resourceHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
 							}
 						}
 					}
@@ -174,15 +194,17 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = container.getItem(i);
 			if (!stack.isEmpty()) {
-				IItemHandler itemHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-				if (itemHandler != null && itemHandler.getSlots() > 0) {
-					for (int j = 0; j < itemHandler.getSlots(); j++) {
-						ItemStack nestedStack = itemHandler.getStackInSlot(j);
-						if (nestedStack != null && !nestedStack.isEmpty()) {
+				ResourceHandler<ItemResource> resourceHandler = stack.getCapability(Capabilities.Item.ITEM, null);
+				if (resourceHandler != null && resourceHandler.size() > 0) {
+					for (int j = 0; j < resourceHandler.size(); j++) {
+						ItemResource nestedResource = resourceHandler.getResource(j);
+						if (!nestedResource.isEmpty()) {
+							int count = resourceHandler.getAmountAsInt(i);
+							ItemStack nestedStack = nestedResource.toStack(count);
 							RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
 							if (recipeHolder != null) {
 								SpoilRecipe recipe = recipeHolder.value();
-								spoilItemInHandler(stack, itemHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
+								spoilItemInHandler(stack, resourceHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
 							}
 						}
 					}
