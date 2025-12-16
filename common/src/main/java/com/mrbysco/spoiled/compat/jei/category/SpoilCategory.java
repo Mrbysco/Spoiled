@@ -1,6 +1,5 @@
 package com.mrbysco.spoiled.compat.jei.category;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import mezz.jei.api.constants.VanillaTypes;
