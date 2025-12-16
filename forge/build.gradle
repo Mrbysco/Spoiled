@@ -82,12 +82,12 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
     compileOnly project(":common")
 
-    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
-    compileOnly "me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}"
-    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}"
-
-    implementation "dev.architectury:architectury-neoforge:${architectury_version}"
-    implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-api-neoforge:${rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-neoforge:${rei_version}"
+//
+//    implementation "dev.architectury:architectury-neoforge:${architectury_version}"
+//    implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
     testCompileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
@@ -143,7 +143,10 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-        mainFile.addOptional("jei", "roughly-enough-items", "crafttweaker", "curios")
+        mainFile.addOptional("jei")
+//        mainFile.addOptional("roughly-enough-items")
+//        mainFile.addOptional("crafttweaker")
+//        mainFile.addOptional("curios")
     }
 }
 
@@ -162,9 +165,9 @@ if (System.getenv().MODRINTH_KEY) {
 
         dependencies {
             optional.project "jei"
-            optional.project "rei"
-            optional.project "crafttweaker"
-            optional.project "curios"
+//            optional.project "rei"
+//            optional.project "crafttweaker"
+//            optional.project "curios"
         }
     }
 }

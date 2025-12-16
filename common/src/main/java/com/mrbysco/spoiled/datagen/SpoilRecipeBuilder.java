@@ -5,7 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -46,7 +46,7 @@ public class SpoilRecipeBuilder {
 		this.build(recipeOutput, BuiltInRegistries.ITEM.getKey(this.result));
 	}
 
-	public void build(RecipeOutput recipeOutput, ResourceLocation id) {
+	public void build(RecipeOutput recipeOutput, Identifier id) {
 		SpoilRecipe recipe = new SpoilRecipe(this.group == null ? "" : this.group, this.ingredient, new ItemStack(this.result), this.spoilTime, this.priority);
 		recipeOutput.accept(ResourceKey.create(Registries.RECIPE, id), recipe, null);
 	}

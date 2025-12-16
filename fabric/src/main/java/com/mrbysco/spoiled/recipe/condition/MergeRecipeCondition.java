@@ -6,12 +6,12 @@ import com.mrbysco.spoiled.SpoiledFabric;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 public class MergeRecipeCondition implements ResourceCondition {
 	public static final MapCodec<MergeRecipeCondition> CODEC = MapCodec.unit(MergeRecipeCondition::new);
-	public static final ResourceLocation ID = Constants.modLoc("merge_food");
+	public static final Identifier ID = Constants.modLoc("merge_food");
 
 	public static final ResourceConditionType<MergeRecipeCondition> PROVIDER = ResourceConditionType.create(ID, CODEC);
 

@@ -19,7 +19,7 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -30,8 +30,8 @@ import java.util.List;
 @JeiPlugin
 public class JEICompat implements IModPlugin {
 
-	public static final ResourceLocation PLUGIN_UID = Constants.modLoc("main");
-	public static final ResourceLocation SPOILING = Constants.modLoc("spoiling");
+	public static final Identifier PLUGIN_UID = Constants.modLoc("main");
+	public static final Identifier SPOILING = Constants.modLoc("spoiling");
 
 	@Nullable
 	private IRecipeCategory<SpoilRecipe> spoilCategory;
@@ -42,7 +42,7 @@ public class JEICompat implements IModPlugin {
 	}
 
 	@Override
-	public ResourceLocation getPluginUid() {
+	public Identifier getPluginUid() {
 		return PLUGIN_UID;
 	}
 

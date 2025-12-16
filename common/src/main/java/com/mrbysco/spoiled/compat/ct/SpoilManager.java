@@ -11,7 +11,7 @@
 //import com.mrbysco.spoiled.registration.SpoiledRecipes;
 //import net.minecraft.core.component.DataComponents;
 //import net.minecraft.core.registries.BuiltInRegistries;
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //import net.minecraft.world.item.Item;
 //import net.minecraft.world.item.ItemStack;
 //import net.minecraft.world.item.crafting.Ingredient;
@@ -28,7 +28,7 @@
 //
 //	@Method
 //	public void addSpoiling(String name, IIngredient food, IItemStack spoilStack, int spoilTime, int priority) {
-//		final ResourceLocation id = ResourceLocation.fromNamespaceAndPath("crafttweaker", name);
+//		final Identifier id = Identifier.fromNamespaceAndPath("crafttweaker", name);
 //		final Ingredient foodIngredient = food.asVanillaIngredient();
 //		final ItemStack resultItemStack = spoilStack.getInternal();
 //		final SpoilRecipe recipe = new SpoilRecipe("", foodIngredient, resultItemStack, spoilTime, priority);
@@ -45,10 +45,10 @@
 //		if (Services.PLATFORM.isModLoaded(modName)) {
 //			List<Item> edibleFoodList = BuiltInRegistries.ITEM.stream().filter(item -> item.getDefaultInstance().has(DataComponents.FOOD)).toList();
 //			for (Item foundItem : edibleFoodList) {
-//				ResourceLocation location = BuiltInRegistries.ITEM.getKey(foundItem);
+//				Identifier location = BuiltInRegistries.ITEM.getKey(foundItem);
 //				if (foundItem != spoilStack.getInternal().getItem() && location != null && location.getNamespace().equals(modName)) {
 //					String itemLocation = location.toString().replace(":", "_");
-//					ResourceLocation id = ResourceLocation.fromNamespaceAndPath("crafttweaker", itemLocation);
+//					Identifier id = Identifier.fromNamespaceAndPath("crafttweaker", itemLocation);
 //					SpoilRecipe recipe = new SpoilRecipe("", Ingredient.of(new ItemStack(foundItem)), spoilStack.getInternal(), spoilTime, priority);
 //					CraftTweakerAPI.apply(new ActionAddRecipe<>(this, new RecipeHolder<>(id, recipe)));
 //				}

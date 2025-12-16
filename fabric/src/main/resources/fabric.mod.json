@@ -27,9 +27,6 @@
     ],
     "modmenu": [
       "com.mrbysco.spoiled.config.SpoiledMenuIntegration"
-    ],
-    "rei_client": [
-      "com.mrbysco.spoiled.compat.rei.REIPluginFabric"
     ]
   },
   "mixins": [
@@ -37,11 +34,11 @@
     "spoiled.fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.17.2",
-    "minecraft": "~1.21.10",
+    "fabricloader": ">=0.18.2",
+    "minecraft": "~1.21.11",
     "java": ">=21",
     "fabric-api": "*",
-    "cloth-config": ">=20"
+    "cloth-config": ">=21"
   }
 }
 

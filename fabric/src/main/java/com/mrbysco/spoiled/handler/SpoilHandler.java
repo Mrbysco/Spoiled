@@ -9,7 +9,7 @@ import com.mrbysco.spoiled.util.SpoilHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
@@ -50,7 +50,7 @@ public class SpoilHandler {
 							}
 						}
 
-						ResourceLocation location = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType());
+						Identifier location = BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(be.getType());
 						double spoilRate = 1.0D;
 						if (location != null && (SpoiledConfigCache.containerModifier.containsKey(location))) {
 							spoilRate = SpoiledConfigCache.containerModifier.get(location);

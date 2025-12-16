@@ -10,7 +10,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
@@ -41,12 +41,12 @@ public class SpoilHelper {
 			return null;
 		}
 		if (Services.PLATFORM.spoilEverything()) {
-			final ResourceLocation stackLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
+			final Identifier stackLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
 			if (stack.has(DataComponents.FOOD)) {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + BuiltInRegistries.ITEM.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
-				return new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, ResourceLocation.fromNamespaceAndPath(Constants.MOD_ID, recipePath)),
+				return new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(Constants.MOD_ID, recipePath)),
 						new SpoilRecipe("", Ingredient.of(stack.getItem()), spoilStack, Services.PLATFORM.getDefaultSpoilTime(), 1));
 			}
 		} else {

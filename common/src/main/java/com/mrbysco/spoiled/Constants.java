@@ -1,7 +1,7 @@
 package com.mrbysco.spoiled;
 
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
@@ -21,8 +21,8 @@ public class Constants {
 	public static final String SPOIL_TIME_TAG = MOD_PREFIX + "SpoilMaxTime";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
-	public static ResourceLocation modLoc(String path) {
-		return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+	public static Identifier modLoc(String path) {
+		return Identifier.fromNamespaceAndPath(MOD_ID, path);
 	}
 
 	public final static List<RecipeHolder<SpoilRecipe>> SPOIL_RECIPES = new ArrayList<>();

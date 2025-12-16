@@ -3,7 +3,7 @@ package com.mrbysco.spoiled.config;
 import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class SpoiledConfigCache {
 
-	public static Map<ResourceLocation, Double> containerModifier = new HashMap<>();
-	public static Map<ResourceLocation, Double> itemContainerModifier = new HashMap<>();
+	public static Map<Identifier, Double> containerModifier = new HashMap<>();
+	public static Map<Identifier, Double> itemContainerModifier = new HashMap<>();
 	public static long spoilRate;
 
 
@@ -28,12 +28,12 @@ public class SpoiledConfigCache {
 		if (value.isEmpty()) {
 			return ItemStack.EMPTY;
 		} else {
-			Item item = BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse(value));
+			Item item = BuiltInRegistries.ITEM.getValue(Identifier.tryParse(value));
 			if (item != null) {
 				return new ItemStack(item);
 			} else {
 				Constants.LOGGER.error("'defaultSpoilItem' couldn't be parsed, using default");
-				return new ItemStack(BuiltInRegistries.ITEM.getValue(ResourceLocation.tryParse("rotten_flesh")));
+				return new ItemStack(BuiltInRegistries.ITEM.getValue(Identifier.tryParse("rotten_flesh")));
 			}
 		}
 	}
@@ -43,14 +43,14 @@ public class SpoiledConfigCache {
 		itemContainerModifier = generateMap(itemContainerValues);
 	}
 
-	private static Map<ResourceLocation, Double> generateMap(List<? extends String> configValues) {
-		Map<ResourceLocation, Double> modifierMap = new HashMap<>();
+	private static Map<Identifier, Double> generateMap(List<? extends String> configValues) {
+		Map<Identifier, Double> modifierMap = new HashMap<>();
 		if (!configValues.isEmpty()) {
 			for (String configValue : configValues) {
 				if (!configValue.contains(",")) {
 					if (configValue.contains(":")) {
 						Constants.LOGGER.error("Invalid syntax '{}' found in 'containerModifier' config values, supplying default modifier of 0", configValue);
-						modifierMap.put(ResourceLocation.tryParse(configValue), 0D);
+						modifierMap.put(Identifier.tryParse(configValue), 0D);
 					} else {
 						Constants.LOGGER.error("Invalid syntax '{}' found in 'containerModifier' config values", configValue);
 					}
@@ -61,7 +61,7 @@ public class SpoiledConfigCache {
 							Constants.LOGGER.error("Invalid resourcelocation syntax in 'containerModifier'. could not find \":\" in {}", configValue);
 							return modifierMap;
 						}
-						ResourceLocation registry = ResourceLocation.tryParse(values[0]);
+						Identifier registry = Identifier.tryParse(values[0]);
 						double modifier = NumberUtils.isParsable(values[1]) ? Double.parseDouble(values[1]) : -1;
 						modifierMap.put(registry, modifier);
 					} else {
