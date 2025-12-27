@@ -24,9 +24,10 @@ public class Spoiled {
 	public static final Logger LOGGER = LogManager.getLogger();
 
 	public Spoiled() {
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
-		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
+		final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		final ModLoadingContext modLoadingContext = ModLoadingContext.get();
+		modLoadingContext.registerConfig(ModConfig.Type.CLIENT, SpoiledConfig.clientSpec);
+		modLoadingContext.registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
 		eventBus.register(SpoiledConfig.class);
 
 		eventBus.register(new SpoiledConditions());

@@ -1,83 +1,63 @@
 plugins {
+    id 'idea'
+    id 'java-library'
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.+'
-    id 'org.spongepowered.mixin'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
+    id 'net.neoforged.moddev.legacyforge' version '2.0.134'
+    id 'net.darkhax.curseforgegradle' version '1.1.28'
     id 'com.modrinth.minotaur' version "2.+"
 }
 
 version = "${version}"
-group = 'com.mrbysco.spoiled' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "Spoiled-${mc_version}"
+group = "${mod_group}"
+base {
+    archivesName = "${mod_archive_name}-${mc_version}"
+}
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+// Mojang ships Java 17 to end users in 1.18+, so your mod should target Java 17.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-minecraft {
-    mappings channel: "${mcp_channel}", version: "${mcp_mappings}"
+legacyForge {
+    // Develop against MinecraftForge (the versions can be found at https://files.minecraftforge.net/)
+    version = "${mc_version}-${forge_version}"
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.hasProperty("parchment_minecraft_version") ? project.parchment_minecraft_version : project.mc_version
+    }
 
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
+    // Validate AT files and raise errors when they have invalid targets
+    // This option is false by default, but turning it on is recommended
+    validateAccessTransformers = true
+
     runs {
         client {
-            workingDirectory project.file('run')
-            arg "-mixin.config=spoiled.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            // Recommended logging data for a userdev environment
-            // property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                spoiled {
-                    source sourceSets.main
-                }
-            }
+            client()
         }
-
         server {
-            workingDirectory project.file('run')
-            arg "-mixin.config=spoiled.mixins.json"
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
-
-            // Recommended logging data for a userdev environment
-            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                spoiled {
-                    source sourceSets.main
-                }
-            }
+            server()
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', "${mod_id}", '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
-        data {
-            workingDirectory project.file('run')
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+        configureEach { run ->
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
 
+            if (javaToolchains.launcherFor(java.toolchain).map { it.metadata.vendor }.getOrElse('').contains('JetBrains')) {
+                jvmArguments.addAll('-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition')
+            }
 
-            // Recommended logging data for a userdev environment
-            //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            jvmArgument '-Xmx4G'
 
             // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
+            systemProperty 'forge.logging.console.level', 'debug'
+        }
+    }
 
-            args '--mod', 'spoiled', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            mods {
-                spoiled {
-                    source sourceSets.main
-                }
-            }
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
         }
     }
 }
@@ -85,10 +65,23 @@ minecraft {
 // Include resources generated by data generators.
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+// Sets up a dependency configuration called 'localRuntime' and a deobfuscating one called 'modLocalRuntime'
+// These configurations should be used instead of 'runtimeOnly' to declare
+// a dependency that will be present for runtime testing but that is
+// "optional", meaning it will not be pulled by dependents of this mod.
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+}
+obfuscation {
+    createRemappingConfiguration(configurations.localRuntime)
+}
+
 repositories {
-    maven {
-        url = "https://dvs1.progwml6.com/files/maven"
-    }
     maven {
         url = "https://maven.blamejared.com"
     }
@@ -106,55 +99,43 @@ repositories {
     }
 }
 
-mixin {
-    add sourceSets.main, "spoiled.refmap.json"
-}
-
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    compileOnly "org.jetbrains:annotations:24.0.1"
 
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
-    compileOnly fg.deobf("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
+    modCompileOnly("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
+    modCompileOnly("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
 
-    runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}-forge:${jei_version}")
-    implementation fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
+    modRuntimeOnly("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
-    runtimeOnly fg.deobf("curse.maven:EnhancedFarming-285105:4412866")
+    modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
 
-    implementation fg.deobf("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
-    runtimeOnly fg.deobf("curse.maven:NamelessTrinkets-541466:4378162")
+    modImplementation("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
+    modRuntimeOnly("curse.maven:NamelessTrinkets-541466:4378162")
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
+// Example for how to get properties into the manifest for reading at runtime.
+tasks.named('jar', Jar).configure {
     manifest {
         attributes([
-                "Specification-Title"     : "spoiled",
+                "Specification-Title"     : "${mod_id}",
                 "Specification-Vendor"    : "Mrbysco",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
+                "Implementation-Version"  : project.jar.archiveVersion,
                 "Implementation-Vendor"   : "Mrbysco",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs"            : "spoiled.mixins.json"
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-    type 'jar'
-    builtBy 'reobfJar'
-}
 publishing {
     publications {
-        mavenJava(MavenPublication) {
-            artifact(reobfArtifact) {
-                builtBy reobfArtifact
-                artifactId = archivesBaseName
-                classifier null
-            }
+        register('mavenJava', MavenPublication) {
+            groupId project.group
+            artifactId base.archivesName.get()
+            version project.version
+            from components.java
         }
     }
     repositories {
@@ -170,21 +151,52 @@ publishing {
     }
 }
 
+if (System.getenv().CURSEFORGE_KEY) {
+    task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+        apiToken = System.getenv().CURSEFORGE_KEY
+
+        def mainFile = upload(project.curseforge_id, reobfJar)
+        mainFile.releaseType = 'release'
+        mainFile.addModLoader("Forge", "NeoForge")
+        mainFile.addGameVersion("${mc_version}")
+        mainFile.addJavaVersion("Java 17")
+        mainFile.addEnvironment('Server', 'Client')
+
+        mainFile.changelog = file("$project.rootDir/changelog.md")
+        mainFile.changelogType = 'markdown'
+
+        mainFile.addOptional("jei", "curios", "crafttweaker")
+    }
+}
+
+if (System.getenv().MODRINTH_KEY) {
+    modrinth {
+        token = System.getenv().MODRINTH_KEY
+        projectId = project.modrinth_id
+        versionType = "release"
+        versionName = "${mod_name} ${mc_version}"
+        versionNumber = project.version
+        uploadFile = reobfJar
+        changelog = file("$project.rootDir/changelog.md").text
+        gameVersions = ["${mc_version}"]
+        loaders = ["neoforge", "forge"]
+
+        dependencies {
+            optional.project "jei"
+            optional.project "curios"
+            optional.project "crafttweaker"
+        }
+    }
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
 
-apply from: 'gradle/curseforge.gradle'
-apply from: 'gradle/modrinth.gradle'
-
-////////////////
-// IntelliJ Project Import
-// The Mixin annotation process does not have an obfuscation source when running through the IntelliJ compiler,
-// thus we have to prevent it from being activated as part of importing this Gradle project into IntelliJ.
-if (System.getProperty("idea.sync.active") == "true") {
-    afterEvaluate {
-        tasks.withType(JavaCompile).all {
-            it.options.annotationProcessorPath = files()
-        }
+// IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
     }
 }
