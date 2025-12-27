@@ -11,11 +11,13 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class SpoilHelper {
 
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
+		if (!canSpoil(stack)) return null;
 		String itemPath = ForgeRegistries.ITEMS.getKey(stack.getItem()).toString();
 		if (!SpoiledConfig.COMMON.spoilBlacklist.get().isEmpty() && SpoiledConfig.COMMON.spoilBlacklist.get().contains(itemPath)) {
 			return null;
@@ -29,8 +31,7 @@ public class SpoilHelper {
 				return new SpoilRecipe(new ResourceLocation(Reference.MOD_ID, recipePath), "", Ingredient.of(stack), spoilStack, SpoiledConfig.COMMON.defaultSpoilTime.get());
 			}
 		} else {
-			return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(),
-					new SimpleContainer(stack), level).orElse(null);
+			return level.getRecipeManager().getRecipeFor(SpoiledRecipes.SPOIL_RECIPE_TYPE.get(), new SimpleContainer(stack), level).orElse(null);
 		}
 		return null;
 	}
@@ -47,5 +48,18 @@ public class SpoilHelper {
 		CompoundTag tag = stack.getOrCreateTag();
 		tag.putInt(Reference.SPOIL_TAG, time);
 		stack.setTag(tag);
+	}
+
+	public static boolean canSpoil(ItemStack stack) {
+		if (!stack.hasTag()) return true;
+		CompoundTag tag = stack.getTag();
+		assert tag != null; // Already checked with hasTag()
+		if (!tag.isEmpty()) {
+			if (ModList.get().isLoaded("salt") && SpoiledConfig.COMMON.saltCompat.get() && tag.contains("Salted")) {
+				return false;
+			}
+			return SpoiledConfig.COMMON.spoilTagBlacklist.get().isEmpty() || SpoiledConfig.COMMON.spoilTagBlacklist.get().stream().noneMatch(tag::contains);
+		}
+		return true;
 	}
 }
