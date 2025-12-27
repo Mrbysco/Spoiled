@@ -106,12 +106,15 @@ dependencies {
     modCompileOnly("mezz.jei:jei-${mc_version}-common-api:${jei_version}")
     modCompileOnly("mezz.jei:jei-${mc_version}-forge-api:${jei_version}")
 
-    modRuntimeOnly("mezz.jei:jei-${mc_version}-forge:${jei_version}")
+    modLocalRuntime("mezz.jei:jei-${mc_version}-forge:${jei_version}")
 
-    modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
+    modCompileOnly("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
+    modLocalRuntime("com.blamejared.crafttweaker:CraftTweaker-forge-${mc_version}:${crafttweaker_version}")
 
-    modImplementation("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
-    modRuntimeOnly("curse.maven:NamelessTrinkets-541466:4378162")
+    modCompileOnly("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
+    modLocalRuntime("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
+    
+    modLocalRuntime("curse.maven:NamelessTrinkets-541466:6337412")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
