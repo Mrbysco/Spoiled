@@ -1,1 +1,1 @@
-* Fix spoiling sometimes happening twice or even thrice as fast as it should
+* Backport salt support from 1.20.1 to 1.19.2
