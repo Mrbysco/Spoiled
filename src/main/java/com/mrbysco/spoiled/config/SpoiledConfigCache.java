@@ -12,17 +12,17 @@ import java.util.List;
 import java.util.Map;
 
 public class SpoiledConfigCache {
-	public static boolean showPercentage;
-
 	public static Map<ResourceLocation, Double> containerModifier;
 	public static long spoilRate;
 
 	public static void refreshCache() {
 		Spoiled.LOGGER.info("Refreshing config cache");
-		showPercentage = SpoiledConfig.CLIENT.showPercentage.get();
-
 		generateContainerModifier(SpoiledConfig.COMMON.containerModifier.get());
-		spoilRate = SpoiledConfig.COMMON.spoilRate.get() * 20L;
+		setSpoilRate(SpoiledConfig.COMMON.spoilRate.get());
+	}
+
+	public static void setSpoilRate(int value) {
+		spoilRate = value * 20L;
 	}
 
 	public static ItemStack getDefaultSpoilItem() {

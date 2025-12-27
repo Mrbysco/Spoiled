@@ -6,6 +6,7 @@ import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -125,14 +126,18 @@ public class SpoiledConfig {
 	}
 
 	@SubscribeEvent
-	public static void onLoad(final ModConfigEvent.Loading configEvent) {
-		Spoiled.LOGGER.debug("Loaded Spoiled's config file {}", configEvent.getConfig().getFileName());
-		SpoiledConfigCache.refreshCache();
+	public static void onLoad(final ModConfigEvent configEvent) {
+		ModConfig config = configEvent.getConfig();
+		Spoiled.LOGGER.debug("Loaded Spoiled's config file {}", config.getFileName());
+		refreshCache(config.getType());
 	}
 
-	@SubscribeEvent
-	public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
-		Spoiled.LOGGER.debug("Spoiled's config just got changed on the file system!");
-		SpoiledConfigCache.refreshCache();
+	private static void refreshCache(ModConfig.Type type) {
+		if (type == ModConfig.Type.COMMON) {
+			SpoiledConfigCache.setSpoilRate(SpoiledConfig.COMMON.spoilRate.get());
+			SpoiledConfigCache.generateContainerModifier(
+					SpoiledConfig.COMMON.containerModifier.get()
+			);
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package com.mrbysco.spoiled.handler;
 
 import com.mrbysco.spoiled.Reference;
+import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +22,7 @@ public class TooltipHandler {
 			int percentage = (int) (((double) timer / timeMax) * 100);
 
 			MutableComponent component;
-			if (SpoiledConfigCache.showPercentage) {
+			if (SpoiledConfig.CLIENT.showPercentage.get()) {
 				component = Component.translatable("spoiled.spoiling").withStyle(ChatFormatting.YELLOW);
 				Component amount = Component.literal(String.valueOf(percentage)).withStyle(ChatFormatting.RED);
 				Component percentageComponent = Component.literal("%").withStyle(ChatFormatting.YELLOW);
