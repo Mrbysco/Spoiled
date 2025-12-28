@@ -1,1 +1,1 @@
-* Backport salt support from 1.20.1 to 1.19.2
+* Fix mixin issue in previous release
