@@ -162,7 +162,7 @@ if (System.getenv().CURSEFORGE_KEY) {
 
         def mainFile = upload(project.curseforge_id, reobfJar)
         mainFile.releaseType = 'release'
-        mainFile.addModLoader("Forge", "NeoForge")
+        mainFile.addModLoader("Forge")
         mainFile.addGameVersion("${mc_version}")
         mainFile.addJavaVersion("Java 17")
         mainFile.addEnvironment('Server', 'Client')
@@ -184,7 +184,7 @@ if (System.getenv().MODRINTH_KEY) {
         uploadFile = reobfJar
         changelog = file("$project.rootDir/changelog.md").text
         gameVersions = ["${mc_version}"]
-        loaders = ["neoforge", "forge"]
+        loaders = ["forge"]
 
         dependencies {
             optional.project "jei"
