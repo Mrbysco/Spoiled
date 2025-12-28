@@ -113,8 +113,9 @@ dependencies {
 
     modCompileOnly("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
     modLocalRuntime("top.theillusivec4.curios:curios-forge:${mc_version}-${curios_version}")
-    
+
     modLocalRuntime("curse.maven:NamelessTrinkets-541466:6337412")
+    modLocalRuntime("curse.maven:expandability-465066:3984029")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
