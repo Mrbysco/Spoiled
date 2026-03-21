@@ -111,7 +111,6 @@ public class SpoilHandler {
 		if (location != null && (SpoiledConfigCache.itemContainerModifier.containsKey(location))) {
 			spoilRate = SpoiledConfigCache.itemContainerModifier.get(location);
 		}
-		Constants.LOGGER.info("{} {}", location, spoilRate);
 		if (spoilRate <= 0) {
 			return; // Skip if spoil rate is 0 or less
 		}
