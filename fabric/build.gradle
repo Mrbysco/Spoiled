@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.13-SNAPSHOT'
+    id "net.fabricmc.fabric-loom" version '1.15-SNAPSHOT'
     id 'net.darkhax.curseforgegradle'
     id 'com.modrinth.minotaur'
 }
@@ -25,32 +25,26 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    implementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     implementation project(":common")
 
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    modImplementation "com.terraformersmc:modmenu:${mod_menu_version}"
+    api("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_api_version}")
+    implementation "com.terraformersmc:modmenu:${mod_menu_version}"
 
-//    modApi "dev.architectury:architectury-fabric:${architectury_version}"
-//    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}"
-//    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
-//    modCompileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
+//    api "dev.architectury:architectury-fabric:${architectury_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${rei_version}"
+//    runtimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
 
-    modCompileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_version}")
-//    modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
-//    modImplementation ("com.blamejared.crafttweaker:CraftTweaker-fabric-${minecraft_version}:${crafttweaker_version}")
+//    compileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_version}")
+//    compileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+//    implementation ("com.blamejared.crafttweaker:CraftTweaker-fabric-${minecraft_version}:${crafttweaker_version}")
 }
 
 loom {
     if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
         accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
-    }
-    mixin {
-        defaultRefmapName.set("${mod_id}.refmap.json")
     }
     runs {
         client {
@@ -132,14 +126,14 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.releaseType = 'beta'
         mainFile.addGameVersion "Fabric"
         mainFile.addGameVersion "${minecraft_version}"
-        mainFile.addGameVersion "Java 21"
+        mainFile.addGameVersion "Java 25"
         mainFile.addGameVersion('Server', 'Client')
 
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-        mainFile.addRequirement("fabric-api", "cloth-config")
-        mainFile.addOptional("jei")
+        mainFile.addRequirement("fabric-api", "forge-config-api-port")
+//        mainFile.addOptional("jei")
 //        mainFile.addOptional("roughly-enough-items")
 //        mainFile.addOptional("crafttweaker")
     }
@@ -160,10 +154,10 @@ if (System.getenv().MODRINTH_KEY) {
 
         dependencies {
             required.project "fabric-api"
-            required.project "cloth-config"
-            optional.project "rei"
-            optional.project "jei"
-            optional.project "crafttweaker"
+            required.project "forge-config-api-port"
+//            optional.project "rei"
+//            optional.project "jei"
+//            optional.project "crafttweaker"
         }
     }
 }

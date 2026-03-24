@@ -7,7 +7,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
@@ -47,7 +47,7 @@ public class SpoilRecipeBuilder {
 	}
 
 	public void build(RecipeOutput recipeOutput, Identifier id) {
-		SpoilRecipe recipe = new SpoilRecipe(this.group == null ? "" : this.group, this.ingredient, new ItemStack(this.result), this.spoilTime, this.priority);
+		SpoilRecipe recipe = new SpoilRecipe(this.group == null ? "" : this.group, this.ingredient, new ItemStackTemplate(this.result), this.spoilTime, this.priority);
 		recipeOutput.accept(ResourceKey.create(Registries.RECIPE, id), recipe, null);
 	}
 }

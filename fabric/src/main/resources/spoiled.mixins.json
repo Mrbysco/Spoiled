@@ -2,16 +2,14 @@
   "required": true,
   "minVersion": "0.8.4",
   "package": "com.mrbysco.spoiled.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "ChunkMapAccessor",
-    "RandomizableContainerBlockEntityAccessor",
     "ItemFrameMixin"
   ],
   "client": [
   ],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "${mod_id}.refmap.json"
+  }
 }

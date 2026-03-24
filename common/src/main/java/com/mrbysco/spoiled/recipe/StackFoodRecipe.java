@@ -1,12 +1,13 @@
 package com.mrbysco.spoiled.recipe;
 
 import com.google.common.collect.Lists;
+import com.mojang.serialization.MapCodec;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
 import com.mrbysco.spoiled.util.SpoilHelper;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -15,8 +16,13 @@ import net.minecraft.world.level.Level;
 import java.util.List;
 
 public class StackFoodRecipe extends CustomRecipe {
-	public StackFoodRecipe(CraftingBookCategory category) {
-		super(category);
+	public static final StackFoodRecipe INSTANCE = new StackFoodRecipe();
+	public static final MapCodec<StackFoodRecipe> MAP_CODEC = MapCodec.unit(INSTANCE);
+	public static final StreamCodec<RegistryFriendlyByteBuf, StackFoodRecipe> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+	public static final RecipeSerializer<StackFoodRecipe> SERIALIZER = new RecipeSerializer<>(MAP_CODEC, STREAM_CODEC);
+
+	public StackFoodRecipe() {
+		super();
 	}
 
 	@Override
@@ -40,7 +46,7 @@ public class StackFoodRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput craftingInput, HolderLookup.Provider registryAccess) {
+	public ItemStack assemble(CraftingInput craftingInput) {
 		List<ItemStack> list = Lists.newArrayList();
 
 		for (int i = 0; i < craftingInput.size(); ++i) {

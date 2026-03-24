@@ -1,7 +1,6 @@
 package com.mrbysco.spoiled.config;
 
 import com.mrbysco.spoiled.Constants;
-import com.mrbysco.spoiled.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -24,7 +23,7 @@ public class SpoiledConfigCache {
 	}
 
 	public static ItemStack getDefaultSpoilItem() {
-		String value = Services.PLATFORM.getDefaultSpoilItem();
+		String value = SpoiledConfig.COMMON.defaultSpoilItem.get();
 		if (value.isEmpty()) {
 			return ItemStack.EMPTY;
 		} else {

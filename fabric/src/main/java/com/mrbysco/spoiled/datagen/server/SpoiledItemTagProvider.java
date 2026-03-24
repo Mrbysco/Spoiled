@@ -1,8 +1,8 @@
 package com.mrbysco.spoiled.datagen.server;
 
 import com.mrbysco.spoiled.util.SpoiledTags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -14,8 +14,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class SpoiledItemTagProvider extends FabricTagProvider.ItemTagProvider {
-	public SpoiledItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
+public class SpoiledItemTagProvider extends FabricTagsProvider.ItemTagsProvider {
+	public SpoiledItemTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
 		super(output, completableFuture);
 	}
 

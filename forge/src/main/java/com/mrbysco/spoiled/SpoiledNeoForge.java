@@ -1,6 +1,7 @@
 package com.mrbysco.spoiled;
 
 import com.mrbysco.spoiled.commands.SpoiledCommands;
+import com.mrbysco.spoiled.config.ConfigHandler;
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.handler.TooltipHandler;
@@ -24,7 +25,7 @@ public class SpoiledNeoForge {
 
 	public SpoiledNeoForge(IEventBus eventBus, ModContainer container, Dist dist) {
 		container.registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
-		eventBus.register(SpoiledConfig.class);
+		eventBus.register(ConfigHandler.class);
 
 		SpoiledConditions.CONDITION_CODECS.register(eventBus);
 

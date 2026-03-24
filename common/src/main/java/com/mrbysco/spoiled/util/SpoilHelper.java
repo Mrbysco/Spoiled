@@ -2,8 +2,8 @@ package com.mrbysco.spoiled.util;
 
 import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.component.SpoilTimer;
+import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
-import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.registration.SpoiledComponents;
 import net.minecraft.core.component.DataComponents;
@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
@@ -36,18 +37,18 @@ public class SpoilHelper {
 	 */
 	public static RecipeHolder<SpoilRecipe> getSpoilRecipe(Level level, ItemStack stack) {
 		String itemPath = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-		List<String> spoilBlacklist = Services.PLATFORM.getSpoilBlacklist();
+		List<? extends String> spoilBlacklist = SpoiledConfig.COMMON.spoilBlacklist.get();
 		if (!spoilBlacklist.isEmpty() && spoilBlacklist.contains(itemPath)) {
 			return null;
 		}
-		if (Services.PLATFORM.spoilEverything()) {
+		if (SpoiledConfig.COMMON.spoilEverything.get()) {
 			final Identifier stackLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
 			if (stack.has(DataComponents.FOOD)) {
 				ItemStack spoilStack = SpoiledConfigCache.getDefaultSpoilItem();
 				String result = spoilStack.isEmpty() ? "to_air" : "to_" + BuiltInRegistries.ITEM.getKey(spoilStack.getItem()).getPath();
 				String recipePath = "everything_" + stackLocation.getPath() + result;
 				return new RecipeHolder<>(ResourceKey.create(Registries.RECIPE, Identifier.fromNamespaceAndPath(Constants.MOD_ID, recipePath)),
-						new SpoilRecipe("", Ingredient.of(stack.getItem()), spoilStack, Services.PLATFORM.getDefaultSpoilTime(), 1));
+						new SpoilRecipe("", Ingredient.of(stack.getItem()), new ItemStackTemplate(spoilStack.typeHolder(), spoilStack.getCount(), spoilStack.getComponentsPatch()), SpoiledConfig.COMMON.defaultSpoilTime.get(), 1));
 			}
 		} else {
 			if (stack.is(SpoiledTags.FOODS_BLACKLIST)) return null;

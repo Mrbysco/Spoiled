@@ -4,6 +4,5 @@
       "condition": "spoiled:merge_food"
     }
   ],
-  "type": "spoiled:stack_food",
-  "category": "misc"
+  "type": "spoiled:stack_food"
 }

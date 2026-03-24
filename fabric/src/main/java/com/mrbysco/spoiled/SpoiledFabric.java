@@ -4,77 +4,43 @@ import com.mrbysco.spoiled.commands.SpoiledCommands;
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.handler.SpoilHandler;
-import com.mrbysco.spoiled.network.RecipeContentPayload;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import com.mrbysco.spoiled.registration.SpoiledRecipes;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.ConfigHolder;
-import me.shedaniel.autoconfig.serializer.YamlConfigSerializer;
+import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditions;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.item.crafting.RecipeHolder;
-
-import java.util.Collection;
-import java.util.Set;
+import net.neoforged.fml.config.ModConfig;
 
 import java.util.ArrayList;
 
 public class SpoiledFabric implements ModInitializer {
-	public static ConfigHolder<SpoiledConfig> config;
 
 	@Override
 	public void onInitialize() {
-		config = AutoConfig.register(SpoiledConfig.class, YamlConfigSerializer::new);
-		config.registerLoadListener((holder, config) -> {
-			SpoiledConfigCache.setSpoilRate(config.general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(
-					config.general.containerModifier, new ArrayList<>()
-			);
-			return InteractionResult.PASS;
-		});
-		config.registerSaveListener((holder, config) -> {
-			SpoiledConfigCache.setSpoilRate(config.general.spoilRate);
-			SpoiledConfigCache.generateContainerModifier(
-					config.general.containerModifier, new ArrayList<>()
-			);
-			return InteractionResult.PASS;
-		});
+		ConfigRegistry.INSTANCE.register("spoiled", ModConfig.Type.SERVER, SpoiledConfig.serverSpec);
 
-		PayloadTypeRegistry.playS2C().register(RecipeContentPayload.TYPE, RecipeContentPayload.STREAM_CODEC);
+		RecipeSynchronization.synchronizeRecipeSerializer(SpoiledRecipes.SPOILING_SERIALIZER.get());
 
 		CommonClass.init();
 
-		ServerTickEvents.END_WORLD_TICK.register(SpoilHandler::onWorldTick);
+		ServerTickEvents.END_LEVEL_TICK.register(SpoilHandler::onWorldTick);
 
 		CommandRegistrationCallback.EVENT.register((commandDispatcher, registryAccess, environment) -> SpoiledCommands.initializeCommands(commandDispatcher));
 
 		ServerLifecycleEvents.SERVER_STARTING.register((server) -> {
-			SpoiledConfigCache.setSpoilRate(config.get().general.spoilRate);
+			SpoiledConfigCache.setSpoilRate(SpoiledConfig.COMMON.spoilRate.getAsInt());
 			SpoiledConfigCache.generateContainerModifier(
-					config.get().general.containerModifier, new ArrayList<>()
+					SpoiledConfig.COMMON.containerModifier.get(), new ArrayList<>()
 			);
 		});
 
 		ResourceConditions.register(ResourceConditionType.create(InitializeSpoilingCondition.ID, InitializeSpoilingCondition.CODEC));
 		ResourceConditions.register(ResourceConditionType.create(MergeRecipeCondition.ID, MergeRecipeCondition.CODEC));
-	}
-
-	/**
-	 * Send the Spoiled recipes to a player.
-	 * @param player the player to send the recipes to
-	 * @param recipeMap the recipe map containing the recipes to send
-	 */
-	public static void sendRecipes(ServerPlayer player, Collection<RecipeHolder<?>> recipeMap) {
-		var payload = RecipeContentPayload.create(Set.of(SpoiledRecipes.SPOIL_RECIPE_TYPE.get()), recipeMap);
-		ServerPlayNetworking.send(player, payload);
 	}
 }

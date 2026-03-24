@@ -2,11 +2,11 @@ package com.mrbysco.spoiled.recipe.condition;
 
 import com.mojang.serialization.MapCodec;
 import com.mrbysco.spoiled.Constants;
-import com.mrbysco.spoiled.SpoiledFabric;
+import com.mrbysco.spoiled.config.SpoiledConfig;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceConditionType;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import org.jetbrains.annotations.Nullable;
 
 public class InitializeSpoilingCondition implements ResourceCondition {
@@ -22,6 +22,6 @@ public class InitializeSpoilingCondition implements ResourceCondition {
 
 	@Override
 	public boolean test(@Nullable RegistryOps.RegistryInfoLookup registryInfo) {
-		return SpoiledFabric.config.get().general.initializeSpoiling;
+		return SpoiledConfig.COMMON.initializeSpoiling.get();
 	}
 }

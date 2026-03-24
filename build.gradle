@@ -1,6 +1,6 @@
 plugins {
     // Required for NeoGradle
-    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.3"
     id "net.darkhax.curseforgegradle" version "1.1.28" apply(false)
     id "com.modrinth.minotaur" version "2.+" apply(false)
 }
@@ -8,9 +8,9 @@ plugins {
 subprojects {
     apply plugin: 'java'
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-    java.withSourcesJar()
+    java.toolchain.languageVersion = JavaLanguageVersion.of(25)
     java.withJavadocJar()
+    java.withSourcesJar()
 
     jar {
         from(rootProject.file("LICENSE")) {
@@ -45,26 +45,18 @@ subprojects {
             url = 'https://repo.spongepowered.org/repository/maven-public/'
         }
         maven {
-            // location of the maven that hosts JEI files since January 2023
-            name = "Jared's maven"
-            url = "https://maven.blamejared.com/"
-        }
-        maven {
-            name = 'Roughly Enough Items'
-            url = "https://maven.shedaniel.me"
-        }
-        maven {
-            name = "Illusive Soulworks maven"
-            url = "https://maven.theillusivec4.top/"
-            content {
-                includeGroup "top.theillusivec4.curios"
-            }
+            name = "Fuzs Mod Resources"
+            url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
         }
     }
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = 'UTF-8'
-        it.options.getRelease().set(21)
+        it.options.getRelease().set(25)
+    }
+
+    tasks.withType(AbstractTestTask).configureEach {
+        failOnNoDiscoveredTests = false
     }
 
     processResources {

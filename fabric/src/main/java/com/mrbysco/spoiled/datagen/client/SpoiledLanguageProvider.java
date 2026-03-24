@@ -1,13 +1,13 @@
 package com.mrbysco.spoiled.datagen.client;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 
 import java.util.concurrent.CompletableFuture;
 
 public class SpoiledLanguageProvider extends FabricLanguageProvider {
-	public SpoiledLanguageProvider(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
+	public SpoiledLanguageProvider(FabricPackOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
 		super(dataOutput, registryLookup);
 	}
 

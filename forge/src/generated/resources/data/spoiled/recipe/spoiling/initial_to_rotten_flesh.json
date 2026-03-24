@@ -7,7 +7,6 @@
   "type": "spoiled:spoil_recipe",
   "ingredient": "#spoiled:foods",
   "result": {
-    "count": 1,
     "id": "minecraft:rotten_flesh"
   }
 }

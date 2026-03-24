@@ -2,7 +2,6 @@ package com.mrbysco.spoiled.handler;
 
 import com.google.common.collect.Lists;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
-import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.util.ChunkHelper;
 import com.mrbysco.spoiled.util.SpoilHelper;
@@ -37,7 +36,7 @@ public class SpoilHandler {
 				for (BlockPos pos : blockEntityPositions) {
 					BlockEntity be = level.getBlockEntity(pos);
 					if (be != null && !be.isRemoved() && be.hasLevel() && be instanceof Container container) {
-						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && ((RandomizableContainerBlockEntityAccessor) randomizeInventory).getLootTable() != null)
+						if (be instanceof RandomizableContainerBlockEntity randomizeInventory && randomizeInventory.getLootTable() != null)
 							continue;
 
 						BlockState state = level.getBlockState(pos);
@@ -58,7 +57,7 @@ public class SpoilHandler {
 						if (spoilRate <= 0) {
 							continue; // Skip if spoil rate is 0 or less
 						}
-						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
+						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.getRandom().nextDouble() <= spoilRate);
 						if (spoilFlag) {
 							if (container != null && container.getContainerSize() > 0) {
 								for (int i = 0; i < container.getContainerSize(); i++) {

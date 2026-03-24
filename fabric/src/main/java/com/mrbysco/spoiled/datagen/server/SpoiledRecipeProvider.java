@@ -7,7 +7,7 @@ import com.mrbysco.spoiled.recipe.StackFoodRecipe;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import com.mrbysco.spoiled.util.SpoiledTags;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ResourceCondition;
 import net.fabricmc.fabric.impl.datagen.FabricDataGenHelper;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class SpoiledRecipeProvider extends FabricRecipeProvider {
-	public SpoiledRecipeProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+	public SpoiledRecipeProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
 		super(output, registriesFuture);
 	}
 

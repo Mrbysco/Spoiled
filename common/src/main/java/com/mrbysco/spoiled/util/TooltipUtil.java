@@ -1,7 +1,7 @@
 package com.mrbysco.spoiled.util;
 
 import com.mrbysco.spoiled.component.SpoilTimer;
-import com.mrbysco.spoiled.platform.Services;
+import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.registration.SpoiledComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -25,7 +25,7 @@ public class TooltipUtil {
 			int percentage = (int) (((double) timer / timeMax) * 100);
 
 			MutableComponent component;
-			if (Services.PLATFORM.showPercentage()) {
+			if (SpoiledConfig.CLIENT.showPercentage.get()) {
 				component = Component.translatable("spoiled.spoiling").withStyle(ChatFormatting.YELLOW);
 				Component amount = Component.literal(String.valueOf(percentage)).withStyle(ChatFormatting.RED);
 				Component percentageComponent = Component.literal("%").withStyle(ChatFormatting.YELLOW);

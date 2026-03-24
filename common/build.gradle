@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'java'
     id 'maven-publish'
-    id "net.neoforged.moddev" version "2.0.124"
+    id "net.neoforged.moddev" version "2.0.141"
 }
 
 base {
@@ -34,10 +34,12 @@ dependencies {
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: "${mixinextras_version}"
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: "${mixinextras_version}"
 
-    compileOnly "me.shedaniel:RoughlyEnoughItems-api:${rei_version}"
-    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rei_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-api:${rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin:${rei_version}"
+//    compileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
 //    compileOnly "com.blamejared.crafttweaker:CraftTweaker-common-${minecraft_version}:${crafttweaker_version}"
+
+    api("fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${forge_config_api_version}")
 }
 
 publishing {

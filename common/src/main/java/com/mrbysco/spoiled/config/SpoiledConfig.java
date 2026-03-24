@@ -1,9 +1,5 @@
 package com.mrbysco.spoiled.config;
 
-import com.mrbysco.spoiled.Constants;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
 import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
@@ -117,20 +113,11 @@ public class SpoiledConfig {
 		COMMON = specPair.getLeft();
 	}
 
-	@SubscribeEvent
-	public static void onLoad(final ModConfigEvent configEvent) {
-		ModConfig config = configEvent.getConfig();
-		Constants.LOGGER.debug("Loaded Spoiled's config file {}", config.getFileName());
-		refreshCache(config.getType());
-	}
-
-	private static void refreshCache(ModConfig.Type type) {
-		if (type == ModConfig.Type.COMMON) {
-			SpoiledConfigCache.setSpoilRate(SpoiledConfig.COMMON.spoilRate.get());
-			SpoiledConfigCache.generateContainerModifier(
-					SpoiledConfig.COMMON.containerModifier.get(),
-					SpoiledConfig.COMMON.itemContainerModifier.get()
-			);
-		}
+	public static void refreshCommonCache() {
+		SpoiledConfigCache.setSpoilRate(SpoiledConfig.COMMON.spoilRate.get());
+		SpoiledConfigCache.generateContainerModifier(
+				SpoiledConfig.COMMON.containerModifier.get(),
+				SpoiledConfig.COMMON.itemContainerModifier.get()
+		);
 	}
 }
