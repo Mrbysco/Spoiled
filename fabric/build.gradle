@@ -122,7 +122,7 @@ if (System.getenv().CURSEFORGE_KEY) {
     task curseforge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
         apiToken = System.getenv().CURSEFORGE_KEY
 
-        def mainFile = upload(project.curseforge_id, remapJar)
+        def mainFile = upload(project.curseforge_id, jar)
         mainFile.releaseType = 'beta'
         mainFile.addGameVersion "Fabric"
         mainFile.addGameVersion "${minecraft_version}"
@@ -147,7 +147,7 @@ if (System.getenv().MODRINTH_KEY) {
         versionType = "alpha"
         versionName = "${mod_name} ${minecraft_version}"
         versionNumber = project.version
-        uploadFile = remapJar
+        uploadFile = jar
         changelog = fileContents
         gameVersions = ["${minecraft_version}"]
         loaders = ["fabric"]
