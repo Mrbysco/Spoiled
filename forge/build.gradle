@@ -136,13 +136,13 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.releaseType = 'beta'
         mainFile.addGameVersion "NeoForge"
         mainFile.addGameVersion "${minecraft_version}"
-        mainFile.addGameVersion "Java 21"
+        mainFile.addGameVersion "Java 25"
         mainFile.addGameVersion('Server', 'Client')
 
         mainFile.changelog = file("$project.rootDir/changelog.md")
         mainFile.changelogType = 'markdown'
 
-        mainFile.addOptional("jei")
+//        mainFile.addOptional("jei")
 //        mainFile.addOptional("roughly-enough-items")
 //        mainFile.addOptional("crafttweaker")
 //        mainFile.addOptional("curios")
@@ -163,7 +163,7 @@ if (System.getenv().MODRINTH_KEY) {
         loaders = ["neoforge"]
 
         dependencies {
-            optional.project "jei"
+//            optional.project "jei"
 //            optional.project "rei"
 //            optional.project "crafttweaker"
 //            optional.project "curios"
