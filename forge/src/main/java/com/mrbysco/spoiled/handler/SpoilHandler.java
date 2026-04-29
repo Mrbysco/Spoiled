@@ -1,7 +1,7 @@
 package com.mrbysco.spoiled.handler;
 
 import com.google.common.collect.Lists;
-import com.mrbysco.spoiled.Constants;
+import com.mrbysco.spoiled.compat.sable.SableCompat;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
@@ -27,6 +27,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -68,7 +69,12 @@ public class SpoilHandler {
 						}
 						boolean spoilFlag = spoilRate == 1.0 || (spoilRate > 0 && level.random.nextDouble() <= spoilRate);
 						if (spoilFlag) {
-							IItemHandler itemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+							IItemHandler itemHandler;
+							if (ModList.get().isLoaded("sable")) {
+								itemHandler = SableCompat.findItemHandler(level, pos);
+							} else {
+								itemHandler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos, null);
+							}
 							if (itemHandler != null && itemHandler.getSlots() > 0) {
 								for (int i = 0; i < itemHandler.getSlots(); i++) {
 									ItemStack stack = itemHandler.getStackInSlot(i);
@@ -97,13 +103,14 @@ public class SpoilHandler {
 
 	/**
 	 * Spoils an item in an item handler based on the spoil recipe and the container's spoil rate.
+	 *
 	 * @param containerStack the stack of the container item
-	 * @param itemHandler the item handler to spoil items in
-	 * @param slot the slot in the item handler to spoil the item
-	 * @param stack the item stack to spoil
-	 * @param recipe the spoil recipe to use for spoiling
+	 * @param itemHandler    the item handler to spoil items in
+	 * @param slot           the slot in the item handler to spoil the item
+	 * @param stack          the item stack to spoil
+	 * @param recipe         the spoil recipe to use for spoiling
 	 * @param registryAccess the registry access for getting the result item of the recipe
-	 * @param random the random source to use for determining if the item should spoil
+	 * @param random         the random source to use for determining if the item should spoil
 	 */
 	public static void spoilItemInHandler(ItemStack containerStack, IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess, RandomSource random) {
 		ResourceLocation location = BuiltInRegistries.ITEM.getKey(containerStack.getItem());
