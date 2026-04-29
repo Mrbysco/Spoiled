@@ -3,7 +3,7 @@ plugins {
     id 'eclipse'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.184'
+    id "net.neoforged.moddev" version "2.0.107"
     id 'net.darkhax.curseforgegradle'
     id 'com.modrinth.minotaur'
 }
@@ -12,51 +12,67 @@ base {
     archivesName = "${mod_name}-neoforge-${minecraft_version}"
 }
 
-if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
-    minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
-}
+neoForge {
+    version = "${neo_version}"
 
-runs {
-    // applies to all the run configs below
-    configureEach {
-        // Recommended logging data for a userdev environment
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-        // Recommended logging level for the console
-        systemProperty 'forge.logging.console.level', 'debug'
-
-        //Limit ram usage for the dev environment to 4GB
-        jvmArgument '-Xmx4G'
-
-        systemProperty 'mixin.env.disableRefMap', 'true'
-
-        modSource project.sourceSets.main
+    parchment {
+        minecraftVersion = "${parchment_minecraft_version}"
+        mappingsVersion = "${parchment_mapping_version}"
     }
 
-    client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', "${mod_id}"
+    // Automatically enable forge AccessTransformers if the file exists
+    // This location is hardcoded in Forge and can not be changed.
+    // https://github.com/MinecraftForge/MinecraftForge/blob/be1698bb1554f9c8fa2f58e32b9ab70bc4385e60/fmlloader/src/main/java/net/minecraftforge/fml/loading/moddiscovery/ModFile.java#L123
+    // Forge still uses SRG names during compile time, so we cannot use the common AT's
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+    def commonResources = project(':common').file("src/main/resources")
+
+    runs {
+        configureEach { model ->
+            systemProperty 'forge.logging.console.level', 'debug'
+            systemProperty 'fml.earlyprogresswindow', 'false'
+
+            //Limit ram usage for the dev environment to 4GB
+            jvmArguments.add('-Xmx4G')
+
+            if (model.project.javaToolchains.launcherFor(java.toolchain).map { it.metadata.vendor }.getOrElse("").contains("JetBrains")) {
+                jvmArguments.add("-XX:+AllowEnhancedClassRedefinition")
+            }
+        }
+
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+        data {
+            data()
+            programArguments.addAll(
+                    '--mod', "${mod_id}",
+                    '--all',
+                    '--output', file('src/generated/resources/').getAbsolutePath(),
+                    '--existing', file('src/main/resources/').getAbsolutePath(),
+                    '--existing', commonResources.getAbsolutePath()
+            )
+        }
     }
 
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', "${mod_id}"
-        programArgument '--nogui'
-    }
-
-    data {
-        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-        // workingDirectory project.file('run-data')
-
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        arguments.addAll '--mod', "${mod_id}", '--all', '--output', file('src/generated/resources/').getAbsolutePath(),
-                '--existing', file('src/main/resources/').getAbsolutePath(), '--existing', project(":common").file("src/main/resources").getAbsolutePath()
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.test
+        }
     }
 }
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
 dependencies {
-    implementation "net.neoforged:neoforge:${neo_version}"
     compileOnly project(":common")
 
     compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${rei_version}"
@@ -73,22 +89,15 @@ dependencies {
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
 
-// NeoGradle compiles the game, but we don't want to add our common code to the game's code
-Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
-
-tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
+compileJava {
     source(project(":common").sourceSets.main.allSource)
 }
 
-tasks.withType(Javadoc).matching(notNeoTask).configureEach {
-    source(project(":common").sourceSets.main.allJava)
+sourcesJar {
+    from project(":common").sourceSets.main.allJava
 }
 
-tasks.named("sourcesJar", Jar) {
-    from(project(":common").sourceSets.main.allSource)
-}
-
-tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
+processResources {
     from project(":common").sourceSets.main.resources
 }
 
