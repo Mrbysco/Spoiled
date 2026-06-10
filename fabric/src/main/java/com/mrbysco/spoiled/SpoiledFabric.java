@@ -23,7 +23,7 @@ public class SpoiledFabric implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		ConfigRegistry.INSTANCE.register("spoiled", ModConfig.Type.SERVER, SpoiledConfig.serverSpec);
+		ConfigRegistry.INSTANCE.register("spoiled", ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
 
 		RecipeSynchronization.synchronizeRecipeSerializer(SpoiledRecipes.SPOILING_SERIALIZER.get());
 
