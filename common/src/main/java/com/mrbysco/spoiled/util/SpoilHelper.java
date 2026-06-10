@@ -41,6 +41,15 @@ public class SpoilHelper {
 		if (!spoilBlacklist.isEmpty() && spoilBlacklist.contains(itemPath)) {
 			return null;
 		}
+
+		List<? extends String> ignoredComponentIdentifiers = SpoiledConfig.COMMON.ignoredComponents.get();
+		if (!ignoredComponentIdentifiers.isEmpty() && stack.getComponents().stream().anyMatch(component -> {
+			Identifier componentId = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(component.type());
+			return componentId != null && ignoredComponentIdentifiers.contains(componentId.toString());
+		})) {
+			return null;
+		}
+
 		if (SpoiledConfig.COMMON.spoilEverything.get()) {
 			final Identifier stackLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
 			if (stack.has(DataComponents.FOOD)) {

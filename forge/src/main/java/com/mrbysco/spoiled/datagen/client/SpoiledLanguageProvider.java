@@ -46,6 +46,9 @@ public class SpoiledLanguageProvider extends LanguageProvider {
 		addConfig("defaultSpoilItem", "Default Spoil Item", "Defines the item the foods vanilla foods will turn into when spoiled (if empty it will clear the spoiling item) [default: 'minecraft:rotten_flesh']");
 		addConfig("client", "Client", "Client Settings");
 		addConfig("showPercentage", "Show Percentage", "When enabled makes the food's tooltips show percentages");
+
+		addConfig("compatibility", "Compatibility", "Compatibility Settings");
+		addConfig("ignoredComponents", "Ignored Component Identifiers", "Any components with these ids will cause items not to spoil when they are present on the item");
 	}
 
 	/**
