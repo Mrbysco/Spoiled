@@ -29,6 +29,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.access.ItemAccess;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 
@@ -160,7 +161,7 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
 			if (!stack.isEmpty()) {
-				ResourceHandler<ItemResource> resourceHandler = stack.getCapability(Capabilities.Item.ITEM, null);
+				ResourceHandler<ItemResource> resourceHandler = ItemAccess.forStack(stack).getCapability(Capabilities.Item.ITEM);
 				if (resourceHandler != null && resourceHandler.size() > 0) {
 					for (int j = 0; j < resourceHandler.size(); j++) {
 						ItemResource nestedResource = resourceHandler.getResource(j);
@@ -193,7 +194,7 @@ public class SpoilHandler {
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = container.getItem(i);
 			if (!stack.isEmpty()) {
-				ResourceHandler<ItemResource> resourceHandler = stack.getCapability(Capabilities.Item.ITEM, null);
+				ResourceHandler<ItemResource> resourceHandler = ItemAccess.forStack(stack).getCapability(Capabilities.Item.ITEM);
 				if (resourceHandler != null && resourceHandler.size() > 0) {
 					for (int j = 0; j < resourceHandler.size(); j++) {
 						ItemResource nestedResource = resourceHandler.getResource(j);
