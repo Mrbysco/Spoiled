@@ -133,7 +133,7 @@ if (System.getenv().CURSEFORGE_KEY) {
         mainFile.changelogType = 'markdown'
 
         mainFile.addRequirement("fabric-api", "forge-config-api-port")
-//        mainFile.addOptional("jei")
+        mainFile.addOptional("jei")
 //        mainFile.addOptional("roughly-enough-items")
 //        mainFile.addOptional("crafttweaker")
     }
@@ -156,7 +156,7 @@ if (System.getenv().MODRINTH_KEY) {
             required.project "fabric-api"
             required.project "forge-config-api-port"
 //            optional.project "rei"
-//            optional.project "jei"
+            optional.project "jei"
 //            optional.project "crafttweaker"
         }
     }
