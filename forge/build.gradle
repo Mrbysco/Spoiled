@@ -147,7 +147,7 @@ if (System.getenv().CURSEFORGE_KEY) {
 //        mainFile.addOptional("jei")
 //        mainFile.addOptional("roughly-enough-items")
 //        mainFile.addOptional("crafttweaker")
-//        mainFile.addOptional("curios")
+        mainFile.addOptional("curios")
     }
 }
 
@@ -168,7 +168,7 @@ if (System.getenv().MODRINTH_KEY) {
 //            optional.project "jei"
 //            optional.project "rei"
 //            optional.project "crafttweaker"
-//            optional.project "curios"
+            optional.project "curios"
         }
     }
 }
