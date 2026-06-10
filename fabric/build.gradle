@@ -37,8 +37,8 @@ dependencies {
 //    runtimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
 //    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
 
-    compileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_version}")
     compileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    testCompileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
 //    implementation ("com.blamejared.crafttweaker:CraftTweaker-fabric-${minecraft_version}:${crafttweaker_version}")
 }
 

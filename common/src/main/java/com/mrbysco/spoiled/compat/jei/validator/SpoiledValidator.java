@@ -11,6 +11,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public class SpoiledValidator {
 	private static final int INVALID_COUNT = -1;
 
