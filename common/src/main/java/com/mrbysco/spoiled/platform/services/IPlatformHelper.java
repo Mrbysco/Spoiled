@@ -74,4 +74,10 @@ public interface IPlatformHelper {
 	 * @return The configured defaultSpoilItem value
 	 */
 	String getDefaultSpoilItem();
+
+	/**
+	 * Any components with these identifiers will cause items not to spoil when they are present on the item
+	 * @return The configured ignoredComponents value
+	 */
+	List<? extends String> getIgnoredComponentIdentifiers();
 }

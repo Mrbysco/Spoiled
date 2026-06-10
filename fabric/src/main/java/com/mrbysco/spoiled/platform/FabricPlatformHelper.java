@@ -57,4 +57,9 @@ public class FabricPlatformHelper implements IPlatformHelper {
 	public String getDefaultSpoilItem() {
 		return SpoiledFabric.config.get().general.defaultSpoilItem;
 	}
+
+	@Override
+	public List<? extends String> getIgnoredComponentIdentifiers() {
+		return SpoiledFabric.config.get().compat.ignoredComponents;
+	}
 }

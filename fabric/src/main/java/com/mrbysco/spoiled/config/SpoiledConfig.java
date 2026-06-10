@@ -14,6 +14,9 @@ public class SpoiledConfig implements ConfigData {
 	@CollapsibleObject
 	public General general = new General();
 
+	@CollapsibleObject
+	public Compat compat = new Compat();
+
 	public static class General {
 		@Comment("""
 				Determines the spoilrate in specific containers [Syntax: tileentity:spoil_rate]
@@ -53,5 +56,10 @@ public class SpoiledConfig implements ConfigData {
 		@Comment("Defines the item the foods vanilla foods will turn into when spoiled (if empty it will clear the spoiling item) [default: 'minecraft:rotten_flesh']")
 		public String defaultSpoilItem = "minecraft:rotten_flesh";
 
+	}
+
+	public static class Compat {
+		@Comment("Any components with these ids will cause items not to spoil when they are present on the item")
+		public List<String> ignoredComponents = List.of();
 	}
 }

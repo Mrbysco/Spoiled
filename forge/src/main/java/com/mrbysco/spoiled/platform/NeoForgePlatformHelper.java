@@ -58,4 +58,9 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 	public String getDefaultSpoilItem() {
 		return SpoiledConfig.COMMON.defaultSpoilItem.get();
 	}
+
+	@Override
+	public List<? extends String> getIgnoredComponentIdentifiers() {
+		return SpoiledConfig.COMMON.ignoredComponents.get();
+	}
 }

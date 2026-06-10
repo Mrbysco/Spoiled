@@ -39,6 +39,7 @@ public class SpoiledConfig {
 		public final ModConfigSpec.ConfigValue<List<? extends String>> spoilBlacklist;
 		public final IntValue defaultSpoilTime;
 		public final ModConfigSpec.ConfigValue<String> defaultSpoilItem;
+		public final ModConfigSpec.ConfigValue<List<? extends String>> ignoredComponents;
 
 		Common(ModConfigSpec.Builder builder) {
 			builder.comment("General settings")
@@ -94,6 +95,14 @@ public class SpoiledConfig {
 			defaultSpoilItem = builder
 					.comment("Defines the item the foods vanilla foods will turn into when spoiled (if empty it will clear the spoiling item) [default: 'minecraft:rotten_flesh']")
 					.define("defaultSpoilItem", "minecraft:rotten_flesh");
+
+			builder.pop();
+			builder.comment("Compatibility settings")
+					.push("compatibility");
+
+			ignoredComponents = builder
+					.comment("Any components with these ids will cause items not to spoil when they are present on the item")
+					.defineListAllowEmpty("ignoredComponents", List::of, String::new, o -> (o instanceof String));
 
 			builder.pop();
 		}

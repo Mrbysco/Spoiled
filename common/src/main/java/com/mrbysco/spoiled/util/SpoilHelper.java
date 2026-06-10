@@ -38,6 +38,15 @@ public class SpoilHelper {
 		if (!spoilBlacklist.isEmpty() && spoilBlacklist.contains(itemPath)) {
 			return null;
 		}
+
+		List<? extends String> ignoredComponentIdentifiers = Services.PLATFORM.getIgnoredComponentIdentifiers();
+		if (!ignoredComponentIdentifiers.isEmpty() && stack.getComponents().stream().anyMatch(component -> {
+			ResourceLocation componentId = BuiltInRegistries.DATA_COMPONENT_TYPE.getKey(component.type());
+			return componentId != null && ignoredComponentIdentifiers.contains(componentId.toString());
+		})) {
+			return null;
+		}
+
 		if (Services.PLATFORM.spoilEverything()) {
 			final ResourceLocation stackLocation = BuiltInRegistries.ITEM.getKey(stack.getItem());
 			if (stack.has(DataComponents.FOOD)) {
