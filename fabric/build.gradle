@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id "net.fabricmc.fabric-loom" version '1.15-SNAPSHOT'
+    id "net.fabricmc.fabric-loom" version '1.16-SNAPSHOT'
     id 'net.darkhax.curseforgegradle'
     id 'com.modrinth.minotaur'
 }
@@ -37,8 +37,8 @@ dependencies {
 //    runtimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
 //    compileOnly "me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:${rei_version}"
 
-//    compileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_version}")
-//    compileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-common:${jei_version}")
+    compileOnly("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
 //    implementation ("com.blamejared.crafttweaker:CraftTweaker-fabric-${minecraft_version}:${crafttweaker_version}")
 }
 

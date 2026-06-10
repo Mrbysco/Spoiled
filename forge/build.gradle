@@ -18,11 +18,6 @@ configurations {
 neoForge {
     version = "${neo_version}"
 
-    parchment {
-        minecraftVersion = "${parchment_minecraft_version}"
-        mappingsVersion = "${parchment_mapping_version}"
-    }
-
     // Automatically enable neoforge AccessTransformers if the file exists
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
@@ -78,6 +73,13 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
+repositories {
+    maven {
+        name = "Illusive Soulworks maven"
+        url = "https://maven.theillusivec4.top/"
+    }
+}
+
 dependencies {
     compileOnly project(":common")
 
@@ -88,10 +90,10 @@ dependencies {
 //    implementation "dev.architectury:architectury-neoforge:${architectury_version}"
 //    implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 
-//    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
-//    testCompileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    testCompileOnly "mezz.jei:jei-${minecraft_version}-common:${jei_version}"
 //    implementation "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
-//    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
 
 compileJava {
