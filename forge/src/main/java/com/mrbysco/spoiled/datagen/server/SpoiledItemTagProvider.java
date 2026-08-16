@@ -23,6 +23,7 @@ public class SpoiledItemTagProvider extends ItemTagsProvider {
 	@Override
 	public void addTags(HolderLookup.Provider lookupProvider) {
 		addModFood(List.of(Items.ROTTEN_FLESH, Items.ENCHANTED_GOLDEN_APPLE));
+		this.tag(Constants.BLACKLIST);
 	}
 
 	private void addModFood(List<Item> blacklist) {

@@ -31,6 +31,7 @@ public class SpoilHelper {
 	 */
 	public static SpoilRecipe getSpoilRecipe(Level level, ItemStack stack) {
 		if (!Services.PLATFORM.canSpoil(stack)) return null;
+		if (stack.is(Constants.BLACKLIST)) return null;
 		String itemPath = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
 		List<String> spoilBlacklist = Services.PLATFORM.getSpoilBlacklist();
 		if (!spoilBlacklist.isEmpty() && spoilBlacklist.contains(itemPath)) {
