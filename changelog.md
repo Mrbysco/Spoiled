@@ -1,1 +1,1 @@
-* Remove leftover debug log (spamming the console)
+* Add `spoiled:blacklist` item tag. Allowing you to reference other tags inside the blacklist tag. (The config blacklist does not support tags)
