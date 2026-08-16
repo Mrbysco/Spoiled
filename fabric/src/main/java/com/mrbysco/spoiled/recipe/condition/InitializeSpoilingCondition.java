@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 
 public class InitializeSpoilingCondition {
 
-	public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "initialize_spoiling");
+	public static final ResourceLocation ID = Constants.modLoc("initialize_spoiling");
 
 	public static final ConditionJsonProvider PROVIDER = new ConditionJsonProvider() {
 		@Override

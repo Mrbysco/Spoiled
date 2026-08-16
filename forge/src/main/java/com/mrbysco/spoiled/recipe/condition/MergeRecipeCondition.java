@@ -8,7 +8,7 @@ import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
 
 public class MergeRecipeCondition implements ICondition {
-	private static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merge_food");
+	private static final ResourceLocation ID = Constants.modLoc("merge_food");
 
 	@Override
 	public ResourceLocation getID() {

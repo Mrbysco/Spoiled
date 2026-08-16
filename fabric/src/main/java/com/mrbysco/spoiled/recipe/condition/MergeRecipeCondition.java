@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
 import net.minecraft.resources.ResourceLocation;
 
 public class MergeRecipeCondition {
-	public static final ResourceLocation ID = new ResourceLocation(Constants.MOD_ID, "merge_food");
+	public static final ResourceLocation ID = Constants.modLoc("merge_food");
 
 	public static final ConditionJsonProvider PROVIDER = new ConditionJsonProvider() {
 		@Override

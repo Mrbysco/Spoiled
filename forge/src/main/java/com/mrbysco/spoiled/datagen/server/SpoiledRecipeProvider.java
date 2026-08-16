@@ -12,7 +12,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SpecialRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -39,8 +38,8 @@ public class SpoiledRecipeProvider extends RecipeProvider {
 		ConditionalRecipe.builder()
 				.addCondition(new MergeRecipeCondition())
 				.addRecipe(c -> SpecialRecipeBuilder.special(SpoiledRecipes.STACK_FOOD_SERIALIZER.get())
-						.save(c, new ResourceLocation(Constants.MOD_ID, "merge_food").toString()))
-				.build(consumer, new ResourceLocation(Constants.MOD_ID, "merge_food"));
+						.save(c, Constants.modLoc("merge_food").toString()))
+				.build(consumer, Constants.modLoc("merge_food"));
 	}
 
 	@Override
