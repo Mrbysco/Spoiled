@@ -1,1 +1,1 @@
-* Add `ignoredComponents` config option. Any item with any of the specified component ids will not spoil
+* Overhaul the way the mod spoils inside inventories like bundles, shulker boxes and other item holding items
