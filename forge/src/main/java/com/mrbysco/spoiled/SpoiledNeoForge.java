@@ -2,6 +2,7 @@ package com.mrbysco.spoiled;
 
 import com.mrbysco.spoiled.commands.SpoiledCommands;
 import com.mrbysco.spoiled.config.SpoiledConfig;
+import com.mrbysco.spoiled.containers.ContainerRegistrar;
 import com.mrbysco.spoiled.handler.SpoilHandler;
 import com.mrbysco.spoiled.handler.TooltipHandler;
 import com.mrbysco.spoiled.recipe.condition.SpoiledConditions;
@@ -11,6 +12,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -30,6 +32,8 @@ public class SpoiledNeoForge {
 
 		CommonClass.init();
 
+		eventBus.addListener(this::commonSetup);
+
 		if (ModList.get().isLoaded("curios")) {
 			NeoForge.EVENT_BUS.addListener(com.mrbysco.spoiled.compat.curios.CuriosCompat::onCuriosTick);
 		}
@@ -41,6 +45,9 @@ public class SpoiledNeoForge {
 		}
 	}
 
+	private void commonSetup(final FMLCommonSetupEvent event) {
+		ContainerRegistrar.register();
+	}
 
 	public void onCommandRegister(RegisterCommandsEvent event) {
 		SpoiledCommands.initializeCommands(event.getDispatcher());

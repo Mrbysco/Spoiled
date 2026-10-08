@@ -1,8 +1,10 @@
 package com.mrbysco.spoiled.handler;
 
 import com.google.common.collect.Lists;
+import com.mrbysco.spoiled.CommonClass;
 import com.mrbysco.spoiled.compat.sable.SableCompat;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
+import com.mrbysco.spoiled.containers.ContainerTrace;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.util.ChunkHelper;
@@ -32,6 +34,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 import java.util.List;
 
@@ -112,7 +115,8 @@ public class SpoilHandler {
 	 * @param registryAccess the registry access for getting the result item of the recipe
 	 * @param random         the random source to use for determining if the item should spoil
 	 */
-	public static void spoilItemInHandler(ItemStack containerStack, IItemHandler itemHandler, int slot, ItemStack stack, SpoilRecipe recipe, RegistryAccess registryAccess, RandomSource random) {
+	public static void spoilItemInHandler(ItemStack containerStack, IItemHandler itemHandler, int slot, ItemStack stack,
+	                                      SpoilRecipe recipe, RegistryAccess registryAccess, RandomSource random) {
 		ResourceLocation location = BuiltInRegistries.ITEM.getKey(containerStack.getItem());
 		double spoilRate = 1.0D;
 		if (location != null && (SpoiledConfigCache.itemContainerModifier.containsKey(location))) {
@@ -132,6 +136,10 @@ public class SpoilHandler {
 					spoiledStack.setCount(oldStackCount);
 					itemHandler.insertItem(slot, spoiledStack, false);
 				}
+			} else {
+				if (itemHandler instanceof IItemHandlerModifiable modifiable) {
+					modifiable.setStackInSlot(slot, stack);
+				}
 			}
 		}
 	}
@@ -144,33 +152,21 @@ public class SpoilHandler {
 		}
 	}
 
-	private void updateInventory(Player player) {
+	private void updateInventory(ServerPlayer player) {
 		final Level level = player.level();
 		int invCount = player.getInventory().getContainerSize();
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
-			if (!stack.isEmpty()) {
-				IItemHandler itemHandler = stack.getCapability(Capabilities.ItemHandler.ITEM);
-				if (itemHandler != null && itemHandler.getSlots() > 0) {
-					for (int j = 0; j < itemHandler.getSlots(); j++) {
-						ItemStack nestedStack = itemHandler.getStackInSlot(j);
-						if (nestedStack != null && !nestedStack.isEmpty()) {
-							RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
-							if (recipeHolder != null) {
-								SpoilRecipe recipe = recipeHolder.value();
-								spoilItemInHandler(stack, itemHandler, j, nestedStack, recipe, level.registryAccess(), level.getRandom());
-							}
-						}
-					}
-				} else {
-					RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
-					if (recipeHolder != null) {
-						SpoilRecipe recipe = recipeHolder.value();
-						SpoilHelper.updateSpoilingStack(stack, recipe);
-						if (SpoilHelper.isSpoiled(stack)) {
-							SpoilHelper.spoilItemForPlayer(player, stack, recipe);
-						}
-					}
+			if (stack.isEmpty()) continue;
+			if (CommonClass.containerManager.spoilItems(player, new ContainerTrace(player), stack))
+				continue;
+
+			RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+			if (recipeHolder != null) {
+				SpoilRecipe recipe = recipeHolder.value();
+				SpoilHelper.updateSpoilingStack(stack, recipe);
+				if (SpoilHelper.isSpoiled(stack)) {
+					SpoilHelper.spoilItemForPlayer(player, stack, recipe);
 				}
 			}
 		}

@@ -3,7 +3,8 @@ package com.mrbysco.spoiled;
 import com.mrbysco.spoiled.commands.SpoiledCommands;
 import com.mrbysco.spoiled.config.SpoiledConfig;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
-import com.mrbysco.spoiled.handler.SpoilHandler;
+import com.mrbysco.spoiled.containers.ContainerRegistrar;
+import com.mrbysco.spoiled.containers.SpoilHandler;
 import com.mrbysco.spoiled.recipe.condition.InitializeSpoilingCondition;
 import com.mrbysco.spoiled.recipe.condition.MergeRecipeCondition;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -41,6 +42,7 @@ public class SpoiledFabric implements ModInitializer {
 		});
 
 		CommonClass.init();
+		ContainerRegistrar.register();
 
 		ServerTickEvents.END_WORLD_TICK.register(SpoilHandler::onWorldTick);
 

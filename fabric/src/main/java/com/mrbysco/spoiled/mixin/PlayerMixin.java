@@ -1,6 +1,6 @@
 package com.mrbysco.spoiled.mixin;
 
-import com.mrbysco.spoiled.handler.SpoilHandler;
+import com.mrbysco.spoiled.containers.SpoilHandler;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

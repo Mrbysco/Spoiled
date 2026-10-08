@@ -1,6 +1,7 @@
-package com.mrbysco.spoiled.handler;
+package com.mrbysco.spoiled.containers;
 
 import com.google.common.collect.Lists;
+import com.mrbysco.spoiled.CommonClass;
 import com.mrbysco.spoiled.config.SpoiledConfigCache;
 import com.mrbysco.spoiled.mixin.RandomizableContainerBlockEntityAccessor;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
@@ -11,6 +12,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -118,25 +120,26 @@ public class SpoilHandler {
 	}
 
 	public static void onPlayerTick(Player player) {
-		if (!player.level().isClientSide &&
+		if (player instanceof ServerPlayer serverPlayer &&
 				player.level().getGameTime() % SpoiledConfigCache.spoilRate == 0 && !player.getAbilities().instabuild) {
-			updateInventory(player);
+			updateInventory(serverPlayer);
 		}
 	}
 
-	private static void updateInventory(Player player) {
+	private static void updateInventory(ServerPlayer player) {
 		final Level level = player.level();
 		int invCount = player.getInventory().getContainerSize();
 		for (int i = 0; i < invCount; i++) {
 			ItemStack stack = player.getInventory().getItem(i);
-			if (!stack.isEmpty()) {
-				RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
-				if (recipeHolder != null) {
-					SpoilRecipe recipe = recipeHolder.value();
-					SpoilHelper.updateSpoilingStack(stack, recipe);
-					if (SpoilHelper.isSpoiled(stack)) {
-						SpoilHelper.spoilItemForPlayer(player, stack, recipe);
-					}
+			if (stack.isEmpty()) continue;
+			if (CommonClass.containerManager.spoilItems(player, new ContainerTrace(player), stack)) continue;
+
+			RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
+			if (recipeHolder != null) {
+				SpoilRecipe recipe = recipeHolder.value();
+				SpoilHelper.updateSpoilingStack(stack, recipe);
+				if (SpoilHelper.isSpoiled(stack)) {
+					SpoilHelper.spoilItemForPlayer(player, stack, recipe);
 				}
 			}
 		}

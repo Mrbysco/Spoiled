@@ -1,6 +1,8 @@
 package com.mrbysco.spoiled.platform;
 
+import com.mrbysco.spoiled.CommonClass;
 import com.mrbysco.spoiled.config.SpoiledConfig;
+import com.mrbysco.spoiled.containers.handlers.HandlerCapability;
 import com.mrbysco.spoiled.platform.services.IPlatformHelper;
 import net.neoforged.fml.ModList;
 
@@ -62,5 +64,10 @@ public class NeoForgePlatformHelper implements IPlatformHelper {
 	@Override
 	public List<? extends String> getIgnoredComponentIdentifiers() {
 		return SpoiledConfig.COMMON.ignoredComponents.get();
+	}
+
+	@Override
+	public void registerContainerManagers() {
+		CommonClass.containerManager.register(new HandlerCapability());
 	}
 }

@@ -80,4 +80,6 @@ public interface IPlatformHelper {
 	 * @return The configured ignoredComponents value
 	 */
 	List<? extends String> getIgnoredComponentIdentifiers();
+
+	void registerContainerManagers();
 }

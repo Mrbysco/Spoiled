@@ -62,4 +62,9 @@ public class FabricPlatformHelper implements IPlatformHelper {
 	public List<? extends String> getIgnoredComponentIdentifiers() {
 		return SpoiledFabric.config.get().compat.ignoredComponents;
 	}
+
+	@Override
+	public void registerContainerManagers() {
+
+	}
 }
