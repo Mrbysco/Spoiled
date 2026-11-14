@@ -18,7 +18,11 @@ public class SpoiledItemTagProvider extends ItemTagsProvider {
 
 	@Override
 	public void addTags(@NotNull HolderLookup.Provider lookupProvider) {
-		this.tag(SpoiledTags.FOODS_BLACKLIST).add(Items.ROTTEN_FLESH, Items.ENCHANTED_GOLDEN_APPLE, Items.GOLDEN_APPLE);
+		this.tag(SpoiledTags.FOODS_BLACKLIST).add(
+				Items.ROTTEN_FLESH.builtInRegistryHolder().key(),
+				Items.ENCHANTED_GOLDEN_APPLE.builtInRegistryHolder().key(),
+				Items.GOLDEN_APPLE.builtInRegistryHolder().key()
+		);
 		this.tag(SpoiledTags.FOODS).addTag(Tags.Items.FOODS);
 	}
 }

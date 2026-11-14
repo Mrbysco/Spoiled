@@ -10,7 +10,7 @@ public class ConfigHandler {
 	public static void onLoad(final ModConfigEvent configEvent) {
 		ModConfig config = configEvent.getConfig();
 		Constants.LOGGER.debug("Loaded Spoiled's config file {}", config.getFileName());
-		if (config.getType() == ModConfig.Type.COMMON) {
+		if (config.getType() == ModConfig.Type.LOCAL) {
 			SpoiledConfig.refreshCommonCache();
 		}
 	}

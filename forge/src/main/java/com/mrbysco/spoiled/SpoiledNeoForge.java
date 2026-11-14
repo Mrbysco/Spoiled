@@ -24,7 +24,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 public class SpoiledNeoForge {
 
 	public SpoiledNeoForge(IEventBus eventBus, ModContainer container, Dist dist) {
-		container.registerConfig(ModConfig.Type.COMMON, SpoiledConfig.serverSpec);
+		container.registerConfig(ModConfig.Type.LOCAL, SpoiledConfig.serverSpec);
 		eventBus.register(ConfigHandler.class);
 
 		SpoiledConditions.CONDITION_CODECS.register(eventBus);

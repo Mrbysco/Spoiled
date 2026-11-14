@@ -57,7 +57,7 @@ public class NeoForgeRegistrationFactory implements RegistrationProvider.Factory
 
 				@Override
 				public ResourceKey<I> getResourceKey() {
-					return (ResourceKey<I>) obj.getKey();
+					return (ResourceKey<I>) obj.key();
 				}
 
 				@Override

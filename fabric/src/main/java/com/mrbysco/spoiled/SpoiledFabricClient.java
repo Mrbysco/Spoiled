@@ -8,7 +8,6 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback;
 import net.fabricmc.fabric.api.client.recipe.v1.sync.ClientRecipeSynchronizedEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.crafting.RecipeMap;
 import net.neoforged.fml.config.ModConfig;
 
 public class SpoiledFabricClient implements ClientModInitializer {
@@ -25,9 +24,8 @@ public class SpoiledFabricClient implements ClientModInitializer {
 		});
 
 		ClientRecipeSynchronizedEvent.EVENT.register((mc, synchronizedRecipes) -> {
-			RecipeMap recipeMap = RecipeMap.create(synchronizedRecipes.recipes());
 			Constants.SPOIL_RECIPES.clear();
-			Constants.SPOIL_RECIPES.addAll(recipeMap.byType(SpoiledRecipes.SPOIL_RECIPE_TYPE.get()));
+			Constants.SPOIL_RECIPES.addAll(synchronizedRecipes.getAllOfType(SpoiledRecipes.SPOIL_RECIPE_TYPE.get()));
 		});
 	}
 }
