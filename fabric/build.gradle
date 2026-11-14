@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'maven-publish'
-    id "net.fabricmc.fabric-loom" version '1.17-SNAPSHOT'
+    id "net.fabricmc.fabric-loom" version '1.18-SNAPSHOT'
     id 'net.darkhax.curseforgegradle'
     id 'com.modrinth.minotaur'
 }
@@ -81,7 +81,7 @@ sourceSets {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
+tasks.named("compileJava", JavaCompile) {
     source(project(":common").sourceSets.main.allSource)
 }
 tasks.withType(Javadoc).configureEach {
