@@ -5,7 +5,6 @@ import com.mrbysco.spoiled.Constants;
 import com.mrbysco.spoiled.compat.jei.category.SpoilCategory;
 import com.mrbysco.spoiled.compat.jei.validator.SpoiledValidator;
 import com.mrbysco.spoiled.config.SpoiledConfig;
-import com.mrbysco.spoiled.platform.Services;
 import com.mrbysco.spoiled.recipe.SpoilRecipe;
 import com.mrbysco.spoiled.util.SpoilHelper;
 import mezz.jei.api.IModPlugin;
