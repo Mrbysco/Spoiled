@@ -1,1 +1,1 @@
-* Update to 26.3
+* Fix indexOutOfBound issue with modded inventories
