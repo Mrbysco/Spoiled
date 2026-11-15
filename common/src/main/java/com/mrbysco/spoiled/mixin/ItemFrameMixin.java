@@ -24,7 +24,7 @@ public abstract class ItemFrameMixin extends HangingEntity {
 	 * @see ItemFrame#setItem(ItemStack)
 	 */
 	@Shadow
-	public abstract void setItem(ItemStack stack);
+	public abstract void setItem(ItemStack itemStack);
 
 	/**
 	 * @see ItemFrame#getItem()
