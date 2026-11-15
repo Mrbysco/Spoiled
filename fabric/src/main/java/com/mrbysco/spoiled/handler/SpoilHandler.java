@@ -63,13 +63,12 @@ public class SpoilHandler {
 								for (int i = 0; i < container.getContainerSize(); i++) {
 									ItemStack stack = container.getItem(i);
 									if (stack != null && !stack.isEmpty()) {
-										int slot = i;
 										RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, stack);
 										if (recipeHolder != null) {
 											SpoilRecipe recipe = recipeHolder.value();
 											SpoilHelper.updateSpoilingStack(stack, recipe);
 											if (SpoilHelper.isSpoiled(stack)) {
-												spoilItemInContainer(container, slot, stack, recipe, level.registryAccess());
+												spoilItemInContainer(container, i, stack, recipe, level.registryAccess());
 												be.setChanged();
 											}
 										}
