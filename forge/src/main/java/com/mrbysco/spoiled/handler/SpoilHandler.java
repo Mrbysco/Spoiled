@@ -166,7 +166,7 @@ public class SpoilHandler {
 					for (int j = 0; j < resourceHandler.size(); j++) {
 						ItemResource nestedResource = resourceHandler.getResource(j);
 						if (!nestedResource.isEmpty()) {
-							int count = resourceHandler.getAmountAsInt(i);
+							int count = resourceHandler.getAmountAsInt(j);
 							ItemStack nestedStack = nestedResource.toStack(count);
 							RecipeHolder<SpoilRecipe> recipeHolder = SpoilHelper.getSpoilRecipe(level, nestedStack);
 							if (recipeHolder != null) {
